@@ -14,10 +14,11 @@ class Project(models.Model):
 
 class Task(models.Model):
     # Модель для задач, содержит информацию о каждой задаче
-    taskId = models.IntegerField(primary_key=True)  # Уникальный идентификатор задачи
+    taskId = models.AutoField(primary_key=True)  # Уникальный идентификатор задачи
     taskName = models.CharField(max_length=30, null=False)  # Название задачи
-    taskDescription = models.CharField(max_length=30, null=True) 
-    dated = models.DateField(null=False)  # Описание задачи
+    taskDescription = models.CharField(max_length=30, null=True)
+    byEmployeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) 
+    fromDate = models.DateField(null=False)# Описание задачи
 
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
