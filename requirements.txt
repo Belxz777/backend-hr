@@ -1,0 +1,17 @@
+# pip install -r requirements.txt что бы устнавовить все зависимости
+Django==5.0.2 # для работы с django
+django-cors-headers==4.3.1 # для работы с cors
+django-filter==23.5 # для фильтрации моделей
+djangorestframework==3.14.0 # для работы с rest api
+pipreqs==0.5.0 # для создания файла requirements.txt и работы с пакетами
+PyJWT==1.7.1 # для jwt аутентификации
+psycopg2-binary==2.9.9 # для подключения к бд(prostgres)
+python-dotenv==1.0.1 # для  загрузки .env
+setuptools==69.0.3 # для запуска
+drf-yasg==1.21.7 # для swagger
+inflection==0.5.1  # для форматирования строк
+pyyaml==6.0.1 # для работы с yaml
+django-rest-swagger ==2.2.0  # для swagger rest
+django-environ==0.11.2 # для работы с переменными окружения продвинутой
+
+ 
