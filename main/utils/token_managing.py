@@ -7,6 +7,23 @@ import jwt,datetime
 
 from ..models import Employee
 from ..serializer import EmployeeSerializer
+
+def check_token(request):
+    token = request.COOKIES.get('jwt')
+    if not token:
+        return Response({'error': 'Unauthorized'}, status=401)
+    try:
+        payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        user = Employee.objects.filter(employeeId=payload['user']).first()
+       
+        return True
+           
+    except jwt.ExpiredSignatureError:
+        return Response({'error': 'Expired'}, status=401)
+    except jwt.InvalidTokenError:
+        return Response({'error': 'Token Err'}, status=401)
+
+
 class RegisterView(APIView):
     def post(self, request):
         serializer = EmployeeSerializer(data=request.data)

@@ -9,6 +9,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True},
                         'login': {'write_only': True}}
         
+        
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job

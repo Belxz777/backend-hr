@@ -28,10 +28,10 @@ class Department(models.Model):
 class LaborCosts(models.Model):
     # Модель для трудозатрат, содержит информацию о затратах труда
     laborCostId = models.IntegerField(primary_key=True)  # Уникальный идентификатор трудозатрат
-    employeeId = models.IntegerField(null=False)  # Идентификатор сотрудника
+    employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
     departmentId = models.IntegerField(null=True)  # Идентификатор услуги
-    taskId = models.IntegerField(null=False)  # Идентификатор задачи
-    projectId = models.IntegerField(null=True)  # Идентификатор проекта
+    taskId = models.ForeignKey(Task, on_delete=models.CASCADE,null=False) # Идентификатор задачии
+    projectId = models.ForeignKey(Project, on_delete=models.CASCADE,null=False) # Идентификатор проектаа
     date = models.DateField(null=False)  # Дата отчета о работе
     workingHours = models.DecimalField(max_digits=5, decimal_places=2, null=False)  # Затраченное время
     comment = models.CharField(max_length=30, null=True)  # Комментарий
