@@ -13,15 +13,13 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
-        fields = [ 'jobName']  
+        fields = ['jobId','jobName']  
 
     def update(self, instance, validated_data):
         instance.jobName = validated_data.get('jobName', instance.jobName)
         instance.save()
         return instance
 
-    def create(self, validated_data):
-        return Job.objects.create(**validated_data)
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,3 +40,4 @@ class LaborCostsSerializer(serializers.ModelSerializer):
     class Meta:
         model = LaborCosts
         fields = ['laborCostId', 'employeeId', 'departmentId', 'taskId', 'projectId', 'date', 'workingHours', 'comment', 'serviceDescription']
+

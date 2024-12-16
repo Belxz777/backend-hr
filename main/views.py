@@ -7,8 +7,6 @@ from .utils.token_managing import check_token
 
 
 class  JobManaging(APIView):  
-    
-     
      def patch(self, request,id):
              check_token(request)
              job = Job.objects.filter(jobId=request.data.get('id')).first()
@@ -34,17 +32,20 @@ class  JobManaging(APIView):
                         return Response(serializer.data)
                     else:
                         return Response({'error': 'Должность не найдена'}, status=404)
+                else:
+                    jobs = Job.objects.all()
+                    serializer = JobSerializer(jobs, many=True)
+                    return Response(serializer.data)
                     
 
 class JobList(APIView):
 
     def post(self, request):
-                check_token(request)
                 serializer = JobSerializer(data=request.data)
-                if serializer.is_valid():
-                    serializer.create(serializer.validated_data)
-                    return Response(serializer.data, status=201)
-                return Response(serializer.errors, status=400)
+                if serializer.is_valid():   
+                    job = serializer.save()  # Use save() instead of create()
+                    return Response(JobSerializer(job).data, status=201)  # Serialize the saved job
+                return Response(serializer.errors, status=400)    
     def get(self, request):
         check_token(request)
         jobs = Job.objects.all()

@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
-from .models import Job,Department,Project,Task
-from .serializer import JobSerializer,DepartmentSerializer,ProjectSerializer,TaskSerializer
+from ..models import Job,Department,Project,Task
+from ..serializer import JobSerializer,DepartmentSerializer,ProjectSerializer,TaskSerializer,LaborCostsSerializer
 from rest_framework.response import Response
 class ProjectTasks(APIView):
     def get(self, request, status,id):
@@ -9,3 +9,4 @@ class ProjectTasks(APIView):
             if status:
                 tasks = Task.objects.filter(tasks,status=status)
             return Response(TaskSerializer(tasks, many=True).data)
+

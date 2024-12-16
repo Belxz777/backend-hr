@@ -1,7 +1,10 @@
 from django.urls import path
 from .views import JobList, JobManaging,DepartmentManaging,DepartmentList,ProjectManaging,TaskManaging,ProjectByName
 from main.utils import token_managing
-from utils.subobj import ProjectTasks
+
+from .utils.post import labor_fill
+from .utils.report import getReport
+from .utils.subobj import ProjectTasks
 urlpatterns = [
     path('users/create',token_managing.RegisterView.as_view()),#для регистрации пользователей
     path("users/login",token_managing.LoginView.as_view()),#дяя входина
@@ -34,9 +37,20 @@ urlpatterns = [
 
     path('entities/task/<id>',TaskManaging.as_view()),
 
-    path('entities/user/byName/<str:name>',token_managing.UserByName.as_view()),
+   # path('entities/user/byName/<str:name>',token_managing.UserByName.as_view()),
 
     path('entities/user/<id>/tasks/?<str:status>/', ProjectTasks.as_view(), name='project-tasks-status'),
+
+
+
+path('fill/progres/user/<id>', labor_fill.labor_fill),
+
+
+
+path('report/department/json/<id>',getReport.get_labor_costs),
+
+    
+
 
 
 

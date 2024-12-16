@@ -17,6 +17,13 @@ class Task(models.Model):
     taskId = models.AutoField(primary_key=True)  # Уникальный идентификатор задачи
     taskName = models.CharField(max_length=30, null=False)  # Название задачи
     taskDescription = models.CharField(max_length=30, null=True)
+    status = models.CharField(max_length=30, null=False, choices=[
+        ('TO_DO', 'К выполнению'),
+        ('IN_PROGRESS', 'В процессе'),
+        ('DONE', 'Выполнено'),
+        ('BLOCKED', 'Заблокировано'),
+        ('CANCELLED', 'Отменено'),
+    ])  # Статус задачи
     byEmployeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) 
     fromDate = models.DateField(null=False)# Описание задачи
 
@@ -35,7 +42,7 @@ class LaborCosts(models.Model):
     date = models.DateField(null=False)  # Дата отчета о работе
     workingHours = models.DecimalField(max_digits=5, decimal_places=2, null=False)  # Затраченное время
     comment = models.CharField(max_length=30, null=True)  # Комментарий
-    serviceDescription = models.CharField(max_length=30, null=True)  # Описание услуги
+    serviceDescription = models.CharField(max_length=30, null=True)  
 
 
 class Employee(models.Model):
