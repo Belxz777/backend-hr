@@ -101,14 +101,14 @@ class DepartmentList(APIView):
 
 
 class ProjectManaging(APIView):
-    def post(self, request):
+    def post(self, request,id):
         serializer = ProjectSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
-    def get(self, request):
-        projects = Project.objects.all()
+    def get(self, request,id):
+        projects = Project.objects.filter(projectId=id)
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data)
     def patch(self, request,id):
@@ -146,7 +146,8 @@ class UserByName(APIView):
         return Response({'error': 'Пользователь не найден'}, status=404)
     
 class TaskManaging(APIView):
-      def post(self, request):
+      def post(self, request,id):
+        request.data['byEmployeeId'] = id
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
