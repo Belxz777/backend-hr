@@ -1,4 +1,3 @@
-import datetime
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -14,6 +13,7 @@ class Project(models.Model):
     projectName = models.CharField(max_length=30, null=False)  # Название проекта
     projectDescription = models.CharField(max_length=30, null=True)  # Описание проекта
 
+#проекты не нужны надо от них избавляться
 class Task(models.Model):
     # Модель для задач, содержит информацию о каждой задаче
     taskId = models.AutoField(primary_key=True)  # Уникальный идентификатор задачи
@@ -42,8 +42,7 @@ class LaborCosts(models.Model):
     employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
     departmentId = models.IntegerField(null=True)  # Идентификатор услуги
     taskId = models.ForeignKey(Task, on_delete=models.CASCADE,null=False) # Идентификатор задачии
-   # projectId = models.ForeignKey(Project, on_delete=models.CASCADE,null=False) # Идентификатор проектаа
-    date = models.DateField(null=False)  # Дата отчета о работе
+    date = models.DateField(auto_now_add=True)  # Дата отчета о работе
     workingHours = models.DecimalField(max_digits=5, decimal_places=2, null=False)  # Затраченное время
     comment = models.CharField(max_length=30, null=True)  # Комментарий
 
