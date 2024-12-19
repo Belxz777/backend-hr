@@ -23,6 +23,9 @@ DATABASES = {
         'PASSWORD': os.getenv('PGPASSWORD') or '123',  # Ensure a default empty string if not set
         'HOST': os.getenv('PGHOST') or 'localhost',  # Default to localhost if not set
         'PORT': os.getenv('PGPORT') or 5432,  # Default to 5432 if not set
+        'OPTIONS': {
+            'sslmode': 'require',
+        }
     }
 }  
 
