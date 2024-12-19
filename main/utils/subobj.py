@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
-from ...models import Job,Department,Project,Task
-from .rest_framework.decorators import api_view
+from ..models import Job,Department,Project,Task
+from rest_framework.decorators import api_view
 from ..serializer import JobSerializer,DepartmentSerializer,ProjectSerializer,TaskSerializer,LaborCostsSerializer
 from rest_framework.response import Response
 class ProjectTasks(APIView):

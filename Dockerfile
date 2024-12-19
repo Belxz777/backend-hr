@@ -4,13 +4,13 @@ WORKDIR /usr/src/app
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
-ENV POSTGRES_USER=postgres_user_owner
+ENV POSTGRES_USER=postgres1 
 ENV DEBUG = FALSE
 ENV SECRET_KEY=django-insecure-%xr3kz0z7d3jpo!t%c6%&wkvra=6lm=5qx+#ua8zu#184l#he@
-ENV POSTGRES_PASSWORD=mWPVS5GepH1l
-ENV POSTGRES_DB=postgres_user
-ENV POSTGRES_HOST=ep-tight-sun-a81gunnv.eastus2.azure.neon.tech
-ENV DATABASE_URL=postgresql://postgres_user_owner:mWPVS5GepH1l@ep-tight-sun-a81gunnv.eastus2.azure.neon.tech/postgres_user?sslmode=require
+ENV POSTGRES_PASSWORD=awpbMho0QStEeHfPUl96bY0ApIEnoBOm
+ENV POSTGRES_DB=main_agry
+ENV POSTGRES_HOST=dpg-cti3fnogph6c73d4kekg-a
+ENV DATABASE_URL=postgresql://postgres1:awpbMho0QStEeHfPUl96bY0ApIEnoBOm@dpg-cti3fnogph6c73d4kekg-a/main_agry?ssl_mode=require
 
 RUN apt-get update && apt-get install -y \
        build-essential  \

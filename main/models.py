@@ -1,5 +1,6 @@
 import datetime
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
 
@@ -18,26 +19,22 @@ class Task(models.Model):
     taskId = models.AutoField(primary_key=True)  # Уникальный идентификатор задачи
     taskName = models.CharField(max_length=30, null=False)  # Название задачи
     taskDescription = models.CharField(max_length=30, null=True)
-    status = models.CharField(max_length=30, null=False, choices=[
-        ('TO_DO', 'К выполнению'),
-        ('IN_PROGRESS', 'В процессе'),
-        ('DONE', 'Выполнено'),
-        ('BLOCKED', 'Заблокировано'),
-        ('CANCELLED', 'Отменено'),
-    ])  # Статус задачи
     byEmployeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) 
     status = models.CharField(max_length=20, choices=[
-        ('in_progress', 'В прогрессе'),
+        ('in_progress', 'В процессе'),
         ('completed', 'Готово'),
         ('todo', 'Сделать')
     ], default='not_started')  # Статус задачи
     projectId = models.ForeignKey('Project', on_delete=models.CASCADE)
-    fromDate = models.DateTimeField( auto_now_add=True)  # Описание задачи
+    hourstoaccomplish = models.IntegerField()
+    fromDate = models.DateTimeField( auto_now_add=True)
+    closeDate = models.DateTimeField(blank=True)  # Описание задачи 
 
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
     departmentName = models.CharField(max_length=30, null=False) 
-    departmentDescription = models.CharField(max_length=200, null=True)  # Название услуги
+    departmentDescription = models.CharField(max_length=200, null=True) 
+    headId = models.ForeignKey('Employee',on_delete=models.CASCADE)# Название услуги
 
 class LaborCosts(models.Model):
     # Модель для трудозатрат, содержит информацию о затратах труда
@@ -45,11 +42,10 @@ class LaborCosts(models.Model):
     employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
     departmentId = models.IntegerField(null=True)  # Идентификатор услуги
     taskId = models.ForeignKey(Task, on_delete=models.CASCADE,null=False) # Идентификатор задачии
-    projectId = models.ForeignKey(Project, on_delete=models.CASCADE,null=False) # Идентификатор проектаа
+   # projectId = models.ForeignKey(Project, on_delete=models.CASCADE,null=False) # Идентификатор проектаа
     date = models.DateField(null=False)  # Дата отчета о работе
     workingHours = models.DecimalField(max_digits=5, decimal_places=2, null=False)  # Затраченное время
     comment = models.CharField(max_length=30, null=True)  # Комментарий
-    serviceDescription = models.CharField(max_length=30, null=True)  
 
 
 class Employee(models.Model):
@@ -60,5 +56,12 @@ class Employee(models.Model):
     patronymic = models.CharField(max_length=30, null=False)  # Отчество сотрудника
     login = models.CharField(max_length=30, null=False)  # Логин сотрудника
     password = models.CharField(max_length=30, null=False)  # Пароль сотрудника
-    jobid = models.ForeignKey(Job, on_delete=models.CASCADE)  # Идентификатор должности сотрудника
+    jobid = models.ForeignKey(Job, on_delete=models.CASCADE) 
+    #добавить иерархию
+    position = models.IntegerField(        default=1,
+        validators=[
+            MaxValueValidator(5),
+            MinValueValidator(1)
+        ])#1 просто сотрудник  2 начальник сотрудника и тд чем выше position тем больше прав
     departmentid = models.ForeignKey(Department, on_delete=models.CASCADE)  # Идентификатор отдела сотрудника
+
