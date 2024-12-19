@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 # Create your models here.
@@ -8,7 +9,7 @@ class Job(models.Model):
     jobName = models.CharField(max_length=30, null=False)  # Название должности
 class Project(models.Model):
     # Модель для проектов, содержит информацию о каждом проекте
-    projectId = models.IntegerField(primary_key=True)  # Уникальный идентификатор проекта
+    projectId = models.AutoField(primary_key=True)  # Уникальный идентификатор проекта
     projectName = models.CharField(max_length=30, null=False)  # Название проекта
     projectDescription = models.CharField(max_length=30, null=True)  # Описание проекта
 
@@ -25,7 +26,13 @@ class Task(models.Model):
         ('CANCELLED', 'Отменено'),
     ])  # Статус задачи
     byEmployeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) 
-    fromDate = models.DateField(null=False)# Описание задачи
+    status = models.CharField(max_length=20, choices=[
+        ('in_progress', 'В прогрессе'),
+        ('completed', 'Готово'),
+        ('todo', 'Сделать')
+    ], default='not_started')  # Статус задачи
+    projectId = models.ForeignKey('Project', on_delete=models.CASCADE)
+    fromDate = models.DateTimeField( auto_now_add=True)  # Описание задачи
 
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги

@@ -60,3 +60,4 @@ docker-compose up  --build
 По всем вопросам обращаться:
 
 @telegram:belxz999
+URL:postgresql://neondb_owner:GAP0vqcr2Jfh@ep-nameless-field-a5mfa03i-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require
