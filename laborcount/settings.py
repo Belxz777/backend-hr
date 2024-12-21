@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from urllib.parse import urlparse
 from dotenv import load_dotenv
-import dj_database_url
 load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -16,22 +15,32 @@ else:
 
 
 # Database connection
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'main_agry',
-        'USER': 'postgres1',
-        'PASSWORD': 'awpbMho0QStEeHfPUl96bY0ApIEnoBOm' ,  # Ensure a default empty string if not set
-        'HOST': 'dpg-cti3fnogph6c73d4kekg-a.frankfurt-postgres.render.com',  # Default to localhost if not set
-        'PORT': os.getenv('PGPORT') or 5432,  # Default to 5432 if not set
-    }
-}  
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'main_agry',
+#         'USER': 'postgres1',
+#         'PASSWORD': 'awpbMho0QStEeHfPUl96bY0ApIEnoBOm' ,  # Ensure a default empty string if not set
+#         'HOST': 'dpg-cti3fnogph6c73d4kekg-a.frankfurt-postgres.render.com',  # Default to localhost if not set
+#         'PORT': os.getenv('PGPORT') or 5432,  # Default to 5432 if not set
+#     }
+# }  
     # DATABASES = {
     # 'default': dj_database_url.config(
     #     # Replace this value with your local database's connection string.        default='postgresql://postgres:postgres@localhost:5432/mysite',        conn_max_age=600    
         
     #     )
     #     }
+DATABASES = { 
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('PGDATABASE'),
+        'USER': os.getenv('PGUSER'),
+        'PASSWORD': os.getenv('PGPASSWORD') ,  # Ensure a default empty string if not set
+        'HOST': os.getenv('PGHOST'),  # Default to localhost if not set
+        'PORT': os.getenv('PGPORT') or 5432,  # Default to 5432 if not set
+    }
+}
 
 
 # Application definition

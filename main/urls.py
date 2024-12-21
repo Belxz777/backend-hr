@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import JobList, JobManaging,DepartmentManaging,DepartmentList,ProjectManaging,TaskManaging,ProjectByName
+from .views import JobList, JobManaging,DepartmentManaging,DepartmentList,TaskManaging
 from main.utils import token_managing
 
 from .utils.post import labor_fill
 from .utils.report import getReport
-from .utils.subobj import ProjectTasks
+from .utils.subobj import EmployeeTasksbystatus,AllEmployeeTasks
 urlpatterns = [
     path('users/create',token_managing.RegisterView.as_view()),#для регистрации пользователей
     path("users/login",token_managing.LoginView.as_view()),#дяя входина
@@ -29,9 +29,9 @@ urlpatterns = [
 
 
 
-    path('entities/project/<id>',ProjectManaging.as_view()),
+    # path('entities/project/<id>',ProjectManaging.as_view()),
 
-    path('entities/projects/<str:name>',ProjectByName.as_view()),
+    # path('entities/projects/<str:name>',ProjectByName.as_view()),
 
 
 
@@ -39,11 +39,12 @@ urlpatterns = [
 
    # path('entities/user/byName/<str:name>',token_managing.UserByName.as_view()),
 
-    path('entities/user/<id>/tasks/?<str:status>/', ProjectTasks.as_view(), name='project-tasks-status'),
+    path('entities/user/<id>/tasks/<status>/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
+    path('entities/user/<id>/tasks/', AllEmployeeTasks.as_view()),
 
 
 
-path('fill/progres/user/<id>', labor_fill.labor_fill),
+    path('fill/progres/user/<id>', labor_fill.labor_fill),
 
 
 

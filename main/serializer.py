@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import Employee, Job, Project, Task, Department, LaborCosts
+from .models import Employee, Job, Task, Department, LaborCosts
 
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,15 +21,15 @@ class JobSerializer(serializers.ModelSerializer):
         return instance
 
 
-class ProjectSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Project
-        fields = ['projectId', 'projectName', 'projectDescription']
+# class ProjectSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Project
+#         fields = ['projectId', 'projectName', 'projectDescription']
 
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['taskId', 'taskName','byEmployeeId','status','projectId', 'taskDescription',  'fromDate']
+        fields = ['taskId', 'taskName','forEmployeeId','status','hourstodo' ,'been','taskDescription',  'fromDate']
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -39,5 +39,5 @@ class DepartmentSerializer(serializers.ModelSerializer):
 class LaborCostsSerializer(serializers.ModelSerializer):
     class Meta:
         model = LaborCosts
-        fields = ['laborCostId', 'employeeId', 'departmentId', 'taskId', 'projectId', 'date', 'workingHours', 'comment', 'serviceDescription']
+        fields = ['laborCostId', 'employeeId', 'departmentId', 'taskId', 'date', 'workingHours', 'comment', 'serviceDescription']
 
