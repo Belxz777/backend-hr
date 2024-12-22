@@ -30,23 +30,15 @@ urlpatterns = [
 
     path('entities/department/<id>/employees/',DepartmentEmployees.as_view()),
 
-
     path('entities/departments/',DepartmentList.as_view()),
 
 
 
 
-    # path('entities/project/<id>',ProjectManaging.as_view()),
-
-    # path('entities/projects/<str:name>',ProjectByName.as_view()),
-
-
-
     path('entities/task/<id>',TaskManaging.as_view()),
 
-   # path('entities/user/byName/<str:name>',token_managing.UserByName.as_view()),
-
     path('entities/user/<id>/tasks/<status>/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
+    
     path('entities/user/<id>/tasks/', AllEmployeeTasks.as_view()),
 
 
@@ -65,15 +57,15 @@ path('report/department/xlsx/<id>',getXlsxReport.get_labor_costs_xlsx),
 
 
 
-# * релизовать логику записи трудозатрат  10 часов
+# * релизовать логику записи трудозатрат  10 часов done
 
-# & реализовать логику расчета трудозатрат 10 часов
+# & реализовать логику расчета трудозатрат 10 часов done
  
-# ? реализовать выгрузку отчетности в формате excel 4 часов
+# ? реализовать выгрузку отчетности в формате excel 4 часов done
 
-#^ Покрыть код тестами и проверить (интегрировать ) необходимые требования к безопасности 30 часов
+#^ Покрыть код тестами и проверить (интегрировать ) необходимые требования к безопасности 30 часов in progress
 
-#! Добавить понятную документацию для разработчиков контейнизировать приложение 5 часов
+#! Добавить понятную документацию для разработчиков контейнизировать приложение 5 часов in progress
 
 
 #* Всего времени : 130 часов
@@ -82,6 +74,7 @@ path('report/department/xlsx/<id>',getXlsxReport.get_labor_costs_xlsx),
 
 
 
+#& осталось 35 часов работы до доведения до ума
 
 
 
