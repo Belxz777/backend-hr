@@ -1,8 +1,7 @@
-from datetime import timezone
-from requests import Response
+from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from main.models import Employee,LaborCosts
+from main.models import Employee,LaborCosts,Task
 from main.serializer import LaborCostsSerializer
 
 @api_view([ 'POST'])
@@ -10,34 +9,42 @@ def labor_fill(request,id):
     if request.method == 'POST':
         data = request.data
         employee = Employee.objects.filter(employeeId=id).first()
-        departmentId = employee.departmentid
-        date = timezone.now()  # Current date and time in Samara timezone
-    #         laborCostId = models.IntegerField(primary_key=True)  # Уникальный идентификатор трудозатрат
+        departmentId = employee.departmentid.departmentId# Current date and time in Samara timezone
+        if employee:
+    #           laborCostId = models.IntegerField(primary_key=True)  # Уникальный идентификатор трудозатрат
     # employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
     # departmentId = models.IntegerField(null=True)  # Идентификатор услуги
     # taskId = models.ForeignKey(Task, on_delete=models.CASCADE,null=False) # Идентификатор задачии
-    # projectId = models.ForeignKey(Project, on_delete=models.CASCADE,null=False) # Идентификатор проектаа
-    # date = models.DateField(null=False)  # Дата отчета о работе
+    # date = models.DateField(auto_now_add=True)  # Дата отчета о работе
     # workingHours = models.DecimalField(max_digits=5, decimal_places=2, null=False)  # Затраченное время
-    # comment = models.CharField(max_length=30, null=True)  # Комментарий
-    # serviceDescription = models.CharField(max_length=30, null=True)  
-        if employee:
-            laborCost =LaborCosts.objects.create(
+    # comment = models.CharField(max_length=30, null=True)
+            laborCost = LaborCosts.objects.create(
                 employeeId=employee,
                 departmentId=departmentId,
-                taskId=data['taskId'],
-                projectId=data['projectId'],
-                date= date,
+                taskId=Task.objects.get(taskId=data['taskId']),  # Ensure taskId is a Task instance
                 workingHours=data['workingHours'],
-                comment=data['comment'],
-                serviceDescription=data['serviceDescription']
-            )
+                comment=data['comment']
+            )        
             if laborCost:
-                return Response({'message': 'Labor cost created successfully'}, status=201)
+                task = Task.objects.get(taskId=data['taskId'])
+                made = task.hourstodo - data['workingHours']
+                print(made)
+                if task:
+                    if made == 0:
+                        task.status = 'completed'
+                        task.hourstodo = made
+                        task.save()
+                    else:
+                        if task.been==False:
+                            task.been = True
+                            task.save()
+                        task.hourstodo = made
+                        task.save()
+                return Response({'message': 'Запись о проделаной работе сделана. / Хорошего вам дня!'}, status=201)
             else:
-                return Response({'error': 'Labor cost not created'}, status=400)
+                return Response({'error': 'Возможно вы отправили не правильные данные | Посмотрите тело запроса.'}, status=400)
         else:
-            return Response({'error': 'Employee not found,imposible to add report'}, status=404)
+            return Response({'error': 'Рабочий под таким номером не существует '}, status=404)
 
 api_view(['GET'])
 def get_labor_costs(request,id):
