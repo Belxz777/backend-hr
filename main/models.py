@@ -64,3 +64,5 @@ class Employee(models.Model):
         ])#1 просто сотрудник  2 начальник сотрудника и тд чем выше position тем больше прав
     departmentid = models.ForeignKey(Department, on_delete=models.CASCADE)  # Идентификатор отдела сотрудника
 
+#нужно продумать так что бы можно было интегрировать нейронку
+    
