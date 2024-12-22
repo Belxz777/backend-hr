@@ -38,7 +38,7 @@ docker-compose up  --build
 
 Через bat и sh file:
 
-1.Просто запустите run.bat || run.sh файл для запуска проекта(для запуска необходимо иметь psql, python и docker,версии не так важны , возможны ошибки в отдельных случаях )
+1.Просто запустите runwindows.bat || runlinux.sh файл для запуска проекта(для запуска необходимо иметь psql, python и docker,версии не так важны , возможны ошибки в отдельных случаях )
 
 2. Порт на котором запускается возможно кастомизировать.
 
@@ -60,4 +60,66 @@ docker-compose up  --build
 По всем вопросам обращаться:
 
 @telegram:belxz999
-URL:postgresql://neondb_owner:GAP0vqcr2Jfh@ep-nameless-field-a5mfa03i-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require
+
+
+
+
+
+
+
+
+
+UTIL DATA:
+
+docker-compose for local:
+version: '3.12'
+
+services:
+  db:
+    image: postgres:15
+    container_name: db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres_user_owner
+      - POSTGRES_PASSWORD=mWPVS5GepH1l
+      - POSTGRES_DB=postgres_user
+      - POSTGRES_HOST=ep-tight-sun-a81gunnv.eastus2.azure.neon.tech
+    ports:
+      - 5432:5432
+  backend:
+    build: .
+    command: python manage.py runserver 127.0.0.1:8000
+    network_mode: host
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1
+      - POSTGRES_DB=system_memory
+      - POSTGRES_HOST=localhost
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - 8000:8000
+
+
+volumes:
+  postgres-data:
+
+
+
+
+docker-compose non executable in case if you are running single app in my case it is cause i use externaal db rath
+er than localy so use this instructions.(Belxz777 6.11.24)
+
+
+to view summary about an image :  docker scout quickview
+docker prune to deelete all images
+
+
+neon db url:
+postgresql://neondb_owner:GAP0vqcr2Jfh@ep-nameless-field-a5mfa03i-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require
+doesnt work withhout vpn but its okay to reach db;
