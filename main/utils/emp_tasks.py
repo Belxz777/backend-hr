@@ -1,7 +1,6 @@
 from rest_framework.views import APIView
-from ..models import Job,Department,Task
-from rest_framework.decorators import api_view
-from ..serializer import JobSerializer,DepartmentSerializer,TaskSerializer,LaborCostsSerializer
+from ..models import Task
+from ..serializer import TaskSerializer
 from rest_framework.response import Response
 class EmployeeTasksbystatus(APIView):
     def get(self, request, status,id):

@@ -13,7 +13,6 @@ urlpatterns = [
     path("users/logout",token_managing.LogoutView.as_view()),
 
 
-    # path('entities/department',views.create_employee),
     path('entities/job/<id>',JobManaging.as_view()),
 
     path('entities/jobs/',JobList.as_view()),

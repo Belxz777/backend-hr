@@ -1,4 +1,7 @@
+from datetime import datetime
 from rest_framework.response import Response
+
+from main.utils.closeDate import calculate_close_date
 from .models import Job,Department,Task,Employee
 from .serializer import JobSerializer,DepartmentSerializer,TaskSerializer,EmployeeSerializer
 from rest_framework.views import APIView
@@ -149,6 +152,7 @@ class UserByName(APIView):
 class TaskManaging(APIView):
       def post(self, request,id):
         request.data['forEmployeeId'] = id
+        request.data['closeDate'] = calculate_close_date(request.data['hourstodo'],datetime.now())
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
