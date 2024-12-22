@@ -11,7 +11,8 @@ from ..serializer import EmployeeSerializer
 def check_token(request):
     token = request.COOKIES.get('jwt')
     if not token:
-        return Response({'error': 'Unauthorized'}, status=401)
+        return Response({'error': 'Токен не предоставлен. ',
+                         'possiblefix':'проверьте пожалуйста настройки запроса.Возможна ошибка чтения куки.'}, status=401)
     try:
         payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         user = Employee.objects.filter(employeeId=payload['user']).first()
@@ -19,9 +20,10 @@ def check_token(request):
         return True
            
     except jwt.ExpiredSignatureError:
-        return Response({'error': 'Expired'}, status=401)
+        return Response({'error': 'Токен истёк.'}, status=401)
     except jwt.InvalidTokenError:
-        return Response({'error': 'Token Err'}, status=401)
+        return Response({'error': 'Ошибка прочтения токена.',
+                         'possiblefix':'Проверьте правильность токена.'}, status=401)
 
 
 class RegisterView(APIView):
@@ -42,7 +44,7 @@ class LoginView(APIView):
         password = data['password']
         user =Employee.objects.filter(login=login).first()
         if user is None:
-            raise AuthenticationFailed('Нету такого пользователя')
+            raise AuthenticationFailed('Такого пользователя  пока не существует')
         if not user.password == password:
             raise AuthenticationFailed('Неверный пароль')
         
@@ -65,7 +67,7 @@ class LogoutView(APIView):
         response = Response()
         response.set_cookie(key='jwt', value='', expires=0)
         response.data = {
-            'message': 'Успешно вышли'
+            'message': 'Совершен успешный выход'
         }
         return response
     
@@ -93,11 +95,11 @@ class refresh_token(APIView):
           exp_time = datetime.datetime.fromtimestamp(payload['exp'])
           now = datetime.datetime.now()
           if now < exp_time:
-            return Response({'message': 'Токен не истек'}, status=200)
+            return Response({'message': 'Токен еще не истек'}, status=200)
           else:
             new_payload = {'exp': datetime.datetime.now() + datetime.timedelta(days=10)}
             new_token = jwt.encode(new_payload, 'secret', algorithm='HS256')
             return Response({'message': 'Токен истек, но был обновлен', 'token': new_token.decode('utf-8')}, status=200)
 
         except jwt.exceptions.DecodeError:
-            return Response({'message': 'Неверный токен'}, status=400)
+            return Response({'message': 'Неверный токен ошибка декодировки.'}, status=400)

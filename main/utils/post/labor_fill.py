@@ -53,4 +53,4 @@ def get_labor_costs(request,id):
     if serializer.is_valid():
         return Response(serializer.data)
     else:
-        return Response(serializer.errors, status=400)
+        return Response({'error':serializer.errors,'possiblefix':"Обратитесь к разработчику программы."}, status=400)

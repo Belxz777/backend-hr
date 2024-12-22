@@ -3,8 +3,8 @@ from .views import JobList, JobManaging,DepartmentManaging,DepartmentList,TaskMa
 from main.utils import token_managing
 
 from .utils.post import labor_fill
-from .utils.report import getReport
-from .utils.subobj import EmployeeTasksbystatus,AllEmployeeTasks
+from .utils.report import getReport,getXlsxReport
+from .utils.emp_tasks import EmployeeTasksbystatus,AllEmployeeTasks
 urlpatterns = [
     path('users/create',token_managing.RegisterView.as_view()),#для регистрации пользователей
     path("users/login",token_managing.LoginView.as_view()),#дяя входина
@@ -50,15 +50,13 @@ urlpatterns = [
 
 path('report/department/json/<id>',getReport.get_labor_costs),
 
+path('report/department/xlsx/<id>',getXlsxReport.get_labor_costs_xlsx),
+
     
 
 
 
 
-
-# начать делать заполнение отчета 
-#сделать статус оптионом типо можно не писать
-# ! добавить crud для проектов и задач  2 часа
 
 # * релизовать логику записи трудозатрат  10 часов
 

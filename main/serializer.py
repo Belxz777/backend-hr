@@ -39,5 +39,5 @@ class DepartmentSerializer(serializers.ModelSerializer):
 class LaborCostsSerializer(serializers.ModelSerializer):
     class Meta:
         model = LaborCosts
-        fields = ['laborCostId', 'employeeId', 'departmentId', 'taskId', 'date', 'workingHours', 'comment', 'serviceDescription']
+        fields = ['laborCostId', 'employeeId', 'departmentId', 'taskId', 'date', 'workingHours', 'comment', ]
 

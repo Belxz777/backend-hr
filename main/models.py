@@ -21,7 +21,7 @@ class Task(models.Model):
     hourstodo = models.IntegerField(   validators=[
             MaxValueValidator(20),
             MinValueValidator(1)
-        ],default=1)
+        ],default=1,null=False)
     been = models.BooleanField(default=False)
     fromDate = models.DateTimeField( auto_now_add=True)
     closeDate = models.DateTimeField(default=None,null=True)  # Описание задачи 

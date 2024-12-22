@@ -14,16 +14,16 @@ class  JobManaging(APIView):
                     serializer = JobSerializer(job, data=request.data, partial=True)
                     if serializer.is_valid():
                         job = serializer.save()
-                        return Response(JobSerializer(job).data)
+                        return Response({'newversion':JobSerializer(job).data,},status=200)
                     return Response(serializer.errors, status=400)
-             return Response({'error': 'Должность удалена'}, status=404) 
+             return Response({'error': 'Ошибка'}, status=404) 
      def delete(self, request,id):
                 if id:
                       job = Job.objects.filter(jobId=id)
-                if job:
-                    job.delete()
-                    return Response({'message': 'Должность удалена'}, status=204)
-                return Response({'error': 'Jobl not found'}, status=404)       
+                      if job:
+                        job.delete()
+                        return Response({'message': 'Должность удалена'}, status=204)
+                return Response({'error': 'Такая должность не найдена или не предоставлен id'}, status=404)       
      def get(self, request, id=None):
                 if id:  # If id is provided
                     job = Job.objects.filter(jobId=id).first()
