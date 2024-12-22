@@ -40,8 +40,28 @@ def calculate_close_date(hours_needed, current_time):
     return current_time
 
 # Пример использования функции
-current_time = datetime.now()  # Текущее время
-hours_needed = 10  # Необходимое количество часов для выполнения задачи
+# current_time = datetime.now()  # Текущее время
+# hours_needed = 10  # Необходимое количество часов для выполнения задачи
 
-close_date = calculate_close_date(hours_needed, current_time)
-print("Дата и время завершения задачи:", close_date)
+# close_date = calculate_close_date(hours_needed, current_time)
+# print("Дата и время завершения задачи:", close_date)
+def is_first_time_not_later( first_time,second_time):
+    """
+    Функция для проверки, является ли первое время не позже второго.
+    
+    :param first_time: Первое время в формате datetime.
+    :param second_time: Второе время в формате datetime.
+    :return: True, если первое время не позже второго, иначе False.
+    """
+    # Убираем информацию о часовом поясе
+    first_time = first_time.replace(tzinfo=None)
+    second_time = second_time.replace(tzinfo=None)
+
+    return first_time <= second_time
+
+# Пример использования функции
+  # Текущее время
+# second_time =datetime.now().replace(hour=23, minute=59, second=59)  # Установим второе время на 23:59:59
+
+# result = is_first_time_not_later( second_time)
+# print(result) 

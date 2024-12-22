@@ -1,5 +1,8 @@
 from datetime import datetime
 from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
+
+import jwt,datetime
 
 from main.utils.closeDate import calculate_close_date
 from .models import Job,Department,Task,Employee
@@ -66,7 +69,7 @@ class DepartmentManaging(APIView):
         return Response(serializer.errors, status=400)
     
     def patch(self, request,id):
-             department = Department.objects.filter(departmentId=request.data.get('id')).first()
+             department = Department.objects.filter(departmentId=id).first()
              if department:
                     serializer = DepartmentSerializer(department, data=request.data, partial=True)
                     if serializer.is_valid():
@@ -102,6 +105,26 @@ class DepartmentList(APIView):
         serializer = DepartmentSerializer(departments, many=True)
         return Response(serializer.data)
     
+class DepartmentEmployees(APIView):
+    def get(self, request,id):
+        department = Department.objects.get(departmentId=id)
+        token = request.COOKIES.get('jwt')
+        if token is None:
+            raise AuthenticationFailed({'message': 'Ты не аутетифицирован '})
+        try:
+            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed('Токен истек')
+        user = Employee.objects.get(employeeId=payload['user'])
+        if not user:
+            raise AuthenticationFailed('Пользователь не найден')
+        serializer = EmployeeSerializer(user)
+        if user == department.headId:
+            employees = Employee.objects.filter(departmentid=id)
+            employees = Employee.objects.filter(departmentid=id).exclude(employeeId=user.employeeId)
+            serializer = EmployeeSerializer(employees, many=True)      
+            return Response(serializer.data)        
+        return Response({'message': 'Вы не можете получить список  сотрудников этого отдела'})
 
 
 # class ProjectManaging(APIView):

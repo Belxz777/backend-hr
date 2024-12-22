@@ -1,8 +1,10 @@
+from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from main.models import Employee,LaborCosts,Task
 from main.serializer import LaborCostsSerializer
+from main.utils.closeDate import is_first_time_not_later
 
 @api_view([ 'POST'])
 def labor_fill(request,id):
@@ -24,15 +26,58 @@ def labor_fill(request,id):
                 taskId=Task.objects.get(taskId=data['taskId']),  # Ensure taskId is a Task instance
                 workingHours=data['workingHours'],
                 comment=data['comment']
-            )        
+            )  
             if laborCost:
                 task = Task.objects.get(taskId=data['taskId'])
                 made = task.hourstodo - data['workingHours']
                 print(made)
                 if task:
+                    if is_first_time_not_later(datetime.now(),task.closeDate) and task.status != 'completed':
+                        task.isExpired =  True
+                        task.save()
+                        if employee.expiredTasksCount is None:
+                            employee.expiredTasksCount = 0
+                            employee.expiredTasksCount += 1
+                            employee.save()
+                        else:
+                            employee.expiredTasksCount += 1
+                            employee.save()
+
                     if made == 0:
                         task.status = 'completed'
                         task.hourstodo = made
+                        if employee.tasksCount is None:
+                            employee.tasksCount = 0
+                            employee.save()
+                        else:
+                            employee.tasksCount -= 1
+                            employee.save()
+                        if employee.completedTasks is None:
+                            employee.completedTasks = 0
+                            employee.completedTasks += 1
+                            employee.save()
+                        else:
+                            employee.completedTasks += 1
+                            employee.save()
+                        task.save()
+                    elif made <0:
+                        task.status = 'completed'
+                        task.hourstodo = 0
+                        if employee.tasksCount is None:
+                            employee.tasksCount = 0
+                            employee.save()
+                        else:
+                            employee.tasksCount -= 1
+                            employee.save()
+                        if employee.completedTasks is None:
+                            employee.completedTasks = 0
+                            employee.completedTasks += 1
+                            employee.save()
+                        else:
+                            employee.completedTasks += 1
+                            employee.save()
+                        employee.completedTasks += 1
+                        employee.save()
                         task.save()
                     else:
                         if task.been==False:

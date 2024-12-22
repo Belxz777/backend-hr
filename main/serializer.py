@@ -5,7 +5,7 @@ from .models import Employee, Job, Task, Department, LaborCosts
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid']
+        fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid','expiredTasksCount','tasksCount','completedTasks']
         extra_kwargs = {'password': {'write_only': True},
                         'login': {'write_only': True}}
         
@@ -29,12 +29,12 @@ class JobSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['taskId', 'taskName','forEmployeeId','status','hourstodo' ,'been','taskDescription',  'fromDate','closeDate','expired']
+        fields = ['taskId', 'taskName','forEmployeeId','status','hourstodo' ,'been','taskDescription',  'fromDate','closeDate','isExpired']
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
-        fields = ['departmentId', 'departmentName','departmentDescription']
+        fields = ['departmentId', 'departmentName','departmentDescription','headId']
 
 class LaborCostsSerializer(serializers.ModelSerializer):
     class Meta:

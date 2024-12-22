@@ -24,8 +24,8 @@ class Task(models.Model):
         ],default=1,null=False)
     been = models.BooleanField(default=False)
     fromDate = models.DateTimeField( auto_now_add=True)
-    closeDate = models.DateTimeField(null=False)
-    expired = models.BooleanField(default=False)  # Описание задачи 
+    closeDate = models.DateTimeField(null=False)  
+    isExpired = models.BooleanField(default=False)# Описание задачи 
 
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
@@ -62,7 +62,10 @@ class Employee(models.Model):
             MaxValueValidator(5),
             MinValueValidator(1)
         ])#1 просто сотрудник  2 начальник сотрудника и тд чем выше position тем больше прав
-    departmentid = models.ForeignKey(Department, on_delete=models.CASCADE)  # Идентификатор отдела сотрудника
+    departmentid = models.ForeignKey(Department, on_delete=models.CASCADE) 
+    expiredTasksCount = models.IntegerField(null=True) 
+    tasksCount = models.IntegerField(null=True)
+    completedTasks = models.IntegerField(null=True)# Идентификатор отдела сотрудника
 
 #нужно продумать так что бы можно было интегрировать нейронку
     

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import JobList, JobManaging,DepartmentManaging,DepartmentList,TaskManaging
+from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList,TaskManaging
 from main.utils import token_managing
 
 from .utils.post import labor_fill
@@ -11,6 +11,11 @@ urlpatterns = [
     path("users/auth",token_managing.UserAuth.as_view()),
     path('users/refresh',token_managing.refresh_token.as_view()),
     path("users/logout",token_managing.LogoutView.as_view()),
+    path('users/change_password',token_managing.Change_Password.as_view()),
+    path('users/get_user',token_managing.GetUser.as_view()),
+
+
+    
 
 
     path('entities/job/<id>',JobManaging.as_view()),
@@ -22,6 +27,9 @@ urlpatterns = [
 
     
     path('entities/department/<id>',DepartmentManaging.as_view()),
+
+    path('entities/department/<id>/employees/',DepartmentEmployees.as_view()),
+
 
     path('entities/departments/',DepartmentList.as_view()),
 
