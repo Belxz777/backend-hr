@@ -25,7 +25,7 @@ class Task(models.Model):
     been = models.BooleanField(default=False)
     fromDate = models.DateTimeField( auto_now_add=True)
     closeDate = models.DateTimeField(null=False)  
-    isExpired = models.BooleanField(default=False)# Описание задачи 
+    isExpired = models.BooleanField(default=False)
 
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
