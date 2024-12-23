@@ -18,13 +18,13 @@ class Task(models.Model):
         ('completed', 'Готово'),
         ('todo', 'Сделать')
     ], default='not_started')  # Статус задачи
-    hourstodo = models.IntegerField(   validators=[
+    hourstodo = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
             MinValueValidator(1)
-        ],default=1,null=False)
+        ], null=False) 
     been = models.BooleanField(default=False)
     fromDate = models.DateTimeField( auto_now_add=True)
-    closeDate = models.DateTimeField(null=False)  
+    closeDate = models.DateTimeField(null=True)  
     isExpired = models.BooleanField(default=False)
 
 class Department(models.Model):
@@ -40,10 +40,10 @@ class LaborCosts(models.Model):
     departmentId = models.IntegerField(null=True)  # Идентификатор услуги
     taskId = models.ForeignKey("Task", on_delete=models.CASCADE, null=False)  # Идентификатор задачи
     date = models.DateField(auto_now_add=True)  # Дата отчета о работе
-    workingHours = models.IntegerField( validators=[
+    workingHours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
             MinValueValidator(1)
-        ],null=False)  # Затраченное время
+        ], null=False)  # Затраченное время
     comment = models.CharField(max_length=150, null=True)  # Комментарий
 
 
@@ -65,7 +65,8 @@ class Employee(models.Model):
     departmentid = models.ForeignKey(Department, on_delete=models.CASCADE) 
     expiredTasksCount = models.IntegerField(null=True) 
     tasksCount = models.IntegerField(null=True)
-    completedTasks = models.IntegerField(null=True)# Идентификатор отдела сотрудника
+    completedTasks = models.IntegerField(null=True)
+# Идентификатор отдела сотрудника
 
 #нужно продумать так что бы можно было интегрировать нейронку
     

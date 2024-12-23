@@ -4,13 +4,14 @@ from rest_framework.decorators import api_view
 
 from main.models import Employee,LaborCosts,Task
 from main.serializer import LaborCostsSerializer
+from main.utils.auth import get_user
 from main.utils.closeDate import is_first_time_not_later
 
 @api_view([ 'POST'])
-def labor_fill(request,id):
+def labor_fill(request):
     if request.method == 'POST':
+        employee = get_user(request)
         data = request.data
-        employee = Employee.objects.filter(employeeId=id).first()
         departmentId = employee.departmentid.departmentId# Current date and time in Samara timezone
         if employee:
     #           laborCostId = models.IntegerField(primary_key=True)  # Уникальный идентификатор трудозатрат

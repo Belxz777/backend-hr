@@ -43,7 +43,7 @@ urlpatterns = [
 
 
 
-    path('fill/progres/user/<id>', labor_fill.labor_fill),
+    path('fill/progress/', labor_fill.labor_fill),
 
 
 
