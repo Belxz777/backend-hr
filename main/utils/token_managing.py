@@ -62,15 +62,6 @@ class LoginView(APIView):
         }
         return response
 
-class LogoutView(APIView):
-    def post(self, request):
-        response = Response()
-        response.set_cookie(key='jwt', value='', expires=0)
-        response.data = {
-            'message': 'Совершен успешный выход'
-        }
-        return response
-    
 
 class UserAuth(APIView):
     def get(self, request):

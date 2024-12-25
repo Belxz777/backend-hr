@@ -10,7 +10,6 @@ urlpatterns = [
     path("users/login",token_managing.LoginView.as_view()),#дяя входина
     path("users/auth",token_managing.UserAuth.as_view()),
     path('users/refresh',token_managing.refresh_token.as_view()),
-    path("users/logout",token_managing.LogoutView.as_view()),
     path('users/change_password',token_managing.Change_Password.as_view()),
     path('users/get_user',token_managing.GetUser.as_view()),
 
