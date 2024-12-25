@@ -39,7 +39,7 @@ urlpatterns = [
 
     path('entities/user/<id>/tasks/<status>/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
     
-    path('entities/user/<id>/tasks/', AllEmployeeTasks.as_view()),
+    path('entities/user/tasks/', AllEmployeeTasks.as_view()),
 
 
 
