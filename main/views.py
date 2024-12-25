@@ -1,8 +1,9 @@
+
 from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 
-import jwt,datetime
+import jwt
 
 from main.utils.closeDate import calculate_close_date
 from .models import Job,Department,Task,Employee

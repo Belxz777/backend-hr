@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from main.models import Employee,LaborCosts,Task
 from main.serializer import LaborCostsSerializer
 from main.utils.auth import get_user
-from main.utils.closeDate import is_first_time_not_later
+from main.utils.closeDate import isExpired
 
 @api_view([ 'POST'])
 def labor_fill(request):
@@ -33,7 +33,7 @@ def labor_fill(request):
                 made = task.hourstodo - data['workingHours']
                 print(made)
                 if task:
-                    if is_first_time_not_later(datetime.now(),task.closeDate) and task.status != 'completed':
+                    if isExpired(datetime.now(),task.closeDate) and task.status != 'completed':
                         task.isExpired =  True
                         task.save()
                         if employee.expiredTasksCount is None:

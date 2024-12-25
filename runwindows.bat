@@ -5,3 +5,4 @@
 
 docker build -t pulse-backend  .
 docker run -it -p 8000:8000  pulse-backend
+
