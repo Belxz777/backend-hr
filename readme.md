@@ -1,3 +1,7 @@
+<p align="center">
+  <a href="" target="blank"><img src="https://storage.yandexcloud.net/questsimages/forKV/2024-12-25_16-50-56%20(1).png" width="200" alt="" /></a>
+</p>
+
 Для запуска проекта необходимо:
 
 1.Python 3.11+
