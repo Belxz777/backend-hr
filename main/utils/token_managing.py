@@ -96,24 +96,27 @@ class refresh_token(APIView):
             return Response({'message': 'Неверный токен ошибка декодировки.'}, status=400)
         
 class Change_Password(APIView):
-    def post(self, request):
-        token = request.COOKIES.get('jwt')
-        if token is None:
-            raise AuthenticationFailed({'message': 'Ты не аутетифицирован '})
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Токен истек')
-        user = Employee.objects.filter(employeeId=payload['user']).first()
-        if not user:
-            raise AuthenticationFailed('Пользователь не найден')
-        new_password = request.data['new_password']
-        if not new_password:
-            raise AuthenticationFailed('Новый пароль не указан')
-        user.password = new_password
-        user.save()
-        return Response({'message': 'Пароль успешно изменен'})
-    
+        def post(self, request):
+            token = request.COOKIES.get('jwt')
+            if token is None:
+                raise AuthenticationFailed({'message': 'Ты не аутетифицирован '})
+            try:
+                payload = jwt.decode(token, 'secret', algorithms=['HS256'])
+            except jwt.ExpiredSignatureError:
+                raise AuthenticationFailed('Токен истек')
+            user = Employee.objects.filter(employeeId=payload['user']).first()
+            if not user:
+                raise AuthenticationFailed('Пользователь не найден')
+            new_password = request.data['new_password']
+            old_password = request.data['old_password']
+            if not new_password:
+                raise AuthenticationFailed('Новый пароль не указан')
+            if old_password != user.password:
+                raise AuthenticationFailed('Неверный старый пароль')
+            user.password = new_password
+            user.save()
+            return Response({'message': 'Пароль успешно изменен'})
+        
 
 
 class GetUser(APIView):
