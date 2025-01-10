@@ -1,4 +1,6 @@
 from django.urls import path
+
+from main.utils.post.add_tasks import upload_tasks
 from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList,TaskManaging
 from main.utils import access_managing
 
@@ -36,6 +38,7 @@ urlpatterns = [
 
 
     path('entities/task/<id>',TaskManaging.as_view()),
+
     path('entities/user/<id>/tasks/<status>/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
     
     path('entities/user/tasks/', AllEmployeeTasks.as_view()),
@@ -50,15 +53,17 @@ urlpatterns = [
 
 
 
-path('report/department/json/<id>',getReport.get_labor_costs),
+    path('report/department/json/<id>',getReport.get_labor_costs),
 
-path('report/department/xlsx/<id>',getXlsxReport.get_labor_costs_xlsx),
+    path('report/department/xlsx/<id>',getXlsxReport.get_labor_costs_xlsx),
 
     
 
+    path('entities/department/xlsx/add',upload_tasks)
 
 
-#* Чек
+
+
 
 # * релизовать логику записи трудозатрат  10 часов done
 
