@@ -18,7 +18,7 @@ class AllEmployeeTasks(APIView):
         if user.employeeId:
                     tasks = Task.objects.filter(forEmployeeId=user.employeeId).values('taskName', 'taskDescription', 'status', 'hourstodo', 'closeDate', 'isExpired') 
                     structured_tasks = {}
-                    expired_tasks = []
+                    expired_tasks = []  
                     for task in tasks:
                         if task['isExpired']:
                             if task not in expired_tasks:

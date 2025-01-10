@@ -10,7 +10,6 @@ urlpatterns = [
     path("users/login",access_managing.LoginView.as_view()),#дяя входина
     path("users/auth",access_managing.UserAuth.as_view()),
     path('users/refresh',access_managing.refresh_token.as_view()),
-    path("users/logout",access_managing.LogoutView.as_view()),
     path('users/change_password',access_managing.Change_Password.as_view()),
     path('users/get_user',access_managing.GetUser.as_view()),
 
