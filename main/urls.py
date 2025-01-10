@@ -4,7 +4,7 @@ from main.utils import access_managing
 
 from .utils.post import labor_fill
 from .utils.report import getReport,getXlsxReport
-from .utils.emp_tasks import EmployeeTasksbystatus,AllEmployeeTasks
+from .utils.emp_tasks import EmployeeTasksbystatus,AllEmployeeTasks, ToReportTasks
 urlpatterns = [
     path('users/create',access_managing.RegisterView.as_view()),#для регистрации пользователей
     path("users/login",access_managing.LoginView.as_view()),#дяя входина
@@ -40,7 +40,7 @@ urlpatterns = [
     
     path('entities/user/tasks/', AllEmployeeTasks.as_view()),
 
-    path('entities/user/tasks/reported/', AllEmployeeTasks.as_view()),
+    path('entities/user/tasks/reported/', ToReportTasks.as_view()),
 
 
 
