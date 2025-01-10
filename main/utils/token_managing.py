@@ -128,8 +128,7 @@ class GetUser(APIView):
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Токен истек')
-        user = Employee.objects.filter(employeeId=payload['user']).first()
+        user = Employee.objects.filter(employeeId=payload['user']).first().values('firstName','lastName','jobid','departmentid')
         if not user:
             raise AuthenticationFailed('Пользователь не найден')
-        serializer = EmployeeSerializer(user)
-        return Response(serializer.data)
+        return Response(user)
