@@ -35,11 +35,15 @@ urlpatterns = [
 
 
 
-    path('entities/task/<id>',TaskManaging.as_view()),
 
+    path('entities/task/<id>',TaskManaging.as_view()),
     path('entities/user/<id>/tasks/<status>/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
     
     path('entities/user/tasks/', AllEmployeeTasks.as_view()),
+
+    path('entities/user/tasks/reported/', AllEmployeeTasks.as_view()),
+
+
 
 
 
