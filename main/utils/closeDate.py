@@ -63,4 +63,4 @@ def isExpired( first_time,second_time):
  # Установим второе время на 23:59:59
 
 result = isExpired(datetime.now(), datetime.now() - timedelta(days=1))
-print(result) 
+# print(result) True

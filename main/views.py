@@ -10,7 +10,7 @@ from .models import Job,Department,Task,Employee
 from .serializer import JobSerializer,DepartmentSerializer,TaskSerializer,EmployeeSerializer
 from rest_framework.views import APIView
 
-from .utils.token_managing import check_token
+from .utils.access_managing import check_token
 
 
 class  JobManaging(APIView):  

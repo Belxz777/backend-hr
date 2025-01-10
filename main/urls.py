@@ -1,18 +1,18 @@
 from django.urls import path
 from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList,TaskManaging
-from main.utils import token_managing
+from main.utils import access_managing
 
 from .utils.post import labor_fill
 from .utils.report import getReport,getXlsxReport
 from .utils.emp_tasks import EmployeeTasksbystatus,AllEmployeeTasks
 urlpatterns = [
-    path('users/create',token_managing.RegisterView.as_view()),#для регистрации пользователей
-    path("users/login",token_managing.LoginView.as_view()),#дяя входина
-    path("users/auth",token_managing.UserAuth.as_view()),
-    path('users/refresh',token_managing.refresh_token.as_view()),
-    path("users/logout",token_managing.LogoutView.as_view()),
-    path('users/change_password',token_managing.Change_Password.as_view()),
-    path('users/get_user',token_managing.GetUser.as_view()),
+    path('users/create',access_managing.RegisterView.as_view()),#для регистрации пользователей
+    path("users/login",access_managing.LoginView.as_view()),#дяя входина
+    path("users/auth",access_managing.UserAuth.as_view()),
+    path('users/refresh',access_managing.refresh_token.as_view()),
+    path("users/logout",access_managing.LogoutView.as_view()),
+    path('users/change_password',access_managing.Change_Password.as_view()),
+    path('users/get_user',access_managing.GetUser.as_view()),
 
 
     
@@ -55,7 +55,7 @@ path('report/department/xlsx/<id>',getXlsxReport.get_labor_costs_xlsx),
 
 
 
-
+#* Чек
 
 # * релизовать логику записи трудозатрат  10 часов done
 
@@ -75,6 +75,8 @@ path('report/department/xlsx/<id>',getXlsxReport.get_labor_costs_xlsx),
 
 
 #& осталось 35 часов работы до доведения до ума
+
+#* к Февралю должно быть готово
 
 
 
