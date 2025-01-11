@@ -48,7 +48,6 @@ urlpatterns = [
 
 
 
-
     path('fill/progress/', labor_fill.labor_fill),
 
 
