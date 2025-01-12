@@ -35,7 +35,7 @@ class ToReportTasks(APIView):
     def get(self, request):
         user = get_user(request)
         if user.employeeId:
-            tasks = Task.objects.filter(forEmployeeId=user.employeeId, status__in=['todo', 'in_progress'])         
+            tasks = Task.objects.filter(forEmployeeId=user.employeeId, status__in=['not_started','todo', 'in_progress'])         
             return Response(TaskSerializer(tasks, many=True).data)
         else:
             return Response({'error': 'Не указан id'})
