@@ -54,7 +54,7 @@ urlpatterns = [
 
     path('report/department/json/<id>',getReport.get_labor_costs),
 
-    path('report/department/xlsx/<id>',getXlsxReport.get_labor_costs_xlsx),
+    path('report/department/xlsx/',getXlsxReport.get_labor_costs_xlsx),
 
     
 

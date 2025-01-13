@@ -7,13 +7,17 @@ from rest_framework.decorators import api_view
 from openpyxl.utils import get_column_letter
 from main.models import Employee,LaborCosts, Task
 from main.serializer import LaborCostsSerializer
+from main.utils.auth import get_user
 
 
 @api_view(['GET'])
-def get_labor_costs_xlsx(request,id):
-    labor_costs = LaborCosts.objects.filter(departmentId=id)
+def get_labor_costs_xlsx(request):
+    user = get_user(request)
+    labor_costs = LaborCosts.objects.filter(departmentId=user.departmentid)
     serializer = LaborCostsSerializer(labor_costs, many=True)
-    task = Task.objects.get(taskId=id)
+    print(serializer.data)
+    for cost in serializer.data:
+        task = Task.objects.get(taskId=cost['taskId'])   
     output = io.BytesIO()
     wb = Workbook()
     ws = wb.active
@@ -43,18 +47,18 @@ def get_labor_costs_xlsx(request,id):
             column_widths[i] = max(column_widths[i], len(str(value)))
 
     # Устанавливаем ширину столбцов с небольшим запасом
-        for i, width in column_widths.items():
+    for i, width in column_widths.items():
             ws.column_dimensions[get_column_letter(i)].width = width + 2  # Доб
-        wb.save(output) 
-        output.seek(0)  
-        today_date = datetime.now().strftime('%Y-%m-%d')  # Формат YYYY-MM-DD
-        filename = f'трудозатраты_{today_date}.xlsx'  # Формируем имя файла
+    wb.save(output) 
+    output.seek(0)  
+    today_date = datetime.now().strftime('%Y-%m-%d')  # Формат YYYY-MM-DD
+    filename = f'трудозатраты_{today_date}.xlsx'  # Формируем имя файла
 
     # Создаем HTTP ответ с содержимым Excel файла
-        response = StreamingHttpResponse(
+    response = StreamingHttpResponse(
         output,
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
-        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     
     return response
