@@ -6,11 +6,6 @@ services:
     container_name: db
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=postgres_user_owner
-      - POSTGRES_PASSWORD=mWPVS5GepH1l
-      - POSTGRES_DB=postgres_user
-      - POSTGRES_HOST=ep-tight-sun-a81gunnv.eastus2.azure.neon.tech
     ports:
       - 5432:5432
   backend:
