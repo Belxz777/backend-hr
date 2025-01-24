@@ -30,8 +30,7 @@ def labor_fill(request):
             )  
             if laborCost:
                 task = Task.objects.get(taskId=data['taskId'])
-                made = task.hourstodo - data['workingHours']
-                print(made)
+                made = float(task.hourstodo) - float(data['workingHours'])              
                 if task:
                     if isExpired(datetime.now(),task.closeDate) and task.status != 'completed':
                         task.isExpired =  True

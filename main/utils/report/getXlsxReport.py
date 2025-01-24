@@ -12,9 +12,10 @@ from main.utils.auth import get_user
 
 @api_view(['GET'])
 def get_labor_costs_xlsx(request):
-    user = get_user(request)
-    labor_costs = LaborCosts.objects.filter(departmentId=user.departmentid)
-    serializer = LaborCostsSerializer(labor_costs, many=True)
+    # user = get_user(request)
+    labor_costs = LaborCosts.objects.filter(departmentId=1)
+    # print(user)
+    serializer = LaborCostsSerializer(labor_costs, many=True)   
     print(serializer.data)
     for cost in serializer.data:
         task = Task.objects.get(taskId=cost['taskId'])   
