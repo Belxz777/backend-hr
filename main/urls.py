@@ -6,7 +6,7 @@ from main.utils import access_managing
 
 from .utils.post import labor_fill
 from .utils.report import getReport,getXlsxReport
-from .utils.emp_tasks import EmployeeTasksbystatus,AllEmployeeTasks, ToReportTasks
+from .utils.emp_tasks import EmployeeTasksbystatus,AllEmployeeTasks, ToReportTasks, getDepEmp
 urlpatterns = [
     path('users/create',access_managing.RegisterView.as_view()),#для регистрации пользователей
     path("users/login",access_managing.LoginView.as_view()),#дяя входина
@@ -32,6 +32,10 @@ urlpatterns = [
     path('entities/department/<id>/employees/',DepartmentEmployees.as_view()),
 
     path('entities/departments/',DepartmentList.as_view()),
+    
+    path(
+        'entities/department/<id>/employees/select/',  getDepEmp),
+    
 
 
 
@@ -55,6 +59,8 @@ urlpatterns = [
     path('report/department/json/<id>',getReport.get_labor_costs),
 
     path('report/department/xlsx/',getXlsxReport.get_labor_costs_xlsx),
+
+    path('report/department/xlsx/persice',getXlsxReport.get_xlsx_precise),
 
     
 
