@@ -1,35 +1,25 @@
 version: '3.12'
 
 services:
+  backend:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    network_mode: host
+    depends_on:
+      - db
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - 8000:8000
   db:
     image: postgres:15
     container_name: db
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=postgres_user_owner
-      - POSTGRES_PASSWORD=mWPVS5GepH1l
-      - POSTGRES_DB=postgres_user
-      - POSTGRES_HOST=ep-tight-sun-a81gunnv.eastus2.azure.neon.tech
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
     ports:
       - 5432:5432
-  backend:
-    build: .
-    command: python manage.py runserver 127.0.0.1:8000
-    network_mode: host
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=1
-      - POSTGRES_DB=system_memory
-      - POSTGRES_HOST=localhost
-    depends_on:
-      - db
-    env_file:
-      - .env
-    volumes:
-      - ./:/usr/src/app
-    ports:
-      - 8000:8000
 
 
 volumes:

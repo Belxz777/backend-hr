@@ -11,7 +11,7 @@ DEBUG = os.getenv('DEBUG')
 if(DEBUG):
     ALLOWED_HOSTS = ["*"]
 else:
-    ALLOWED_HOSTS = ["ep-tight-sun-a81gunnv.eastus2.azure.neon.tech"]
+    ALLOWED_HOSTS = ["ep-tight-sun-a81gunnv.eastus2.azure.neon.tech","*"]
 
 
 # Database connection
@@ -34,15 +34,15 @@ else:
 DATABASES = { 
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('PGDATABASE'),
-        'USER': os.getenv('PGUSER') or 'postgres',
-        'PASSWORD': os.getenv('PGPASSWORD') ,  # Ensure a default empty string if not set
-        'HOST': os.getenv('PGHOST'),  # Default to localhost if not set
+        'NAME': os.getenv('PGDATABASE') or "labor",
+        'USER': os.getenv('PGUSER') or "postgres",
+        'PASSWORD': os.getenv('PGPASSWORD') or "123",  # Ensure a default empty string if not set
+        'HOST': os.getenv('PG_HOST') or "localhost",  # Default to localhost if not set
         'PORT': os.getenv('PGPORT') or 5432,  # Default to 5432 if not set
     }
 }
 
-
+print(DATABASES,)
 # Application definition
 
 INSTALLED_APPS = [

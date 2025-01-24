@@ -66,6 +66,7 @@ class Employee(models.Model):
     expiredTasksCount = models.IntegerField(null=True) 
     tasksCount = models.IntegerField(null=True)
     completedTasks = models.IntegerField(null=True)
+    isBoss = models.BooleanField(default=False)
 # Идентификатор отдела сотрудника
 
 #нужно продумать так что бы можно было интегрировать нейронку
