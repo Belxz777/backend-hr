@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from main.utils.auth import get_user
 from ..models import Employee, Task
-from ..serializer import TaskSerializer
+from ..serializer import EmployeeSerializer, TaskSerializer
 from rest_framework.response import Response
 class EmployeeTasksbystatus(APIView):
     def get(self, request, status,id):
@@ -41,13 +41,12 @@ class ToReportTasks(APIView):
             return Response({'error': 'Не указан id'})
         
 @api_view(['GET'])
-def getDepEmp(request,id):
-    user = get_user(request)
-    isBoss = Employee.objects.filter(employeeId=user.employeeId).first().isBoss
-    if isBoss:
-        return Employee.objects.filter(departmentid_id=id)
-    else:
-        return Response({'error': 'Вы не являетесь руководителем отдела'})
-
-
-   
+def getDepEmp(request, id):
+    if request.method == 'GET':
+        user = get_user(request)
+        isBoss = Employee.objects.filter(employeeId=user.employeeId).first().isBoss 
+        if isBoss:
+            employees = Employee.objects.filter(departmentid_id=id,isBoss=False)
+            return Response(employees.values('employeeId', 'firstName', 'lastName'))
+        else:
+            return Response({'error': 'Вы не являетесь руководителем отдела'})   

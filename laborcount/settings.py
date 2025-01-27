@@ -41,7 +41,16 @@ DATABASES = {
         'PORT': os.getenv('PGPORT') or 5432,  # Default to 5432 if not set
     }
 }
+CACHES = {
+    # we use "default" as the alias.
+    "default": {
+        # Here, we're using the database-backed cache backend.
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
 
+        # Provide a LOCATION parameter to specify the database table name where cached data will be stored.
+        "LOCATION": "cached_data",
+    }
+}
 print(DATABASES,)
 # Application definition
 

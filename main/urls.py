@@ -14,6 +14,7 @@ urlpatterns = [
     path('users/refresh',access_managing.refresh_token.as_view()),
     path('users/change_password',access_managing.Change_Password.as_view()),
     path('users/get_user',access_managing.GetUser.as_view()),
+    path('users/deposition/<id>',access_managing.Deposition.as_view()),
 
 
     
@@ -33,8 +34,7 @@ urlpatterns = [
 
     path('entities/departments/',DepartmentList.as_view()),
     
-    path(
-        'entities/department/<id>/employees/select/',  getDepEmp),
+    path('entities/department/<id>/employees/select/',  getDepEmp),
     
 
 

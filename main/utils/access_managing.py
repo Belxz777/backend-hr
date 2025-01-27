@@ -4,7 +4,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 
 import jwt,datetime
-
+from django.core.cache import cache
 from ..models import Department, Employee
 from ..serializer import EmployeeSerializer
 
@@ -139,7 +139,19 @@ class GetUser(APIView):
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Токен истек')
-        user = Employee.objects.filter(employeeId=payload['user']).values('firstName','lastName','jobid','departmentid').first()
+        cacheduser =  cache.get(f'user_{payload["user"]}')
+        if cacheduser:
+            return Response(cacheduser)
+        user = Employee.objects.filter(employeeId=payload['user']).values('employeeId','firstName','lastName','jobid','departmentid','position').first()
+        cache.set(f'user_{payload["user"]}', user, timeout=100)
         if not user:
             raise AuthenticationFailed('Пользователь не найден')
         return Response(user)
+    
+class Deposition(APIView):
+        def patch(self,request,id):
+            new_pos = request.data['position']
+            print(new_pos)
+            change = Employee.objects.filter(employeeId = request.data['empid']).update(position=new_pos)
+            print(change)
+            return Response({'message': 'Должность успешно изменена'})

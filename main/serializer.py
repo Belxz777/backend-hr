@@ -5,7 +5,7 @@ from .models import Employee, Job, Task, Department, LaborCosts
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
-        fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid','expiredTasksCount','position','tasksCount','completedTasks','isBoss']
+        fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid','expiredTasksCount','position','tasksCount','completedTasks']
         extra_kwargs = {'password': {'write_only': True},
                         'login': {'write_only': True}}     
 class JobSerializer(serializers.ModelSerializer):
