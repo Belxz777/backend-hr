@@ -33,12 +33,12 @@ else:
     #     }
 DATABASES = { 
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('PGDATABASE') or "labor",
-        'USER': os.getenv('PGUSER') or "postgres",
-        'PASSWORD': os.getenv('PGPASSWORD') or "123",  # Ensure a default empty string if not set
-        'HOST': os.getenv('PG_HOST') or "localhost",  # Default to localhost if not set
-        'PORT': os.getenv('PGPORT') or 5432,  # Default to 5432 if not set
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.getenv('PGDATABASE') or 'labor',
+        'USER': os.getenv('PGUSER') or 'postgres',
+        'PASSWORD': os.getenv('PGPASSWORD') or '123',  # Ensure a default empty string if not set
+        'HOST': os.getenv('PG_HOST') or 'db',  # Default to localhost if not set
+        'PORT': 5432,  # Default to 5432 if not set
     }
 }
 CACHES = {

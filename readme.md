@@ -67,5 +67,6 @@ docker-compose up  --build
 
 
 
-
-
+Удалить мусор, использовать только если не запускается:
+docker system prune
+docker-compose restart core

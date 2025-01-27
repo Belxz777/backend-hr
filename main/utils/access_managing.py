@@ -139,11 +139,11 @@ class GetUser(APIView):
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Токен истек')
-        cacheduser =  cache.get(f'user_{payload["user"]}')
+        cacheduser = cache.get(f'user_{payload["user"]}')
         if cacheduser:
             return Response(cacheduser)
         user = Employee.objects.filter(employeeId=payload['user']).values('employeeId','firstName','lastName','jobid','departmentid','position').first()
-        cache.set(f'user_{payload["user"]}', user, timeout=100)
+        cache.set(f'user_{payload["user"]}', user, timeout=100)    
         if not user:
             raise AuthenticationFailed('Пользователь не найден')
         return Response(user)
