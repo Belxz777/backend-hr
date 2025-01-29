@@ -51,7 +51,8 @@ CACHES = {
         "LOCATION": "cached_data",
     }
 }
-print(DATABASES,)
+if (os.getenv('IS_PROD') == "True"):
+    print("production mode db conn params: ",DATABASES," /n whether using internal db dont spec host in .env for correct work")
 # Application definition
 
 INSTALLED_APPS = [
