@@ -6,12 +6,7 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = os.getenv('DEBUG')
-
-if(DEBUG):
-    ALLOWED_HOSTS = ["*"]
-else:
-    ALLOWED_HOSTS = ["ep-tight-sun-a81gunnv.eastus2.azure.neon.tech","*"]
+IS_PROD = os.getenv('IS_PROD')
 
 
 # Database connection
@@ -38,7 +33,7 @@ DATABASES = {
         'USER': os.getenv('PGUSER') or 'postgres',
         'PASSWORD': os.getenv('PGPASSWORD') or '123',  # Ensure a default empty string if not set
         'HOST': os.getenv('PG_HOST') or 'db',  # Default to localhost if not set
-        'PORT': 5432,  # Default to 5432 if not set
+        'PORT': 5432, 
     }
 }
 CACHES = {
@@ -51,9 +46,13 @@ CACHES = {
         "LOCATION": "cached_data",
     }
 }
-if (os.getenv('IS_PROD') == "True"):
-    print("production mode db conn params: ",DATABASES," /n whether using internal db dont spec host in .env for correct work")
-# Application definition
+
+if(IS_PROD):
+    ALLOWED_HOSTS = ["*"]
+    print("production mode db conn params: ",DATABASES," /n whether using internal db dont spec host in .env for correct work") 
+else:
+    ALLOWED_HOSTS = ["*"]
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',

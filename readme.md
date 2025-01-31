@@ -15,6 +15,7 @@
 
 
 1.pip install -r requirements.txt (при первом запуске для установки зависимостей)
+(установите виртуальное окружение .venv или .conda)
 
 
 2.Python manage.py makemigrations  essential (для создания миграции)

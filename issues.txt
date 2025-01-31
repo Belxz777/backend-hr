@@ -56,3 +56,19 @@ docker prune to deelete all images
 neon db url:
 postgresql://neondb_owner:GAP0vqcr2Jfh@ep-nameless-field-a5mfa03i-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require
 doesnt work withhout vpn but its okay to reach db;
+
+
+
+sometimes when you have just created  .venv and trying to run app in same terminal
+you will face error of lack of django 
+so to fix that just create new environment and run it in new terminal
+
+
+you can use this pattern of .env :
+SECRET_KEY='!'  
+PG_HOST='localhost'
+PGDATABASE='labor'
+PGUSER='postgres'   
+PGPASSWORD='123'
+ADMINPASS = "a1234dfc"
+IS_PROD = False

@@ -15,8 +15,10 @@ class EmployeeTasksbystatus(APIView):
 class AllEmployeeTasks(APIView):
     def get(self, request):
         user = get_user(request)
+        print(user)
         if user.employeeId:
-                    tasks = Task.objects.filter(forEmployeeId=user.employeeId).values('taskName', 'taskDescription', 'status', 'hourstodo', 'closeDate', 'isExpired') 
+                    tasks = Task.objects.filter(forEmployeeId=user.employeeId)
+                    if not tasks: print("tasks")
                     structured_tasks = {}
                     expired_tasks = []  
                     for task in tasks:
