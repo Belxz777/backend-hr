@@ -17,22 +17,23 @@ class AllEmployeeTasks(APIView):
         user = get_user(request)
         print(user)
         if user.employeeId:
-                    tasks = Task.objects.filter(forEmployeeId=user.employeeId)
-                    if not tasks: print("tasks")
-                    structured_tasks = {}
-                    expired_tasks = []  
-                    for task in tasks:
-                        if task['isExpired']:
-                            if task not in expired_tasks:
-                                expired_tasks.append(task)
-                        else:
-                            status = task['status']
-                            if status not in structured_tasks:
-                                structured_tasks[status] = []
-                            structured_tasks[status].append(task)
-                    return Response({'all': structured_tasks, 'expired_tasks': expired_tasks}) 
-        else: # Changed to return tasks structured by status        else:
-            return Response({'error': 'Не указан id'})
+            tasks = Task.objects.filter(forEmployeeId=user.employeeId)
+            print(tasks)
+            if not tasks: 
+                print("tasks")
+            structured_tasks = {}
+            expired_tasks = []  
+            for task in tasks:
+                if task.isExpired:  # Corrected to access the attribute directly
+                    if task not in expired_tasks:   
+                        expired_tasks.append(task)
+                else:
+                    status = task.status  # Corrected to access the attribute directly
+                    if status not in structured_tasks:
+                        structured_tasks[status] = []     
+                    structured_tasks[status].append(task)
+            return Response({'all': structured_tasks, 'expired_tasks': TaskSerializer(expired_tasks, many=True).data}) 
+        else:            return Response({'error': 'Не указан id'})
 class ToReportTasks(APIView):
     def get(self, request):
         user = get_user(request)

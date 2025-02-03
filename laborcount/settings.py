@@ -8,6 +8,12 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 IS_PROD = os.getenv('IS_PROD')
 
+DEBUG = os.getenv('DEBUG')
+if DEBUG:
+    print("Приложение запущено в debug mode")
+else:
+    print("Приложение запущено в production mode")
+
 
 # Database connection
 # DATABASES = {

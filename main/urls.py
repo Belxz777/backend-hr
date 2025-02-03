@@ -15,7 +15,7 @@ urlpatterns = [
     path('users/change_password',access_managing.Change_Password.as_view()),
     path('users/get_user',access_managing.GetUser.as_view()),
     path('users/deposition/<id>',access_managing.Deposition.as_view()),
-
+ # это работает , есть небольная проблема с caching
 
     
 
@@ -23,7 +23,7 @@ urlpatterns = [
     path('entities/job/<id>',JobManaging.as_view()),
 
     path('entities/jobs/',JobList.as_view()),
-    
+     # jobs работает 
 
     
 
@@ -41,7 +41,7 @@ urlpatterns = [
 
 
 
-    path('entities/task/<id>',TaskManaging.as_view()),
+path('entities/task/',TaskManaging.as_view()),
 
     path('entities/user/<id>/tasks/<status>/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
     

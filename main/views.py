@@ -174,8 +174,8 @@ class UserByName(APIView):
         return Response({'error': 'Пользователь не найден'}, status=404)
     
 class TaskManaging(APIView):
-      def post(self, request,id):
-        request.data['forEmployeeId'] = id
+      def post(self, request):
+        request.data['forEmployeeId']
         request.data['closeDate'] = calculate_close_date(request.data['hourstodo'],datetime.now())
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
