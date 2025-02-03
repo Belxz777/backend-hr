@@ -20,7 +20,7 @@ class AllEmployeeTasks(APIView):
             tasks = Task.objects.filter(forEmployeeId=user.employeeId)
             print(tasks)
             if not tasks: 
-                print("tasks")
+                print("no tasks found")
             structured_tasks = {}
             expired_tasks = []  
             for task in tasks:
@@ -47,9 +47,5 @@ class ToReportTasks(APIView):
 def getDepEmp(request, id):
     if request.method == 'GET':
         user = get_user(request)
-        isBoss = Employee.objects.filter(employeeId=user.employeeId).first().isBoss 
-        if isBoss:
-            employees = Employee.objects.filter(departmentid_id=id,isBoss=False)
-            return Response(employees.values('employeeId', 'firstName', 'lastName'))
-        else:
-            return Response({'error': 'Вы не являетесь руководителем отдела'})   
+        employees = Employee.objects.filter(departmentid_id=id).exclude(employeeId=user.employeeId)
+        return Response(employees.values('employeeId', 'firstName', 'lastName'))    

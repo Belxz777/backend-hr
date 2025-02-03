@@ -44,7 +44,7 @@ class LaborCosts(models.Model):
             MaxValueValidator(20),
             MinValueValidator(1)
         ], null=False)  # Затраченное время
-    comment = models.CharField(max_length=150, null=True)  # Комментарий
+    comment = models.CharField(max_length=150, null=True) # Комментарий
 
 
 class Employee(models.Model):

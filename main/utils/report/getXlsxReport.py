@@ -14,7 +14,7 @@ from main.utils.auth import get_user
 def get_labor_costs_xlsx(request):
     user = get_user(request)
     
-    labor_costs = LaborCosts.objects.filter(departmentId=user.departmentid)
+    labor_costs = LaborCosts.objects.filter(departmentId=user.departmentid.departmentId)
     serializer = LaborCostsSerializer(labor_costs, many=True)
     print(serializer.data)
     for cost in serializer.data:
@@ -49,7 +49,7 @@ def get_labor_costs_xlsx(request):
 
     # Устанавливаем ширину столбцов с небольшим запасом
     for i, width in column_widths.items():
-            ws.column_dimensions[get_column_letter(i)].width = width + 2  # Доб
+        ws.column_dimensions[get_column_letter(i)].width = width + 2  # Доб
     wb.save(output) 
     output.seek(0)  
     today_date = datetime.now().strftime('%Y-%m-%d')  # Формат YYYY-MM-DD
@@ -59,11 +59,10 @@ def get_labor_costs_xlsx(request):
     response = StreamingHttpResponse(
         output,
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        )
+    )
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     
     return response
-
 @api_view(['POST'])
 def get_xlsx_precise(request):
             if request.method == 'POST':
