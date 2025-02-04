@@ -6,12 +6,12 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-IS_PROD = os.getenv('IS_PROD')
-
 DEBUG = os.getenv('DEBUG')
 if DEBUG:
+    ALLOWED_HOSTS = ["*"]
     print("Приложение запущено в debug mode")
 else:
+    ALLOWED_HOSTS = ["*"]#specify certain
     print("Приложение запущено в production mode")
 
 
@@ -52,12 +52,6 @@ CACHES = {
         "LOCATION": "cached_data",
     }
 }
-
-if(IS_PROD):
-    ALLOWED_HOSTS = ["*"]
-    print("production mode db conn params: ",DATABASES," /n whether using internal db dont spec host in .env for correct work") 
-else:
-    ALLOWED_HOSTS = ["*"]
 
 
 INSTALLED_APPS = [

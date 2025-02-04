@@ -8,7 +8,6 @@ from django.core.cache import cache
 from main.models import Employee
 def get_user(request):
     token = request.COOKIES.get('jwt')
-    print(request.COOKIES)
     if token is None:
         print("dfsfsdfsdf")
         raise AuthenticationFailed('Ты не аутетифицирован')

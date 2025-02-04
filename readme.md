@@ -66,7 +66,8 @@ docker-compose up  --build
 
 @telegram:belxz999
 
-
+PostMan docs:
+https://documenter.getpostman.com/view/29025992/2sAYX5LiFH
 
 Удалить мусор, использовать только если не запускается:
 docker system prune

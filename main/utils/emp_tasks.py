@@ -5,10 +5,11 @@ from ..models import Employee, Task
 from ..serializer import EmployeeSerializer, TaskSerializer
 from rest_framework.response import Response
 class EmployeeTasksbystatus(APIView):
-    def get(self, request, status,id):
-        if id and status:
+    def get(self, request, status):
+        userid = get_user(request).employeeId
+        if userid and status:
             print(status)
-            tasks = Task.objects.filter(forEmployeeId=id, status=status)    
+            tasks = Task.objects.filter(forEmployeeId=userid, status=status)    
             return Response(TaskSerializer(tasks, many=True).data)
         else:
             return Response({'error': 'Не указан id или статус'})
@@ -31,17 +32,19 @@ class AllEmployeeTasks(APIView):
                     status = task.status  # Corrected to access the attribute directly
                     if status not in structured_tasks:
                         structured_tasks[status] = []     
-                    structured_tasks[status].append(task)
+                    structured_tasks[status].append(TaskSerializer(task).data)  # Serialize task here
             return Response({'all': structured_tasks, 'expired_tasks': TaskSerializer(expired_tasks, many=True).data}) 
-        else:            return Response({'error': 'Не указан id'})
+        else:            
+            return Response({'error': 'Не указан id'}) 
 class ToReportTasks(APIView):
     def get(self, request):
-        user = get_user(request)
-        if user.employeeId:
-            tasks = Task.objects.filter(forEmployeeId=user.employeeId, status__in=['not_started','todo', 'in_progress'])         
+        userid = get_user(request).employeeId
+        print(userid)
+        if userid:
+            tasks = Task.objects.filter(forEmployeeId=userid, status__in=['in_progress', 'not_started'])     
             return Response(TaskSerializer(tasks, many=True).data)
         else:
-            return Response({'error': 'Не указан id'})
+            return Response({'error': 'Не указан id'}) 
         
 @api_view(['GET'])
 def getDepEmp(request, id):

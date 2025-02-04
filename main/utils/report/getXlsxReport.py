@@ -16,22 +16,20 @@ def get_labor_costs_xlsx(request):
     
     labor_costs = LaborCosts.objects.filter(departmentId=user.departmentid.departmentId)
     serializer = LaborCostsSerializer(labor_costs, many=True)
-    print(serializer.data)
-    for cost in serializer.data:
-        task = Task.objects.get(taskId=cost['taskId'])   
+    
     output = io.BytesIO()
     wb = Workbook()
     ws = wb.active
     ws.title = "Трудозатраты"
 
     # Заголовки столбцов
-    headers = ['ID_report', 'ID_employee',  'ID_task',"Task_name","Task_from_date" , 'Current_date', 'Worked_h', 'Left_task_h','Comment']
+    headers = ['report_id', 'employee_id', 'task_id', "task_name", "task_from_date", 'report_date', 'worked_hours', 'left_hours', 'comment']
     ws.append(headers)
     column_widths = {i: len(header) for i, header in enumerate(headers, start=1)}
 
-
     # Заполняем данными
     for cost in serializer.data:
+        task = Task.objects.get(taskId=cost['taskId'])
         row = [
             cost['laborCostId'],
             cost['employeeId'],
@@ -40,7 +38,7 @@ def get_labor_costs_xlsx(request):
             task.fromDate.date(),
             cost['date'],
             cost['workingHours'],
-            task.hourstodo,
+            None if task.hourstodo == 0 else task.hourstodo,
             cost['comment']
         ]
         ws.append(row)
@@ -50,19 +48,16 @@ def get_labor_costs_xlsx(request):
     # Устанавливаем ширину столбцов с небольшим запасом
     for i, width in column_widths.items():
         ws.column_dimensions[get_column_letter(i)].width = width + 2  # Доб
+
     wb.save(output) 
     output.seek(0)  
-    today_date = datetime.now().strftime('%Y-%m-%d')  # Формат YYYY-MM-DD
-    filename = f'трудозатраты_{today_date}.xlsx'  # Формируем имя файла
-
-    # Создаем HTTP ответ с содержимым Excel файла
     response = StreamingHttpResponse(
         output,
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    response['Content-Disposition'] = f'attachment; filename="отчет_{datetime.now().strftime("%Y-%m-%d")}.xlsx"'  # Формируем имя файла
     
-    return response
+    return response    # Создаем HTTP ответ с содержимым Excel файла
 @api_view(['POST'])
 def get_xlsx_precise(request):
             if request.method == 'POST':
@@ -71,19 +66,17 @@ def get_xlsx_precise(request):
                 data = request.data
                 print(data)
                 employee_ids = data.get('employee_ids', [])
-                from_date = data.get('from_date')
+                from_date = data.get('start_date')
                 end_date = data.get('end_date')
-                is_boss = user.isBoss
                 print(user)
-                if not is_boss:
-                    print("Access denied for employees.")
-                    return HttpResponseForbidden("Access denied for employees.")
+                # if not user.position == 1:
+                #     print("Access denied for employees.")
+                #     return HttpResponseForbidden("Access denied for employees.")
         
                 labor_costs = LaborCosts.objects.filter(
                     employeeId__in=employee_ids,
                     date__range=[from_date, end_date]
-                )
-        
+                )             
                 serializer = LaborCostsSerializer(labor_costs, many=True)
                 output = io.BytesIO()
                 wb = Workbook()
@@ -91,7 +84,7 @@ def get_xlsx_precise(request):
                 ws.title = "Трудозатраты"
         
                 # Заголовки столбцов
-                headers = ['ID_report', 'ID_employee', 'ID_task', "Task_name", "Task_from_date", 'Current_date', 'Worked_h', 'Left_task_h', 'Comment']
+                headers = ['report_id', 'employee_id', 'task_id', "task_name", "task_from_date", 'report_date', 'worked_hours', 'left_hours', 'comment']
                 ws.append(headers)
                 column_widths = {i: len(header) for i, header in enumerate(headers, start=1)}
         
@@ -106,7 +99,7 @@ def get_xlsx_precise(request):
                         task.fromDate.date(),
                         cost['date'],
                         cost['workingHours'],
-                        task.hourstodo,
+                        None if task.hourstodo == 0 else task.hourstodo,
                         cost['comment']
                     ]
                     ws.append(row)
@@ -119,7 +112,7 @@ def get_xlsx_precise(request):
                 wb.save(output)
                 output.seek(0)
                 today_date = datetime.now().strftime('%Y-%m-%d')  # Формат YYYY-MM-DD
-                filename = f'трудозатраты_{today_date}.xlsx'  # Формируем имя файла
+                filename = f'persise.xlsx'  # Формируем имя файла
         
                 # Создаем HTTP ответ с содержимым Excel файла
                 response = StreamingHttpResponse(
