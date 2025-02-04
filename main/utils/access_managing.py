@@ -145,7 +145,7 @@ class GetUser(APIView):
         return Response(user)
     
 class Deposition(APIView):
-        def patch(self,request,id):
+        def patch(self,request):
             new_pos = request.data['position']
             print(new_pos)
             change = Employee.objects.filter(employeeId = request.data['empid']).update(position=new_pos)

@@ -14,7 +14,8 @@ urlpatterns = [
     path('users/refresh',access_managing.refresh_token.as_view()),
     path('users/change_password',access_managing.Change_Password.as_view()),
     path('users/get_user',access_managing.GetUser.as_view()),
-    path('users/deposition/<id>',access_managing.Deposition.as_view()),
+    path('users/deposition/',access_managing.Deposition.as_view()),
+    # path('users/compliancy/'),# типо как на github
  # это работает , есть небольная проблема с caching
 
     
@@ -30,9 +31,9 @@ urlpatterns = [
     
     path('entities/department/<id>',DepartmentManaging.as_view()),
 
-    path('entities/department/<id>/employees/',DepartmentEmployees.as_view()),
+    # path('entities/department/<id>/employees/',DepartmentEmployees.as_view()), тут проверка 
 
-    path('entities/departments/',DepartmentList.as_view()),
+    path('entities/department/create/',DepartmentList.as_view()),
     
     path('entities/department/<id>/employees/select/',  getDepEmp),
     
@@ -41,9 +42,9 @@ urlpatterns = [
 
 
 
-path('entities/task/',TaskManaging.as_view()),
+    path('entities/task/',TaskManaging.as_view()),
 
-    path('entities/user/<id>/tasks/<status>/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
+    path('entities/user/tasks/<status>/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
     
     path('entities/user/tasks/', AllEmployeeTasks.as_view()),
 
@@ -56,15 +57,22 @@ path('entities/task/',TaskManaging.as_view()),
 
 
 
-    path('report/department/json/<id>',getReport.get_labor_costs),
+    path('download/department/<id>/json/',getReport.get_labor_costs), # test для проверки записей о трудозатратах
 
-    path('report/department/xlsx/',getXlsxReport.get_labor_costs_xlsx),
+    path('download/department/xlsx/',getXlsxReport.get_labor_costs_xlsx),
 
-    path('report/department/xlsx/persice',getXlsxReport.get_xlsx_precise),
+    path('download/department/xlsx/persice/',getXlsxReport.get_xlsx_precise),
 
+    # path('history/user/tasks/') , # чекаем все таски сотрудника  за промежуток времен
     
+    # path('history/department/tasks'),# чекаем все таски за промежуток времени
 
-    path('entities/department/xlsx/add',upload_tasks)
+
+    # path('neuro/analytics/department/') # аналитика с нейросетки
+
+
+
+    # path('entities/department/xlsx/add',upload_tasks)
 
 
 

@@ -61,14 +61,6 @@ class JobList(APIView):
     
 
 class DepartmentManaging(APIView):
-    def post(self, request):
-        # check_token(request)
-        serializer =  DepartmentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-    
     def patch(self, request,id):
              department = Department.objects.filter(departmentId=id).first()
              if department:
@@ -101,14 +93,9 @@ class DepartmentList(APIView):
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
-    def get(self, request):
-        departments = Department.objects.all()
-        serializer = DepartmentSerializer(departments, many=True)
-        return Response(serializer.data)
     
 class DepartmentEmployees(APIView):
     def get(self, request,id):
-        department = Department.objects.get(departmentId=id)
         token = request.COOKIES.get('jwt')
         if token is None:
             raise AuthenticationFailed({'message': 'Ты не аутетифицирован '})
@@ -119,13 +106,16 @@ class DepartmentEmployees(APIView):
         user = Employee.objects.get(employeeId=payload['user'])
         if not user:
             raise AuthenticationFailed('Пользователь не найден')
+        department = Department.objects.get(departmentId=id)
         serializer = EmployeeSerializer(user)
-        if user == department.headId:
+        print(user.employeeId,department.departmentId)
+        #если пользователь является сотрудником этого отдела, то он может получить список сотрудников этого отдела
+        if user.employeeId == department.departmentId:
             employees = Employee.objects.filter(departmentid=id)
             employees = Employee.objects.filter(departmentid=id).exclude(employeeId=user.employeeId)
             serializer = EmployeeSerializer(employees, many=True)      
             return Response(serializer.data)        
-        return Response({'message': 'Вы не можете получить список  сотрудников этого отдела'})
+        return Response({'message': 'Вы не можете получить список  сотрудников этого отдела'}, status=403)
 
 
 # class ProjectManaging(APIView):
@@ -174,33 +164,54 @@ class UserByName(APIView):
         return Response({'error': 'Пользователь не найден'}, status=404)
     
 class TaskManaging(APIView):
+#http://127.0.0.1:8000/api/v1/entities/task/ enpoint post | patch | delete
       def post(self, request):
+#         post | body{
+# "forEmployeeId":2,
+# "hourstodo":7,
+# "taskName":"Реализовать возможность загрузки задачи"
+#         }
         request.data['forEmployeeId']
         request.data['closeDate'] = calculate_close_date(request.data['hourstodo'],datetime.now())
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
-      def get(self, request):
-        tasks = Task.objects.all()
-        serializer = TaskSerializer(tasks, many=True)
-        return Response(serializer.data)
-      def patch(self, request,id):
-             task = Task.objects.filter(taskId=request.data.get('id')).first()
+            return Response({
+                 'message': 'Задача создана',
+                    'taskId': serializer.data['taskId']
+            }, status=201)
+        return Response({
+             'error': 'Не удалось создать задачу',
+             'detail': serializer.errors
+        }, status=400)
+      def patch(self, request):
+#    patch |  body{
+#     "taskId":12,
+#     "taskName":"hello",
+# forEmployeeId:1,
+# }
+             task = Task.objects.filter(taskId=request.data['taskId']).first()
              if task:
                     serializer = TaskSerializer(task, data=request.data, partial=True)
                     if serializer.is_valid():
                         task = serializer.save()
-                        return Response(TaskSerializer(task).data)
-                    return Response(serializer.errors, status=400)
-             return Response({'error': ''}, status=404)
-      def delete(self, request,id):
-                if id:
-                      task = Task.objects.filter(taskId=id)
+                        return Response({
+                             'message': 'Задача обновлена',
+                             'params': serializer.data.values()
+                        }, status=201)
+                    return Response({
+                         'error': 'Не удалось обновить задачу',
+                         'detail': serializer.errors
+                    }, status=400)
+             return Response({'error': 'Ошибка задача не найдена'}, status=404)
+      def delete(self, request):
+                # delete | body {
+                #      "taskId":12,
+                # }
+                task = Task.objects.filter(taskId=request.data['taskId']).first()
                 if task:
                     task.delete()
-                    return Response({'message': 'Задача удалена'}, status=204)
+                    return Response({'message': 'Задача удалена',"taskId":request.data['taskId']}, status=204)
                 return Response({'error': 'Задача не найдена'}, status=404)
       
 
