@@ -61,24 +61,37 @@ class JobList(APIView):
     
 
 class DepartmentManaging(APIView):
-    def patch(self, request,id):
-             department = Department.objects.filter(departmentId=id).first()
-             if department:
-                    serializer = DepartmentSerializer(department, data=request.data, partial=True)
-                    if serializer.is_valid():
-                        department = serializer.save()
-                        return Response(DepartmentSerializer(department).data)
-                    return Response(serializer.errors, status=400)
-             return Response({'error': ''}, status=404)
-    def delete(self, request,id):
-                if id:
-                      department = Department.objects.filter(departmentId=id)
+    def patch(self, request):
+        # Получаем id из query parameters
+        department_id = request.query_params.get('id')
+        
+        if not department_id:
+            return Response({"error": "ID is required"}, status=400)
+        
+        # Ищем отдел по ID
+        department = Department.objects.filter(departmentId=department_id).first()
+        
+        if not department:
+            return Response({"error": "Department not found"}, status=404)
+        
+        # Обновляем отдел
+        serializer = DepartmentSerializer(department, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            department = serializer.save()
+            return Response(DepartmentSerializer(department).data)
+        
+        return Response(serializer.errors, status=400)
+       
+    def delete(self, request):   
+                id = request.query_params.get('id')
+                department = Department.objects.filter(departmentId=id)
                 if department:
                     department.delete()
                     return Response({'message': 'Отдел удален'}, status=204)
                 return Response({'error': 'Отдел не найден'}, status=404)
     def get(self, request, id=None):
-                if id:  # If id is provided
+                    id = request.query_params.get('id')
                     department = Department.objects.filter(departmentId=id).first()
                     if department:
                         serializer = DepartmentSerializer(department)

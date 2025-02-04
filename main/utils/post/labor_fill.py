@@ -11,6 +11,7 @@ from main.utils.closeDate import isExpired
 def labor_fill(request):
     if request.method == 'POST':
         employee = get_user(request)
+        task_id = request.query_params.get("task_id")
         data = request.data
         departmentId = employee.departmentid.departmentId# Current date and time in Samara timezone
         if employee:
@@ -24,12 +25,12 @@ def labor_fill(request):
             laborCost = LaborCosts.objects.create(
                 employeeId=employee,
                 departmentId=departmentId,
-                taskId=Task.objects.get(taskId=data['taskId']),  # Ensure taskId is a Task instance
+                taskId=Task.objects.get(taskId=task_id),  # Ensure taskId is a Task instance
                 workingHours=data['workingHours'],
                 comment=data['comment']
             )  
             if laborCost:
-                task = Task.objects.get(taskId=data['taskId'])
+                task = Task.objects.get(taskId=task_id)
                 made = float(task.hourstodo) - float(data['workingHours'])              
                 if task:
                     if isExpired(datetime.now(),task.closeDate) and task.status != 'completed':

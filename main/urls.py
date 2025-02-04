@@ -29,13 +29,13 @@ urlpatterns = [
     
 
     
-    path('entities/department/<id>',DepartmentManaging.as_view()),
+    path('entities/department/',DepartmentManaging.as_view()),
 
     # path('entities/department/<id>/employees/',DepartmentEmployees.as_view()), тут проверка 
 
     path('entities/department/create/',DepartmentList.as_view()),
     
-    path('entities/department/<id>/employees/select/',  getDepEmp),
+    path('entities/department/employees/select/',getDepEmp),
     
 
 
@@ -44,7 +44,7 @@ urlpatterns = [
 
     path('entities/task/',TaskManaging.as_view()),
 
-    path('entities/user/tasks/<status>/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
+    path('entities/user/tasks/bystatus/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
     
     path('entities/user/tasks/', AllEmployeeTasks.as_view()),
 
@@ -57,7 +57,7 @@ urlpatterns = [
 
 
 
-    path('download/department/<id>/json/',getReport.get_labor_costs), # test для проверки записей о трудозатратах
+    path('download/department/json/',getReport.get_labor_costs), # test для проверки записей о трудозатратах
 
     path('download/department/xlsx/',getXlsxReport.get_labor_costs_xlsx),
 

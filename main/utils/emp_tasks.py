@@ -5,10 +5,15 @@ from ..models import Employee, Task
 from ..serializer import EmployeeSerializer, TaskSerializer
 from rest_framework.response import Response
 class EmployeeTasksbystatus(APIView):
-    def get(self, request, status):
+    def get(self, request):
+        status = request.query_params.get('status')
         userid = get_user(request).employeeId
         if userid and status:
-            print(status)
+            # print(status)
+            if status == "report":
+                            print("csse")
+                            tasks = Task.objects.filter(forEmployeeId=userid, status__in=['in_progress', 'not_started'])     
+                            return Response(TaskSerializer(tasks, many=True).data)
             tasks = Task.objects.filter(forEmployeeId=userid, status=status)    
             return Response(TaskSerializer(tasks, many=True).data)
         else:
@@ -47,8 +52,9 @@ class ToReportTasks(APIView):
             return Response({'error': 'Не указан id'}) 
         
 @api_view(['GET'])
-def getDepEmp(request, id):
+def getDepEmp(request):
     if request.method == 'GET':
         user = get_user(request)
+        id =request.query_params.get('department_id')
         employees = Employee.objects.filter(departmentid_id=id).exclude(employeeId=user.employeeId)
         return Response(employees.values('employeeId', 'firstName', 'lastName'))    
