@@ -6,6 +6,8 @@ from main.utils import access_managing
 
 from .utils.post import labor_fill
 from .utils.report import getReport,getXlsxReport
+from .utils.compliencyandhistory.compliency import EmployeePerformanceView
+from .utils.compliencyandhistory.history import DepartmentPerformanceView
 from .utils.emp_tasks import EmployeeTasksbystatus,AllEmployeeTasks, ToReportTasks, getDepEmp
 urlpatterns = [
     path('users/create',access_managing.RegisterView.as_view()),#для регистрации пользователей
@@ -15,7 +17,7 @@ urlpatterns = [
     path('users/change_password',access_managing.Change_Password.as_view()),
     path('users/get_user',access_managing.GetUser.as_view()),
     path('users/deposition/',access_managing.Deposition.as_view()),
-    # path('users/compliancy/'),# типо как на github
+    path('users/compliancy/',EmployeePerformanceView.as_view()),# типо как на github
  # это работает , есть небольная проблема с caching
 
     
@@ -24,14 +26,11 @@ urlpatterns = [
     path('entities/job/<id>',JobManaging.as_view()),
 
     path('entities/jobs/',JobList.as_view()),
-     # jobs работает 
 
     
 
     
     path('entities/department/',DepartmentManaging.as_view()),
-
-    # path('entities/department/<id>/employees/',DepartmentEmployees.as_view()), тут проверка 
 
     path('entities/department/create/',DepartmentList.as_view()),
     
@@ -63,9 +62,9 @@ urlpatterns = [
 
     path('download/department/xlsx/persice/',getXlsxReport.get_xlsx_precise),
 
-    # path('history/user/tasks/') , # чекаем все таски сотрудника  за промежуток времен
+    path('history/user/tasks/',EmployeePerformanceView.as_view()) , # чекаем все таски сотрудника  за промежуток времен
     
-    # path('history/department/tasks'),# чекаем все таски за промежуток времени
+    path('history/department/tasks',DepartmentPerformanceView.as_view()),# чекаем все таски за промежуток времени
 
 
     # path('neuro/analytics/department/') # аналитика с нейросетки

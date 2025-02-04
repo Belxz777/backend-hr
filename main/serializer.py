@@ -34,6 +34,10 @@ class   DepartmentSerializer(serializers.ModelSerializer):
         model = Department  
         fields = ['departmentId', 'departmentName','departmentDescription','headId']
 
+class PerformanceSerializer(serializers.Serializer):
+    date = serializers.DateField()
+    report_count = serializers.IntegerField()
+    total_hours = serializers.DecimalField(max_digits=5, decimal_places=2)
 class LaborCostsSerializer(serializers.ModelSerializer):
     class Meta:
         model = LaborCosts
