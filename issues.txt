@@ -72,3 +72,11 @@ PGUSER='postgres'
 PGPASSWORD='123'
 ADMINPASS = "a1234dfc"
 IS_PROD = False
+
+
+
+
+
+Удалить мусор, использовать только если не запускается:
+docker system prune
+docker-compose restart core
