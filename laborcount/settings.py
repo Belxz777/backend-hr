@@ -58,15 +58,34 @@ else:
 #     print(f"Connection failed: {e}")
 # Replace the SQLite DATABASES configuration with PostgreSQL:
 # connection for render database external via url
-DATABASES = {
-    'default': dj_database_url.config(
+ext_db = os.getenv('EXTERNAL_DB')
+print(ext_db)
+if  ext_db:
+    print("db is external")
+    DATABASES = {
+        'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-        default=os.getenv('DATABASE_URL') or 'postgresql://test_pyco_user:zhsN9ck24KHRfx8JVVvGESCAwooM0Civ@dpg-cuhl54jtq21c73bbpai0-a.frankfurt-postgres.render.com/test_pyco',
-        conn_max_age=600
-    )
-}
+            default=os.getenv('DATABASE_URL') or 'postgresql://test_pyco_user:zhsN9ck24KHRfx8JVVvGESCAwooM0Civ@dpg-cuhl54jtq21c73bbpai0-a.frankfurt-postgres.render.com/test_pyco',
+            conn_max_age=600
+     )  
+    }   
+else:
+        print("db is local")
+        DATABASES = { 
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.getenv('PGDATABASE') or 'labor',
+            'USER': os.getenv('PGUSER') or 'postgres',
+            'PASSWORD': os.getenv('PGPASSWORD') or '123',  # Ensure a default empty string if not set
+            'HOST': os.getenv('PG_HOST') or 'localhost',  # Default to localhost if not set
+            'PORT': 5432, 
+        }
+    }
 
+
+print(DATABASES)
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
