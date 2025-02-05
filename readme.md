@@ -47,6 +47,14 @@ docker-compose up  --build
 
 2. Порт на котором запускается возможно кастомизировать.
 
+# Документация эндпоинтов:
+### https://documenter.getpostman.com/view/29025992/2sAYX5LiFH
+
+# Эксель отчет:
+## Точный:
+### https://storage.yandexcloud.net/filesup/tochnii_otchet_2025-02-05.xlsx
+## Общий
+### https://storage.yandexcloud.net/filesup/obshii_otchet_2025-02-05.xlsx
 
 
 Используемые инструменты/Tools:
@@ -66,8 +74,7 @@ docker-compose up  --build
 
 @telegram:belxz999
 
-PostMan docs:
-https://documenter.getpostman.com/view/29025992/2sAYX5LiFH
+
 
 Удалить мусор, использовать только если не запускается:
 docker system prune
