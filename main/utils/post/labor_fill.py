@@ -12,6 +12,11 @@ def labor_fill(request):
     if request.method == 'POST':
         employee = get_user(request)
         task_id = request.query_params.get("task_id")
+        if employee:
+                    task = Task.objects.get(taskId=task_id)
+                    if task.forEmployeeId != employee:  # Check if the task belongs to the employee
+                        return Response({"error": "Вы не можете отправить отчет так как это не ваша задача "}, status=403)
+        
         data = request.data
         departmentId = employee.departmentid.departmentId# Current date and time in Samara timezone
         if employee:
@@ -93,6 +98,7 @@ def labor_fill(request):
             return Response({'error': 'Рабочий под таким номером не существует '}, status=404)
 
 api_view(['GET'])
+
 def get_labor_costs(request,id):
     labor_costs = LaborCosts.objects.filter(departmentId=id)
     serializer = LaborCostsSerializer(labor_costs, many=True)

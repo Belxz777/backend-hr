@@ -1,7 +1,9 @@
 import os
 from pathlib import Path
 from urllib.parse import urlparse
+import dj_database_url
 from dotenv import load_dotenv
+import psycopg2
 load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -32,27 +34,37 @@ else:
         
     #     )
     #     }
-DATABASES = { 
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('PGDATABASE') or 'labor',
-        'USER': os.getenv('PGUSER') or 'postgres',
-        'PASSWORD': os.getenv('PGPASSWORD') or '123',  # Ensure a default empty string if not set
-        'HOST': os.getenv('PG_HOST') or 'localhost',  # Default to localhost if not set
-        'PORT': 5432, 
-    }
+# DATABASES = { 
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': os.getenv('PGDATABASE') or 'labor',
+#         'USER': os.getenv('PGUSER') or 'postgres',
+#         'PASSWORD': os.getenv('PGPASSWORD') or '123',  # Ensure a default empty string if not set
+#         'HOST': os.getenv('PG_HOST') or 'localhost',  # Default to localhost if not set
+#         'PORT': 5432, 
+#     }
+# }
+# try:
+#     conn = psycopg2.connect(
+#         dbname="test_pyco",
+#         user="test_pyco_user",
+#         password="zhsN9ck24KHRfx8JVVvGESCAwooM0Civ",
+#         host="dpg-cuhl54jtq21c73bbpai0-a",
+#         port=5432
+#     )
+#     print("Connection successful!")
+#     conn.close()
+# except Exception as e:
+#     print(f"Connection failed: {e}")
+# Replace the SQLite DATABASES configuration with PostgreSQL:
+# connection for render database external via url
+DATABASES = {
+    'default': dj_database_url.config(
+        # Replace this value with your local database's connection string.
+        default=os.getenv('DATABASE_URL') or 'postgresql://test_pyco_user:zhsN9ck24KHRfx8JVVvGESCAwooM0Civ@dpg-cuhl54jtq21c73bbpai0-a.frankfurt-postgres.render.com/test_pyco',
+        conn_max_age=600
+    )
 }
-CACHES = {
-    # we use "default" as the alias.
-    "default": {
-        # Here, we're using the database-backed cache backend.
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-
-        # Provide a LOCATION parameter to specify the database table name where cached data will be stored.
-        "LOCATION": "cached_data",
-    }
-}
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',

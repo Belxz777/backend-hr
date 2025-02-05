@@ -4,14 +4,9 @@ WORKDIR /usr/src/app
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
-ENV POSTGRES_USER=postgres1 
 ENV DEBUG = FALSE
 ENV SECRET_KEY=django-insecure-%xr3kz0z7d3jpo!t%c6%&wkvra=6lm=5qx+#ua8zu#184l#he@
-ENV POSTGRES_PASSWORD=awpbMho0QStEeHfPUl96bY0ApIEnoBOm
-ENV POSTGRES_DB=main_agry
-ENV POSTGRES_HOST=dpg-cti3fnogph6c73d4kekg-a
-ENV DATABASE_URL=postgresql://postgres1:awpbMho0QStEeHfPUl96bY0ApIEnoBOm@dpg-cti3fnogph6c73d4kekg-a/main_agry?ssl_mode=require
-
+ENV DATABASE_URL=postgresql://test_pyco_user:zhsN9ck24KHRfx8JVVvGESCAwooM0Civ@dpg-cuhl54jtq21c73bbpai0-a.frankfurt-postgres.render.com/test_pyco
 RUN apt-get update && apt-get install -y \
        build-essential  \
        libpq-dev \
