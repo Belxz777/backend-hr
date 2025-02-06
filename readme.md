@@ -21,34 +21,43 @@
 2. Или в ручную
 
 
-Команды для ручного запуска приложения при внутренней базе данных:
+# Ручной запуск
+
+## Необходимо  установить  зависимости и создать виртуальное окружение (.venv, .conda):
+
+> pip install -r requirements.txt
+
+в vs code возможно автоматическая установка .venv , необходимо скачать *Python Extension*
+
+## Применение миграции , создание сущностей в базе данных:
+### Этот шаг проделывается при условии что база данных внутренняя.
+’’’
+> python manage.py makemigrations 
+
+> python manage.py migrate 
+’’’
+
+## Запуск приложения 
+
+’’’
+> python manage.py runserver 
+’’’
 
 
-1.pip install -r requirements.txt (при первом запуске для установки зависимостей)
-(установите виртуальное окружение .venv или .conda)
+
+# Также возможен  ручной запуск через докер:
+‘‘‘
+docker build <imagename> 
+docker run <config> <imageid> 
+‘‘‘
 
 
-2.Python manage.py makemigrations  essential (для создания миграции)
-
-
-3.Python manage.py migrate essential (для применения миграции)
-
-
-4.Python manage.py runserver (для запуска сервера)
-
-При внешней миграции применять не нужно.
-
-Также возможен запуск через докер:
-//собрать image 
-//docker build <imagename> <directory>
-//запустить
-//docker run <config> <imageid> 
-
-
-Через docker-compose:
+# Через docker-compose:
+‘‘‘
 docker-compose run backend  python manage.py makemigrations
 docker-compose run backend  python manage.py migrate
 docker-compose up  --build
+‘‘‘
 
 
 
@@ -64,7 +73,7 @@ docker-compose up  --build
 
 
 # Используемые инструменты:
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white) ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white) ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white) ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white) 
 
 ![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white) ![DjangoREST](https://img.shields.io/badge/DJANGO-REST-ff1709?style=for-the-badge&logo=django&logoColor=white&color=ff1709&labelColor=gray) ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) 
 
