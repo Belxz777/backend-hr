@@ -29,35 +29,42 @@
 
 в vs code возможно автоматическая установка .venv , необходимо скачать *Python Extension*
 
-## Применение миграции , создание сущностей в базе данных:
+
+## Применение миграции , создание сущностей в базе данных:
 ### Этот шаг проделывается при условии что база данных внутренняя.
-’’’
+
+```
 > python manage.py makemigrations 
-
+
 > python manage.py migrate 
-’’’
+```
 
 ## Запуск приложения 
 
-’’’
+```
 > python manage.py runserver 
-’’’
+
+```
+
 
 
 
 # Также возможен  ручной запуск через докер:
-‘‘‘
+```
 docker build <imagename> 
+
 docker run <config> <imageid> 
-‘‘‘
+```
 
 
 # Через docker-compose:
-‘‘‘
+```
 docker-compose run backend  python manage.py makemigrations
+
 docker-compose run backend  python manage.py migrate
+
 docker-compose up  --build
-‘‘‘
+```
 
 
 
