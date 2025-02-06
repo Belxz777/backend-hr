@@ -6,7 +6,6 @@ set PGUSER=postgres
 set PGPASSWORD=123
 set ADMINPASS=a1234dfc
 set DEBUG=FALSE
-set EXTERNAL_DB = False
 
 @REM docker-compose -f docker-compose.yml up --build backend
 @REM docker-compose -f docker-compose.yml up db
