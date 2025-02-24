@@ -1,9 +1,9 @@
 from django.urls import path
 
+from main.utils.compliencyandhistory.regdata import departsdata
 from main.utils.post.add_tasks import upload_tasks
 from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList,TaskManaging
 from main.utils import access_managing
-
 from .utils.post import labor_fill
 from .utils.report import getReport,getXlsxReport
 from .utils.compliencyandhistory.compliency import EmployeePerformanceView
@@ -31,6 +31,8 @@ urlpatterns = [
 
     
     path('entities/department/',DepartmentManaging.as_view()),
+
+    path('entities/departments/overall/',departsdata),
 
     path('entities/department/create/',DepartmentList.as_view()),
     
