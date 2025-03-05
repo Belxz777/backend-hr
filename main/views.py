@@ -5,6 +5,7 @@ from rest_framework.exceptions import AuthenticationFailed
 
 import jwt
 
+from main.utils.auth import get_user
 from main.utils.closeDate import calculate_close_date
 from .models import Job,Department,Task,Employee
 from .serializer import JobSerializer,DepartmentSerializer,TaskSerializer,EmployeeSerializer
@@ -184,10 +185,13 @@ class TaskManaging(APIView):
 # "hourstodo":7,
 # "taskName":"Реализовать возможность загрузки задачи"
 #         }
-        request.data['forEmployeeId']
+    # 1. Получить данные из запроса
+        user  = get_user(request)
+        request.data['forEmployeeId'] = user.employeeId
         request.data['closeDate'] = calculate_close_date(request.data['hourstodo'],datetime.now())
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
+            print("created")
             serializer.save()
             return Response({
                  'message': 'Задача создана',

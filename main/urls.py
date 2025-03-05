@@ -44,6 +44,8 @@ urlpatterns = [
 
 
     path('entities/task/',TaskManaging.as_view()),
+    
+    path('entities/task/ext',TaskManaging.as_view()),
 
     path('entities/user/tasks/bystatus/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
     

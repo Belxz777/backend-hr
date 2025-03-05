@@ -55,6 +55,5 @@ class ToReportTasks(APIView):
 def getDepEmp(request):
     if request.method == 'GET':
         user = get_user(request)
-        id =request.query_params.get('department_id')
-        employees = Employee.objects.filter(departmentid_id=id).exclude(employeeId=user.employeeId)
-        return Response(employees.values('employeeId', 'firstName', 'lastName'))    
+        employees = Employee.objects.filter(departmentid_id=user.departmentid.departmentId).exclude(employeeId=user.employeeId)
+        return Response(employees.values('employeeId', 'firstName', 'lastName','position'))    
