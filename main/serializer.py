@@ -27,7 +27,7 @@ class JobSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['taskId', 'taskName','forEmployeeId','status','hourstodo' ,'been','taskDescription',  'fromDate','closeDate','isExpired']
+        fields = ['taskId', 'taskName','forEmployeeId','status','hourstodo','category','been','taskDescription',  'fromDate','closeDate','isExpired']
 
 class   DepartmentSerializer(serializers.ModelSerializer):
     class Meta:

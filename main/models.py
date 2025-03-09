@@ -17,7 +17,8 @@ class Task(models.Model):
         ('in_progress', 'В процессе'),
         ('completed', 'Готово'),
         ('todo', 'Сделать')
-    ], default='not_started')  # Статус задачи
+    ], default='not_started') 
+    category = models.CharField(max_length=20, default='not_started')  # Статус задачи
     hourstodo = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
             MinValueValidator(0.5)
