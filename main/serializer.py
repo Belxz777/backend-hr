@@ -11,7 +11,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
-        fields = ['jobId','jobName']  
+        fields = ['jobId','jobName','rate']  
 
     def update(self, instance, validated_data):
         instance.jobName = validated_data.get('jobName', instance.jobName)
@@ -27,7 +27,7 @@ class JobSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['taskId', 'taskName','forEmployeeId','status','hourstodo','category','been','taskDescription',  'fromDate','closeDate','isExpired']
+        fields = ['taskId', 'taskName','forEmployeeId','status','hourstodo','been','taskDescription',  'fromDate','closeDate','isExpired']
 
 class   DepartmentSerializer(serializers.ModelSerializer):
     class Meta:

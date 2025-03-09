@@ -5,7 +5,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 class Job(models.Model):
     # Модель для должностей, содержит информацию о каждой должности
     jobId = models.AutoField(primary_key=True)  # Уникальный идентификатор должности
-    jobName = models.CharField(max_length=30, null=False)  # Название должности
+    jobName = models.CharField(max_length=30, null=False) 
+    rate = models.IntegerField(default=1,
+        validators=[
+            MaxValueValidator(5),
+            MinValueValidator(1)
+        ])# # Название должности
 #проекты не нужны надо от них избавляться
 class Task(models.Model):
     # Модель для задач, содержит информацию о каждой задаче
@@ -18,7 +23,6 @@ class Task(models.Model):
         ('completed', 'Готово'),
         ('todo', 'Сделать')
     ], default='not_started') 
-    category = models.CharField(max_length=20, default='not_started')  # Статус задачи
     hourstodo = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
             MinValueValidator(0.5)
@@ -44,7 +48,7 @@ class LaborCosts(models.Model):
     workingHours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
             MinValueValidator(1)
-        ], null=False)  # Затраченное время
+    ], null=False)  # Затраченное время
     comment = models.CharField(max_length=150, null=True) # Комментарий
 
 
@@ -57,12 +61,9 @@ class Employee(models.Model):
     login = models.CharField(max_length=30, null=False)  # Логин сотрудника
     password = models.CharField(max_length=30, null=False)  # Пароль сотрудника
     jobid = models.ForeignKey(Job, on_delete=models.CASCADE) 
+    position = models.IntegerField(default=1)
     #добавить иерархию
-    position = models.IntegerField(default=1,
-        validators=[
-            MaxValueValidator(5),
-            MinValueValidator(1)
-        ])#1 просто сотрудник  2 начальник сотрудника и тд чем выше position тем больше прав
+    # #1 просто сотрудник  2 начальник сотрудника и тд чем выше position тем больше прав
     departmentid = models.ForeignKey(Department, on_delete=models.CASCADE) 
     expiredTasksCount = models.IntegerField(null=True) 
     tasksCount = models.IntegerField(null=True)
