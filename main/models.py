@@ -30,7 +30,7 @@ class Task(models.Model):
 
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
-    departmentName = models.CharField(max_length=30, null=False) 
+    departmentName = models.CharField(max_length=100, null=False) 
     departmentDescription = models.CharField(max_length=200, null=True) 
     headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)# Название услуги
 
