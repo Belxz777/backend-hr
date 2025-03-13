@@ -65,7 +65,7 @@ if  ext_db:
     DATABASES = {
         'default': dj_database_url.config(
         # Replace this value with your local database's connection string.
-            default=os.getenv('DATABASE_URL') or 'postgresql://test_pyco_user:zhsN9ck24KHRfx8JVVvGESCAwooM0Civ@dpg-cuhl54jtq21c73bbpai0-a.frankfurt-postgres.render.com/test_pyco',
+            default=os.getenv('DATABASE_URL') or 'postgresql://postgresd:xIenuJ2m7X0AhIKfi8KTX1NCYt5w6R79@dpg-cv9f8s9u0jms73ejfgtg-a.frankfurt-postgres.render.com/smt_wvo0',
             conn_max_age=600
      )  
     }   
