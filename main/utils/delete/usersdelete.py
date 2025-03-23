@@ -5,8 +5,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 
 
-def delete_user(request):
-    id = request.query_params.get('id')
+def delete_user(request, id):
     user = Employee.objects.filter(departmentId=id)
     if user:
         user.delete()
