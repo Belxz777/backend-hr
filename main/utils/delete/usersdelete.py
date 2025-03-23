@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 
 def delete_user(request, id):
-    user = Employee.objects.filter(departmentId=id)
+    user = Employee.objects.filter(employeeId=id).first()
     if user:
         user.delete()
         return Response({'message': 'Сотрудник удален'}, status=204)
