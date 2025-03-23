@@ -1,6 +1,7 @@
 from django.urls import path
 
 from main.utils.compliencyandhistory.regdata import departsdata
+from main.utils.delete.usersdelete import delete_user
 from main.utils.post.add_tasks import upload_tasks
 from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList,TaskManaging
 from main.utils import access_managing
@@ -18,6 +19,8 @@ urlpatterns = [
     path('users/get_user',access_managing.GetUser.as_view()),
     path('users/deposition/',access_managing.Deposition.as_view()),
     path('users/compliancy/',EmployeePerformanceView.as_view()),# типо как на github
+    path('users/delete/<id>',delete_user),# типо как на github
+
  # это работает , есть небольная проблема с caching
 
     

@@ -1,102 +1,78 @@
-from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-
-from main.models import Employee,LaborCosts,Task
+from datetime import datetime
+from main.models import Employee, LaborCosts, Task
 from main.serializer import LaborCostsSerializer
 from main.utils.auth import get_user
 from main.utils.closeDate import isExpired
 
-@api_view([ 'POST'])
+@api_view(['POST'])
 def labor_fill(request):
     if request.method == 'POST':
         employee = get_user(request)
         task_id = request.query_params.get("task_id")
-        if employee:
-                    task = Task.objects.get(taskId=task_id)
-                    if task.forEmployeeId != employee:  # Check if the task belongs to the employee
-                        return Response({"error": "Вы не можете отправить отчет так как это не ваша задача "}, status=403)
-        
+        if not employee:
+            return Response({"error": "Рабочий под таким номером не существует"}, status=404)
+
+        try:
+            task = Task.objects.get(taskId=task_id)
+        except Task.DoesNotExist:
+            return Response({"error": "Задача не найдена"}, status=404)
+
+        # Проверка, принадлежит ли задача сотруднику
+        if task.forEmployeeId != employee:
+            return Response({"error": "Вы не можете отправить отчет, так как это не ваша задача"}, status=403)
+
         data = request.data
-        departmentId = employee.departmentid.departmentId# Current date and time in Samara timezone
-        if employee:
-    #           laborCostId = models.IntegerField(primary_key=True)  # Уникальный идентификатор трудозатрат
-    # employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
-    # departmentId = models.IntegerField(null=True)  # Идентификатор услуги
-    # taskId = models.ForeignKey(Task, on_delete=models.CASCADE,null=False) # Идентификатор задачии
-    # date = models.DateField(auto_now_add=True)  # Дата отчета о работе
-    # workingHours = models.DecimalField(max_digits=5, decimal_places=2, null=False)  # Затраченное время
-    # comment = models.CharField(max_length=30, null=True)
-            laborCost = LaborCosts.objects.create(
-                employeeId=employee,
-                departmentId=departmentId,
-                taskId=Task.objects.get(taskId=task_id),  # Ensure taskId is a Task instance
-                workingHours=data['workingHours'],
-                comment=data['comment']
-            )  
-            if laborCost:
-                task = Task.objects.get(taskId=task_id)
-                made = float(task.hourstodo) - float(data['workingHours'])              
-                if task:
-                    if isExpired(datetime.now(),task.closeDate) and task.status != 'completed':
-                        task.isExpired =  True
-                        task.save()
-                        if employee.expiredTasksCount is None:
-                            employee.expiredTasksCount = 0
-                            employee.expiredTasksCount += 1
-                            employee.save()
-                        else:
-                            employee.expiredTasksCount += 1
-                            employee.save()
+        departmentId = employee.departmentid.departmentId
 
-                    if made == 0:
-                        task.status = 'completed'
-                        task.hourstodo = made
-                        if employee.tasksCount is None:
-                            employee.tasksCount = 0
-                            employee.save()
-                        else:
-                            employee.tasksCount -= 1
-                            employee.save()
-                        if employee.completedTasks is None:
-                            employee.completedTasks = 0
-                            employee.completedTasks += 1
-                            employee.save()
-                        else:
-                            employee.completedTasks += 1
-                            employee.save()
-                        task.save()
-                    elif made <0:
-                        task.status = 'completed'
-                        task.hourstodo = 0
-                        if employee.tasksCount is None:
-                            employee.tasksCount = 0
-                            employee.save()
-                        else:
-                            employee.tasksCount -= 1
-                            employee.save()
-                        if employee.completedTasks is None:
-                            employee.completedTasks = 0
-                            employee.completedTasks += 1
-                            employee.save()
-                        else:
-                            employee.completedTasks += 1
-                            employee.save()
-                        employee.completedTasks += 1
-                        employee.save()
-                        task.save()
-                    else:
-                        if task.been==False:
-                            task.been = True
-                            task.save()
-                        task.hourstodo = made
-                        task.save()
-                return Response({'message': 'Запись о проделаной работе сделана. / Хорошего вам дня!'}, status=201)
-            else:
-                return Response({'error': 'Возможно вы отправили не правильные данные | Посмотрите тело запроса.'}, status=400)
+        # Создание записи о трудозатратах
+        laborCost = LaborCosts.objects.create(
+            employeeId=employee,
+            departmentId=departmentId,
+            taskId=task,
+            workingHours=data['workingHours'],
+            comment=data['comment']
+        )
+
+        if not laborCost:
+            return Response({'error': 'Возможно вы отправили неправильные данные | Посмотрите тело запроса.'}, status=400)
+
+        # Обновление задачи
+        made = float(task.hourstodo) - float(data['workingHours'])
+
+        if made <= 0:
+            # Задача завершена
+            task.status = 'completed'
+            task.hourstodo = 0
+
+            # Обновление счетчиков сотрудника
+            if employee.tasksCount is None:
+                employee.tasksCount = 0
+            employee.tasksCount -= 1
+
+            if employee.completedTasks is None:
+                employee.completedTasks = 0
+            employee.completedTasks += 1
+
+            # Проверка на истечение срока
+            if isExpired(datetime.now(), task.closeDate):
+                task.isExpired = True
+                if employee.expiredTasksCount is None:
+                    employee.expiredTasksCount = 0
+                employee.expiredTasksCount += 1
         else:
-            return Response({'error': 'Рабочий под таким номером не существует '}, status=404)
+            # Задача не завершена
+            task.hourstodo = made
+            if not task.been:
+                task.been = True
 
+        # Сохранение изменений
+        task.save()
+        employee.save()
+
+        return Response({'message': 'Запись о проделанной работе сделана. Хорошего вам дня!'}, status=201)
+    
 api_view(['GET'])
 
 def get_labor_costs(request,id):
