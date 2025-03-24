@@ -82,3 +82,12 @@ def get_labor_costs(request,id):
         return Response(serializer.data)
     else:
         return Response({'error':serializer.errors,'possiblefix':"Обратитесь к разработчику программы."}, status=400)
+    
+
+@api_view(['DELETE'])
+def delete_user(request, id):
+    user = Employee.objects.filter(employeeId=id).first()
+    if user:
+        user.delete()
+        return Response({'message': 'Сотрудник удален'}, status=204)
+    return Response({'error': 'Сотрудник не найден'}, status=404)
