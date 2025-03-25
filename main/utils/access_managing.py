@@ -5,8 +5,10 @@ from rest_framework.views import APIView
 
 import jwt,datetime
 from django.core.cache import cache
+
+from main.utils.auth import get_user
 from ..models import Department, Employee
-from ..serializer import EmployeeSerializer
+from ..serializer import AdminEmployeeSerializer, EmployeeSerializer
 
 def check_token(request):
     token = request.COOKIES.get('jwt')
@@ -151,3 +153,31 @@ class Deposition(APIView):
             change = Employee.objects.filter(employeeId = request.data['empid']).update(position=new_pos)
             print(change)
             return Response({'message': 'Должность успешно изменена'})
+        
+@api_view(['GET'])
+def UserList(request):
+    user = get_user(request)
+    if user:
+        if user.position >=4:
+            users = Employee.objects.all()
+            return Response(users.values('employeeId', 'firstName', 'lastName','position'))
+        else:
+            return Response({'message': 'У вас нет доступа к этой странице'})
+    else:
+        return Response({'message': 'Ты не аутетифицирован '})
+    
+
+@api_view(['GET'])
+def UserDetail(request, pk):
+    user = get_user(request)
+    if user:
+        if user.position >=4:
+            userfound = Employee.objects.get(employeeId=pk)
+            if not userfound:
+                return Response({'message': 'Пользователь не найден'})
+            serializer = AdminEmployeeSerializer(userfound)
+            return Response(serializer.data)
+        else:
+            return Response({'message': 'У вас нет доступа к этой странице'})
+    else:
+        return Response({'message': 'Ты не аутетифицирован '})

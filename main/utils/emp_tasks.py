@@ -56,4 +56,4 @@ def getDepEmp(request):
     if request.method == 'GET':
         user = get_user(request)
         employees = Employee.objects.filter(departmentid_id=user.departmentid.departmentId).exclude(employeeId=user.employeeId)
-        return Response(employees.values('employeeId', 'firstName', 'lastName','position'))    
+    return Response(employees.values('employeeId', 'firstName', 'lastName','position'))    
