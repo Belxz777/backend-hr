@@ -2,6 +2,7 @@ from django.urls import path
 
 from main.utils.compliencyandhistory.regdata import departsdata
 from main.utils.post.add_tasks import upload_tasks
+from main.utils.work.statistics import get_app_status_data
 from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList,TaskManaging
 from main.utils import access_managing
 from .utils.post import labor_fill
@@ -71,11 +72,15 @@ urlpatterns = [
     path('history/department/tasks',DepartmentPerformanceView.as_view()),# чекаем все таски за промежуток времени
 
 
+
+path('alldata',getXlsxReport.get_all_labor_costs_xlsx),
     # path('neuro/analytics/department/') # аналитика с нейросетки
 
 
 
     # path('entities/department/xlsx/add',upload_tasks)
+
+path('statistics',get_app_status_data)
 
 
 
