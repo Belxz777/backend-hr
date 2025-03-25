@@ -17,4 +17,5 @@ et-xmlfile==2.0.0  # не знаю
 openpyxl==3.1.5 # для работы с excel    
 dj-database-url==2.3.0
 psutil==7.0.0
+tzdata==2025.1
  
