@@ -191,7 +191,6 @@ class TaskManaging(APIView):
         request.data['closeDate'] = calculate_close_date(request.data['hourstodo'],datetime.now())
         serializer = TaskSerializer(data=request.data)
         if serializer.is_valid():
-            print("created")
             serializer.save()
             return Response({
                  'message': 'Задача создана',
