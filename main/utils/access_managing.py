@@ -171,12 +171,13 @@ def UserList(request):
 def UserDetail(request, pk):
     user = get_user(request)
     if user:
-        if user.position >=4:
-            userfound = Employee.objects.get(employeeId=pk)
-            if not userfound:
+        if user.position >= 4:
+            try:
+                userfound = Employee.objects.get(employeeId=pk)
+                serializer = AdminEmployeeSerializer(userfound)
+                return Response(serializer.data)
+            except Employee.DoesNotExist:
                 return Response({'message': 'Пользователь не найден'})
-            serializer = AdminEmployeeSerializer(userfound)
-            return Response(serializer.data)
         else:
             return Response({'message': 'У вас нет доступа к этой странице'})
     else:
