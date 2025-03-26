@@ -61,7 +61,7 @@ class LoginView(APIView):
         response.data = {
             'message': 'Успешно вошли',
             'token': token,
-            'time': datetime.datetime.utcnow() + datetime.timedelta(days=10)
+            'time':  datetime.datetime.now().strftime("%H:%M:%S")
         }
         return response
 
