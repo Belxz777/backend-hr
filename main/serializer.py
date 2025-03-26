@@ -7,7 +7,13 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = Employee
         fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid','expiredTasksCount','position','tasksCount','completedTasks']
         extra_kwargs = {'password': {'write_only': True},
-                        'login': {'write_only': True}}     
+                        'login': {'write_only': True}}   
+
+class AdminEmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid','expiredTasksCount','position','tasksCount','completedTasks']
+        
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job

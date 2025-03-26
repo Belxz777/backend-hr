@@ -19,7 +19,11 @@ urlpatterns = [
     path('users/get_user',access_managing.GetUser.as_view()),
     path('users/deposition/',access_managing.Deposition.as_view()),
     path('users/compliancy/',EmployeePerformanceView.as_view()),# типо как на github
-    path('users/delete/<id>',labor_fill.delete_user),# типо как на github
+    path('users/delete/<id>',labor_fill.delete_user),
+
+    path('users/',access_managing.UserList),
+
+    path('users/<pk>',access_managing.UserDetail),
 
  # это работает , есть небольная проблема с caching
     
