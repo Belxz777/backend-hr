@@ -1,56 +1,33 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-# Create your models here.
 
 class Job(models.Model):
     # Модель для должностей, содержит информацию о каждой должности
     jobId = models.AutoField(primary_key=True)  # Уникальный идентификатор должности
     jobName = models.CharField(max_length=30, null=False) 
-    rate = models.IntegerField(default=1,
-        validators=[
-            MaxValueValidator(5),
-            MinValueValidator(1)
-        ])# # Название должности
-#проекты не нужны надо от них избавляться
-class Task(models.Model):
-    # Модель для задач, содержит информацию о каждой задаче
-    taskId = models.AutoField(primary_key=True)  # Уникальный идентификатор задачи
-    taskName = models.CharField(max_length=50, null=False)  # Название задачи
-    taskDescription = models.CharField(max_length=150, null=True)
-    forEmployeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) 
-    status = models.CharField(max_length=20, choices=[
-        ('in_progress', 'В процессе'),
-        ('completed', 'Готово'),
-        ('todo', 'Сделать')
-    ], default='not_started') 
-    hourstodo = models.DecimalField(max_digits=5, decimal_places=2, validators=[
-            MaxValueValidator(20),
-            MinValueValidator(0.5)
-        ], null=False) 
-    been = models.BooleanField(default=False)
-    fromDate = models.DateTimeField( auto_now_add=True)
-    closeDate = models.DateTimeField(null=True)  
-    isExpired = models.BooleanField(default=False)
+    typicalFunctions = models.ManyToManyField('TypicalFunction')
+    indepart = models.ForeignKey('Department', on_delete=models.CASCADE)
 
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
     departmentName = models.CharField(max_length=100, null=False) 
     departmentDescription = models.CharField(max_length=200, null=True) 
-    headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)# Название услуги
+    headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)
+    typicalFunctions = models.ManyToManyField('TypicalFunction') 
 
 class LaborCosts(models.Model):
     # Модель для трудозатрат, содержит информацию о затратах труда
     laborCostId = models.AutoField(primary_key=True)  # Уникальный идентификатор трудозатрат
     employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
     departmentId = models.IntegerField(null=True)  # Идентификатор услуги
-    taskId = models.ForeignKey("Task", on_delete=models.CASCADE, null=False)  # Идентификатор задачи
-    date = models.DateField(auto_now_add=True)  # Дата отчета о работе
-    workingHours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
+    typicalFunctionId = models.ForeignKey('TypicalFunction', on_delete=models.CASCADE)  # Идентификатор услуги
+    worked_hours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
-            MinValueValidator(1)
-    ], null=False)  # Затраченное время
-    comment = models.CharField(max_length=150, null=True) # Комментарий
-
+            MinValueValidator(0.5)
+        ], null=False)
+    comment = models.CharField(max_length=300, null=True)  # Комментарий к трудозатратам
+    date = models.DateTimeField( auto_now_add=True)
+    
 
 class Employee(models.Model):
     # Модель для сотрудников, содержит информацию о работниках
@@ -65,9 +42,29 @@ class Employee(models.Model):
     #добавить иерархию
     # #1 просто сотрудник  2 начальник сотрудника и тд чем выше position тем больше прав
     departmentid = models.ForeignKey(Department, on_delete=models.CASCADE) 
-    expiredTasksCount = models.IntegerField(null=True) 
-    tasksCount = models.IntegerField(null=True)
-    completedTasks = models.IntegerField(null=True)
+   # expiredTasksCount = models.IntegerField(null=True) 
+   # tasksCount = models.IntegerField(null=True)
+    # completedTasks = models.IntegerField(null=True)
+
+
+
+class TypicalFunction(models.Model):
+    # Модель для типовых функций, содержит информацию о типовых функциях
+    typicalFunctionId = models.AutoField(primary_key=True)  # Уникальный идентификатор типовой функции
+    typicalFunctionName = models.CharField(max_length=50, null=False)  # Название типовой функции
+    typicalFunctionDescription = models.CharField(max_length=150, null=True)  # Описание типовой функции
+    departmentId = models.ForeignKey(Department, on_delete=models.CASCADE)
+    time = models.DecimalField(max_digits=5, decimal_places=2, validators=[
+            MaxValueValidator(20),
+            MinValueValidator(0.5)
+        ], null=False)
+    forjobIds = models.ManyToManyField(Job)
+    isMain = models.BooleanField(default=False) # по дефолту вспомогательная не главная
+
+
+
+
+
 # Идентификатор отдела сотрудника
 
 #нужно продумать так что бы можно было интегрировать нейронку
