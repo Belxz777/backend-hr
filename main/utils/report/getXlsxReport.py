@@ -176,7 +176,7 @@ def get_all_labor_costs_xlsx(request):
     ws.title = "Все трудозатраты"
 
     # Headers
-    headers = ['report_id', 'employee_id', 'task_id', "task_name", "task_from_date", 'report_date', 'worked_hours', 'left_hours', 'comment']
+    headers = ['report_id', 'employee_id','department_id', 'task_id', "task_name", "task_from_date", 'report_date', 'worked_hours', 'left_hours', 'comment']
     ws.append(headers)
     column_widths = {i: len(header) for i, header in enumerate(headers, start=1)}
 
@@ -186,6 +186,7 @@ def get_all_labor_costs_xlsx(request):
         row = [
             cost['laborCostId'],
             cost['employeeId'],
+            cost['departmentId'],
             cost['taskId'],
             task.taskName,
             task.fromDate.date(),
