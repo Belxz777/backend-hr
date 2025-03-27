@@ -58,20 +58,10 @@ class LoginView(APIView):
         token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
         response = Response()
         response.set_cookie(key='jwt', value=token, httponly=True)
-        isBoss = Department.objects.filter(headId=user.employeeId).first()
-        if isBoss:
-            response.data = {
-                'message': 'Успешно вошли',
-                'token': token,
-                'isBoss': True,
-                'departmentId': isBoss.departmentId
-            }
-            return response
-        else:    
-            response.data = {
+        response.data = {
             'message': 'Успешно вошли',
             'token': token,
-            'isBoss': False
+            'time':  datetime.datetime.now().strftime("%H:%M:%S")
         }
         return response
 
