@@ -1,93 +1,93 @@
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from datetime import datetime
-from main.models import Employee, LaborCosts, Task
-from main.serializer import LaborCostsSerializer
-from main.utils.auth import get_user
-from main.utils.closeDate import isExpired
+# from rest_framework.response import Response
+# from rest_framework.decorators import api_view
+# from datetime import datetime
+# from main.models import Employee, LaborCosts, Task
+# from main.serializer import LaborCostsSerializer
+# from main.utils.auth import get_user
+# from main.utils.closeDate import isExpired
 
-@api_view(['POST'])
-def labor_fill(request):
-    if request.method == 'POST':
-        employee = get_user(request)
-        task_id = request.query_params.get("task_id")
-        if not employee:
-            return Response({"error": "Рабочий под таким номером не существует"}, status=404)
+# @api_view(['POST'])
+# def labor_fill(request):
+#     if request.method == 'POST':
+#         employee = get_user(request)
+#         task_id = request.query_params.get("task_id")
+#         if not employee:
+#             return Response({"error": "Рабочий под таким номером не существует"}, status=404)
 
-        try:
-            task = Task.objects.get(taskId=task_id)
-        except Task.DoesNotExist:
-            return Response({"error": "Задача не найдена"}, status=404)
+#         try:
+#             task = Task.objects.get(taskId=task_id)
+#         except Task.DoesNotExist:
+#             return Response({"error": "Задача не найдена"}, status=404)
 
-        # Проверка, принадлежит ли задача сотруднику
-        if task.forEmployeeId != employee:
-            return Response({"error": "Вы не можете отправить отчет, так как это не ваша задача"}, status=403)
+#         # Проверка, принадлежит ли задача сотруднику
+#         if task.forEmployeeId != employee:
+#             return Response({"error": "Вы не можете отправить отчет, так как это не ваша задача"}, status=403)
 
-        data = request.data
-        departmentId = employee.departmentid.departmentId
+#         data = request.data
+#         departmentId = employee.departmentid.departmentId
 
-        # Создание записи о трудозатратах
-        laborCost = LaborCosts.objects.create(
-            employeeId=employee,
-            departmentId=departmentId,
-            taskId=task,
-            workingHours=data['workingHours'],
-            comment=data['comment']
-        )
+#         # Создание записи о трудозатратах
+#         laborCost = LaborCosts.objects.create(
+#             employeeId=employee,
+#             departmentId=departmentId,
+#             taskId=task,
+#             workingHours=data['workingHours'],
+#             comment=data['comment']
+#         )
 
-        if not laborCost:
-            return Response({'error': 'Возможно вы отправили неправильные данные | Посмотрите тело запроса.'}, status=400)
+#         if not laborCost:
+#             return Response({'error': 'Возможно вы отправили неправильные данные | Посмотрите тело запроса.'}, status=400)
 
-        # Обновление задачи
-        made = float(task.hourstodo) - float(data['workingHours'])
+#         # Обновление задачи
+#         made = float(task.hourstodo) - float(data['workingHours'])
 
-        if made <= 0:
-            # Задача завершена
-            task.status = 'completed'
-            task.hourstodo = 0
+#         if made <= 0:
+#             # Задача завершена
+#             task.status = 'completed'
+#             task.hourstodo = 0
 
-            # Обновление счетчиков сотрудника
-            if employee.tasksCount is None:
-                employee.tasksCount = 0
-            employee.tasksCount -= 1
+#             # Обновление счетчиков сотрудника
+#             if employee.tasksCount is None:
+#                 employee.tasksCount = 0
+#             employee.tasksCount -= 1
 
-            if employee.completedTasks is None:
-                employee.completedTasks = 0
-            employee.completedTasks += 1
+#             if employee.completedTasks is None:
+#                 employee.completedTasks = 0
+#             employee.completedTasks += 1
 
-            # Проверка на истечение срока
-            if isExpired(datetime.now(), task.closeDate):
-                task.isExpired = True
-                if employee.expiredTasksCount is None:
-                    employee.expiredTasksCount = 0
-                employee.expiredTasksCount += 1
-        else:
-            # Задача не завершена
-            task.hourstodo = made
-            if not task.been:
-                task.been = True
+#             # Проверка на истечение срока
+#             if isExpired(datetime.now(), task.closeDate):
+#                 task.isExpired = True
+#                 if employee.expiredTasksCount is None:
+#                     employee.expiredTasksCount = 0
+#                 employee.expiredTasksCount += 1
+#         else:
+#             # Задача не завершена
+#             task.hourstodo = made
+#             if not task.been:
+#                 task.been = True
 
-        # Сохранение изменений
-        task.save()
-        employee.save()
+#         # Сохранение изменений
+#         task.save()
+#         employee.save()
 
-        return Response({'message': 'Запись о проделанной работе сделана. Хорошего вам дня!'}, status=201)
+#         return Response({'message': 'Запись о проделанной работе сделана. Хорошего вам дня!'}, status=201)
     
-api_view(['GET'])
+# api_view(['GET'])
 
-def get_labor_costs(request,id):
-    labor_costs = LaborCosts.objects.filter(departmentId=id)
-    serializer = LaborCostsSerializer(labor_costs, many=True)
-    if serializer.is_valid():
-        return Response(serializer.data)
-    else:
-        return Response({'error':serializer.errors,'possiblefix':"Обратитесь к разработчику программы."}, status=400)
+# def get_labor_costs(request,id):
+#     labor_costs = LaborCosts.objects.filter(departmentId=id)
+#     serializer = LaborCostsSerializer(labor_costs, many=True)
+#     if serializer.is_valid():
+#         return Response(serializer.data)
+#     else:
+#         return Response({'error':serializer.errors,'possiblefix':"Обратитесь к разработчику программы."}, status=400)
     
 
-@api_view(['DELETE'])
-def delete_user(request, id):
-    user = Employee.objects.filter(employeeId=id).first()
-    if user:
-        user.delete()
-        return Response({'message': 'Сотрудник удален'}, status=204)
-    return Response({'error': 'Сотрудник не найден'}, status=404)
+# @api_view(['DELETE'])
+# def delete_user(request, id):
+#     user = Employee.objects.filter(employeeId=id).first()
+#     if user:
+#         user.delete()
+#         return Response({'message': 'Сотрудник удален'}, status=204)
+#     return Response({'error': 'Сотрудник не найден'}, status=404)

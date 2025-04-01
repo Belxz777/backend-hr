@@ -1,15 +1,15 @@
 from django.urls import path
 
 from main.utils.compliencyandhistory.regdata import departsdata
-from main.utils.post.add_tasks import upload_tasks
+from main.utils.func.crud import FunctionView
 from main.utils.work.statistics import get_app_status_data
-from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList,TaskManaging
+from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList
 from main.utils import access_managing
 from .utils.post import labor_fill
-from .utils.report import getReport,getXlsxReport
+# from .utils.report import getReport,getXlsxReport
 from .utils.compliencyandhistory.compliency import EmployeePerformanceView
 from .utils.compliencyandhistory.history import DepartmentPerformanceView
-from .utils.emp_tasks import EmployeeTasksbystatus,AllEmployeeTasks, ToReportTasks, getDepEmp
+from .utils.emp_tasks import  getDepEmp
 urlpatterns = [
     path('users/create',access_managing.RegisterView.as_view()),#для регистрации пользователей
     path("users/login",access_managing.LoginView.as_view()),#дяя входина
@@ -19,7 +19,7 @@ urlpatterns = [
     path('users/get_user',access_managing.GetUser.as_view()),
     path('users/deposition/',access_managing.Deposition.as_view()),
     path('users/compliancy/',EmployeePerformanceView.as_view()),# типо как на github
-    path('users/delete/<id>',labor_fill.delete_user),
+    # path('users/delete/<id>',labor_fill.delete_user),
 
     path('users/',access_managing.UserList),
 
@@ -46,41 +46,41 @@ urlpatterns = [
     
 
 
+path('entities/typicalfunc/',FunctionView.as_view()),
 
 
-
-    path('entities/task/',TaskManaging.as_view()),
+    # path('entities/task/',TaskManaging.as_view()),
     
-    path('entities/task/ext',TaskManaging.as_view()),
+    # path('entities/task/ext',TaskManaging.as_view()),
 
-    path('entities/user/tasks/bystatus/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
+    # path('entities/user/tasks/bystatus/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
     
-    path('entities/user/tasks/', AllEmployeeTasks.as_view()),
+    # path('entities/user/tasks/', AllEmployeeTasks.as_view()),
 
-    path('entities/user/tasks/reported/', ToReportTasks.as_view()),
-
-
-
-
-    path('fill/progress/', labor_fill.labor_fill),
+    # path('entities/user/tasks/reported/', ToReportTasks.as_view()),
 
 
 
-    path('download/department/json/',getReport.get_labor_costs), # test для проверки записей о трудозатратах
 
-    path('download/department/xlsx/',getXlsxReport.get_labor_costs_xlsx),
+    # path('fill/progress/', labor_fill.labor_fill),
 
-    path('download/department/xlsx/persice/',getXlsxReport.get_xlsx_precise),
 
-    path('history/user/tasks/',EmployeePerformanceView.as_view()) , # чекаем все таски сотрудника  за промежуток времен
+
+    # path('download/department/json/',getReport.get_labor_costs), # test для проверки записей о трудозатратах
+
+    # path('download/department/xlsx/',getXlsxReport.get_labor_costs_xlsx),
+
+    # path('download/department/xlsx/persice/',getXlsxReport.get_xlsx_precise),
+
+    # path('history/user/tasks/',EmployeePerformanceView.as_view()) , # чекаем все таски сотрудника  за промежуток времен
     
-    path('history/department/tasks',DepartmentPerformanceView.as_view()),# чекаем все таски за промежуток времени
+    # path('history/department/tasks',DepartmentPerformanceView.as_view()),# чекаем все таски за промежуток времени
 
 
 
 
 # эндпоинты для администрирования
-path('reports/all',getXlsxReport.get_all_labor_costs_xlsx),
+# path('reports/all',getXlsxReport.get_all_labor_costs_xlsx),
 
 path('app/statistics',get_app_status_data)
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Employee, Job, Task, Department, LaborCosts, TypicalFunction
+from .models import Employee, Job,  Department, LaborCosts, TypicalFunction
 
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:

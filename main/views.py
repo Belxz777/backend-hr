@@ -7,8 +7,8 @@ import jwt
 
 from main.utils.auth import get_user
 from main.utils.closeDate import calculate_close_date
-from .models import Job,Department,Task,Employee
-from .serializer import JobSerializer,DepartmentSerializer,TaskSerializer,EmployeeSerializer
+from .models import Job,Department,Employee
+from .serializer import JobSerializer,DepartmentSerializer,EmployeeSerializer
 from rest_framework.views import APIView
 
 from .utils.access_managing import check_token
@@ -177,58 +177,58 @@ class UserByName(APIView):
             return Response(serializer.data)
         return Response({'error': 'Пользователь не найден'}, status=404)
     
-class TaskManaging(APIView):
-#http://127.0.0.1:8000/api/v1/entities/task/ enpoint post | patch | delete
-      def post(self, request):
-#         post | body{
-# "forEmployeeId":2,
-# "hourstodo":7,
-# "taskName":"Реализовать возможность загрузки задачи"
-#         }
-    # 1. Получить данные из запроса
-        user  = get_user(request)
-        request.data['forEmployeeId'] = user.employeeId
-        request.data['closeDate'] = calculate_close_date(request.data['hourstodo'],datetime.now())
-        serializer = TaskSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({
-                 'message': 'Задача создана',
-                    'taskId': serializer.data['taskId']
-            }, status=201)
-        return Response({
-             'error': 'Не удалось создать задачу',
-             'detail': serializer.errors
-        }, status=400)
-      def patch(self, request):
-#    patch |  body{
-#     "taskId":12,
-#     "taskName":"hello",
-# forEmployeeId:1,
-# }
-             task = Task.objects.filter(taskId=request.data['taskId']).first()
-             if task:
-                    serializer = TaskSerializer(task, data=request.data, partial=True)
-                    if serializer.is_valid():
-                        task = serializer.save()
-                        return Response({
-                             'message': 'Задача обновлена',
-                             'params': serializer.data.values()
-                        }, status=201)
-                    return Response({
-                         'error': 'Не удалось обновить задачу',
-                         'detail': serializer.errors
-                    }, status=400)
-             return Response({'error': 'Ошибка задача не найдена'}, status=404)
-      def delete(self, request):
-                # delete | body {
-                #      "taskId":12,
-                # }
-                task = Task.objects.filter(taskId=request.data['taskId']).first()
-                if task:
-                    task.delete()
-                    return Response({'message': 'Задача удалена',"taskId":request.data['taskId']}, status=204)
-                return Response({'error': 'Задача не найдена'}, status=404)
+# class TaskManaging(APIView):
+# #http://127.0.0.1:8000/api/v1/entities/task/ enpoint post | patch | delete
+#       def post(self, request):
+# #         post | body{
+# # "forEmployeeId":2,
+# # "hourstodo":7,
+# # "taskName":"Реализовать возможность загрузки задачи"
+# #         }
+#     # 1. Получить данные из запроса
+#         user  = get_user(request)
+#         request.data['forEmployeeId'] = user.employeeId
+#         request.data['closeDate'] = calculate_close_date(request.data['hourstodo'],datetime.now())
+#         serializer = TaskSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response({
+#                  'message': 'Задача создана',
+#                     'taskId': serializer.data['taskId']
+#             }, status=201)
+#         return Response({
+#              'error': 'Не удалось создать задачу',
+#              'detail': serializer.errors
+#         }, status=400)
+#       def patch(self, request):
+# #    patch |  body{
+# #     "taskId":12,
+# #     "taskName":"hello",
+# # forEmployeeId:1,
+# # }
+#              task = Task.objects.filter(taskId=request.data['taskId']).first()
+#              if task:
+#                     serializer = TaskSerializer(task, data=request.data, partial=True)
+#                     if serializer.is_valid():
+#                         task = serializer.save()
+#                         return Response({
+#                              'message': 'Задача обновлена',
+#                              'params': serializer.data.values()
+#                         }, status=201)
+#                     return Response({
+#                          'error': 'Не удалось обновить задачу',
+#                          'detail': serializer.errors
+#                     }, status=400)
+#              return Response({'error': 'Ошибка задача не найдена'}, status=404)
+#       def delete(self, request):
+#                 # delete | body {
+#                 #      "taskId":12,
+#                 # }
+#                 task = Task.objects.filter(taskId=request.data['taskId']).first()
+#                 if task:
+#                     task.delete()
+#                     return Response({'message': 'Задача удалена',"taskId":request.data['taskId']}, status=204)
+#                 return Response({'error': 'Задача не найдена'}, status=404)
       
 
 

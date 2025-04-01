@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.db.models import Count, Sum
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from main.models import Employee,LaborCosts,Task
+from main.models import Employee,LaborCosts
 from main.serializer import LaborCostsSerializer, PerformanceSerializer
 
 class EmployeePerformanceView(APIView):
