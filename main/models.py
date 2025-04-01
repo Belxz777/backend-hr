@@ -5,15 +5,14 @@ class Job(models.Model):
     # Модель для должностей, содержит информацию о каждой должности
     jobId = models.AutoField(primary_key=True)  # Уникальный идентификатор должности
     jobName = models.CharField(max_length=30, null=False) 
-    typicalFunctions = models.ManyToManyField('TypicalFunction')
-    indepart = models.ForeignKey('Department', on_delete=models.CASCADE)
+    typicalFunctions = models.ManyToManyField("TypicalFunction")
 
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
     departmentName = models.CharField(max_length=100, null=False) 
     departmentDescription = models.CharField(max_length=200, null=True) 
     headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)
-    typicalFunctions = models.ManyToManyField('TypicalFunction') 
+    typicalFunctions = models.ManyToManyField('TypicalFunction',on_delete=models.CASCADE,null=True) 
 
 class LaborCosts(models.Model):
     # Модель для трудозатрат, содержит информацию о затратах труда

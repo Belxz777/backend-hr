@@ -46,7 +46,7 @@ urlpatterns = [
     
 
 
-path('entities/typicalfunc/',FunctionView.as_view()),
+    path('entities/typicalfunc/',FunctionView.as_view()),
 
 
     # path('entities/task/',TaskManaging.as_view()),

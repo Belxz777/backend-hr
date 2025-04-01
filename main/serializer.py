@@ -16,7 +16,7 @@ class AdminEmployeeSerializer(serializers.ModelSerializer):
 class JobSerializer(serializers.ModelSerializer):
       class Meta:
           model = Job
-          fields = ['jobId', 'jobName', 'typicalFunctions', 'indepart', 'rate']  
+          fields = ['jobId', 'jobName', 'typicalFunctions']  
 
       def update(self, instance, validated_data):
           instance.jobName = validated_data.get('jobName', instance.jobName)
@@ -41,8 +41,19 @@ class LaborCostsSerializer(serializers.ModelSerializer):
           model = LaborCosts
           fields = ['laborCostId', 'employeeId', 'departmentId', 'taskId', 'date', 'worked_hours', 'comment']
 
+from rest_framework import serializers
 
 class TypicalFunctionSerializer(serializers.ModelSerializer):
-      class Meta:
-          model = TypicalFunction
-          fields = ['typicalFunctionId', 'typicalFunctionName', 'typicalFunctionDescription','departmentId','isMain']
+  
+
+    class Meta:
+        model = TypicalFunction
+        fields = [
+            'typicalFunctionId', 
+            'typicalFunctionName', 
+            'typicalFunctionDescription',
+            'departmentId',
+            'time',
+            'forjobIds',
+            'isMain'
+        ]
