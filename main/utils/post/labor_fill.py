@@ -1,11 +1,43 @@
-# from rest_framework.response import Response
-# from rest_framework.decorators import api_view
-# from datetime import datetime
-# from main.models import Employee, LaborCosts, Task
-# from main.serializer import LaborCostsSerializer
-# from main.utils.auth import get_user
-# from main.utils.closeDate import isExpired
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from datetime import datetime
+from main.models import Employee, LaborCosts,TypicalFunction
+from main.serializer import LaborCostsSerializer
+from main.utils.auth import get_user
+from main.utils.closeDate import isExpired
 
+@api_view(['POST'])
+def labor_fill(request):
+    if request.method == 'POST':
+        employee = get_user(request)
+        if not employee:
+            return Response({"error": "Рабочий под таким номером не существует"}, status=404)
+        data = request.data
+        tf = data.get('tf_id')
+        if tf is None:
+            return Response({"error": "Не указан tf"}, status=400)
+        try:
+            tf =TypicalFunction.objects.get(tfId=tf)
+        except tf.DoesNotExist:
+            return Response({"error": "Задача не найдена"}, status=404)
+
+        # Проверка, принадлежит ли задача сотруднику
+        data = request.data
+        departmentId = employee.departmentid.departmentId
+        laborCost = LaborCosts.objects.create(
+            employeeId=employee,
+            departmentId=departmentId,
+            tf = tf,
+            worked_hours =data['workingHours'],
+            normal_hours = tf.time,
+            comment=data['comment']
+        )
+
+        if not laborCost:
+            return Response({'error': 'Возможно вы отправили неправильные данные | Посмотрите тело запроса.'}, status=400)
+
+        return Response({'message': 'Запись о проделанной работе сделана. Хорошего вам дня!'}, status=201)
+        
 # @api_view(['POST'])
 # def labor_fill(request):
 #     if request.method == 'POST':

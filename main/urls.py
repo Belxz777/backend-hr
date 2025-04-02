@@ -6,10 +6,10 @@ from main.utils.work.statistics import get_app_status_data
 from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList
 from main.utils import access_managing
 from .utils.post import labor_fill
-# from .utils.report import getReport,getXlsxReport
+from .utils.report import getReport,getXlsxReport
 from .utils.compliencyandhistory.compliency import EmployeePerformanceView
 from .utils.compliencyandhistory.history import DepartmentPerformanceView
-from .utils.emp_tasks import  getDepEmp
+from .utils.emp_tasks import  departmentTf, getDepEmp,jobTf
 urlpatterns = [
     path('users/create',access_managing.RegisterView.as_view()),#для регистрации пользователей
     path("users/login",access_managing.LoginView.as_view()),#дяя входина
@@ -29,9 +29,11 @@ urlpatterns = [
     
 
 
-    path('entities/job/<id>',JobManaging.as_view()),
+    path('entities/job/',JobManaging.as_view()),
 
     path('entities/jobs/',JobList.as_view()),
+
+    
 
     
 
@@ -46,7 +48,16 @@ urlpatterns = [
     
 
 
-    path('entities/typicalfunc/',FunctionView.as_view()),
+    path('entities/tf/',FunctionView.as_view()),
+
+    path('entities/tf/department',departmentTf),
+
+    path('entities/tf/jobs',jobTf),
+
+
+
+
+
 
 
     # path('entities/task/',TaskManaging.as_view()),
@@ -62,17 +73,17 @@ urlpatterns = [
 
 
 
-    # path('fill/progress/', labor_fill.labor_fill),
+    path('fill/progress/', labor_fill.labor_fill),
 
 
 
-    # path('download/department/json/',getReport.get_labor_costs), # test для проверки записей о трудозатратах
+    path('download/department/json/',getReport.get_labor_costs), # test для проверки записей о трудозатратах
 
-    # path('download/department/xlsx/',getXlsxReport.get_labor_costs_xlsx),
+    path('download/department/xlsx/',getXlsxReport.get_labor_costs_xlsx),
 
-    # path('download/department/xlsx/persice/',getXlsxReport.get_xlsx_precise),
+    path('download/department/xlsx/persice/',getXlsxReport.get_xlsx_precise),
 
-    # path('history/user/tasks/',EmployeePerformanceView.as_view()) , # чекаем все таски сотрудника  за промежуток времен
+    path('history/user/tasks/',EmployeePerformanceView.as_view()) , # чекаем все таски сотрудника  за промежуток времен
     
     # path('history/department/tasks',DepartmentPerformanceView.as_view()),# чекаем все таски за промежуток времени
 

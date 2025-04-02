@@ -4,41 +4,46 @@ from .models import Employee, Job,  Department, LaborCosts, TypicalFunction
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
           model = Employee
-          fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid', 'expiredTasksCount', 'position', 'tasksCount', 'completedTasks']
+          fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid', 'position']
           extra_kwargs = {'password': {'write_only': True},
                           'login': {'write_only': True}}   
 
 class AdminEmployeeSerializer(serializers.ModelSerializer):
     class Meta:
           model = Employee
-          fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid', 'expiredTasksCount', 'position', 'tasksCount', 'completedTasks']
+          fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid',  'position', ]
         
 class JobSerializer(serializers.ModelSerializer):
-      class Meta:
-          model = Job
-          fields = ['jobId', 'jobName', 'typicalfunctions']  
+    typicalfunctions = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=TypicalFunction.objects.all(),
+        required=False
+    )
 
-      def update(self, instance, validated_data):
-          instance.jobName = validated_data.get('jobName', instance.jobName)
-          instance.typicalFunctions.set(validated_data.get('typicalFunctions', instance.typicalFunctions.all()))
-          instance.save()
-          return instance
+    class Meta:
+        model = Job
+        fields = ['jobId', 'jobName', 'tfs']
 
-
+    def create(self, validated_data):
+        typicalfunctions_data = validated_data.pop('tfs', [])
+        job = Job.objects.create(**validated_data)
+        job.tfs.set(typicalfunctions_data)
+        return job
 class DepartmentSerializer(serializers.ModelSerializer):
       class Meta:
           model = Department  
-          fields = ['departmentId', 'departmentName', 'departmentDescription', 'headId', 'typicalFunctions','jobsList']
+          fields = ['departmentId', 'departmentName', 'departmentDescription', 'headId', 'tfs','jobsList']
+
 
 class PerformanceSerializer(serializers.Serializer):
-      date = serializers.DateField()
-      report_count = serializers.IntegerField()
-      total_hours = serializers.DecimalField(max_digits=5, decimal_places=2)
+    date = serializers.DateField()
+    report_count = serializers.IntegerField()
+    total_hours = serializers.DecimalField(max_digits=5, decimal_places=2)
 
 class LaborCostsSerializer(serializers.ModelSerializer):
       class Meta:
           model = LaborCosts
-          fields = ['laborCostId', 'employeeId', 'departmentId', 'typicalfunction', 'date', 'worked_hours', 'comment']
+          fields = ['laborCostId', 'employeeId', 'departmentId', 'tf', 'date', 'worked_hours','normal_hours', 'comment']
 
 from rest_framework import serializers
 
@@ -48,10 +53,9 @@ class TypicalFunctionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TypicalFunction
         fields = [
-            'typicalFunctionId', 
-            'typicalFunctionName', 
-            'typicalFunctionDescription',
-            'departmentId',
+            'tfId', 
+            'tfName', 
+            'tfDescription',
             'time',
             'isMain'
         ]

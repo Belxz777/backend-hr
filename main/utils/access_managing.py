@@ -48,6 +48,7 @@ class LoginView(APIView):
         if user is None:
             raise AuthenticationFailed('Такого пользователя  пока не существует')
         if not user.password == password:
+            print(user.password, password)
             raise AuthenticationFailed('Неверный пароль')
         
         payload = {

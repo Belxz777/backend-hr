@@ -74,7 +74,7 @@ else:
         DATABASES = { 
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.getenv('PGDATABASE') or 'labor',
+            'NAME': os.getenv('PGDATABASE') or 'data',
             'USER': os.getenv('PGUSER') or 'postgres',
             'PASSWORD': os.getenv('PGPASSWORD') or '123',  # Ensure a default empty string if not set
             'HOST': os.getenv('PG_HOST') or 'localhost',  # Default to localhost if not set

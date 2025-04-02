@@ -5,21 +5,25 @@ class Job(models.Model):
     # Модель для должностей, содержит информацию о каждой должности
     jobId = models.AutoField(primary_key=True)  # Уникальный идентификатор должности
     jobName = models.CharField(max_length=30, null=False) 
-    typicalfunctions = models.ManyToManyField('TypicalFunction')
+    tfs = models.ManyToManyField('TypicalFunction',null=True)
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
     departmentName = models.CharField(max_length=100, null=False) 
     departmentDescription = models.CharField(max_length=200, null=True) 
     headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)
-    typicalFunctions = models.ManyToManyField('TypicalFunction') 
-    jobsList = models.ManyToManyField('Job')
+    tfs = models.ManyToManyField('TypicalFunction',null=True) 
+    jobsList = models.ManyToManyField('Job',null=True)
 class LaborCosts(models.Model):
     # Модель для трудозатрат, содержит информацию о затратах труда
     laborCostId = models.AutoField(primary_key=True)  # Уникальный идентификатор трудозатрат
     employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
     departmentId = models.IntegerField(null=True)  # Идентификатор услуги
-    typicalfunction = models.ForeignKey('TypicalFunction', on_delete=models.CASCADE)  # Идентификатор услуги
+    tf= models.ForeignKey('TypicalFunction', on_delete=models.CASCADE,null=True)  # Идентификатор услуги
     worked_hours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
+            MaxValueValidator(20),
+            MinValueValidator(0.5)
+        ], null=False)
+    normal_hours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
             MinValueValidator(0.5)
         ], null=False)
@@ -40,18 +44,14 @@ class Employee(models.Model):
     #добавить иерархию
     # #1 просто сотрудник  2 начальник сотрудника и тд чем выше position тем больше прав
     departmentid = models.ForeignKey(Department, on_delete=models.CASCADE) 
-   # expiredTasksCount = models.IntegerField(null=True) 
-   # tasksCount = models.IntegerField(null=True)
-    # completedTasks = models.IntegerField(null=True)
 
 
 
 class TypicalFunction(models.Model):
     # Модель для типовых функций, содержит информацию о типовых функциях
-    typicalFunctionId = models.AutoField(primary_key=True)  # Уникальный идентификатор типовой функции
-    typicalFunctionName = models.CharField(max_length=50, null=False)  # Название типовой функции
-    typicalFunctionDescription = models.CharField(max_length=150, null=True)  # Описание типовой функции
-    departmentId = models.ForeignKey(Department, on_delete=models.CASCADE)
+    tfId = models.AutoField(primary_key=True)  # Уникальный идентификатор типовой функции
+    tfName = models.CharField(max_length=50, null=False)  # Название типовой функции
+    tfDescription = models.CharField(max_length=150, null=True)  # Описание типовой функции
     time = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
             MinValueValidator(0.5)

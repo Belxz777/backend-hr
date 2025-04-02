@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from main.utils.auth import get_user
-from ..models import Employee
+from ..models import Department, Employee, Job, TypicalFunction
 from ..serializer import EmployeeSerializer
 from rest_framework.response import Response
 # class EmployeeTasksbystatus(APIView):
@@ -48,3 +48,22 @@ def getDepEmp(request):
         user = get_user(request)
         employees = Employee.objects.filter(departmentid_id=user.departmentid.departmentId).exclude(employeeId=user.employeeId)
     return Response(employees.values('employeeId', 'firstName', 'lastName','position'))    
+
+
+@api_view(['GET'])
+def departmentTf(request):
+    if request.method == 'GET':
+        id = request.query_params.get('id')
+        tfs = Department.objects.filter(departmentId=id).values('tfs')
+        type = TypicalFunction.objects.filter(tfId__in=tfs).values('tfId', 'tfName')
+        return Response(type)
+
+
+@api_view(['GET'])
+def jobTf(request):
+    if request.method == 'GET':
+        id = request.query_params.get('id')
+        tfs = Job.objects.filter(jobId=id).values('tfs')
+        type = TypicalFunction.objects.filter(tfId__in=tfs).values('tfId', 'tfName')
+        return Response(type)
+

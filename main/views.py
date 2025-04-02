@@ -7,7 +7,7 @@ import jwt
 
 from main.utils.auth import get_user
 from main.utils.closeDate import calculate_close_date
-from .models import Job,Department,Employee
+from .models import Job,Department,Employee, TypicalFunction
 from .serializer import JobSerializer,DepartmentSerializer,EmployeeSerializer
 from rest_framework.views import APIView
 
@@ -15,17 +15,19 @@ from .utils.access_managing import check_token
 
 
 class  JobManaging(APIView):  
-     def patch(self, request,id):
+     def patch(self, request):
              check_token(request)
-             job = Job.objects.filter(jobId=request.data.get('id')).first()
+             id = request.query_params.get('id')
+             job = Job.objects.filter(jobId=id).first()
              if job:
                     serializer = JobSerializer(job, data=request.data, partial=True)
                     if serializer.is_valid():
                         job = serializer.save()
-                        return Response({'newversion':JobSerializer(job).data,},status=200)
+                        return Response({'new':JobSerializer(job).data,},status=200)
                     return Response(serializer.errors, status=400)
              return Response({'error': 'Ошибка'}, status=404) 
-     def delete(self, request,id):
+     def delete(self, request):
+                id = request.query_params.get('id')
                 if id:
                       job = Job.objects.filter(jobId=id)
                       if job:
@@ -33,6 +35,7 @@ class  JobManaging(APIView):
                         return Response({'message': 'Должность удалена'}, status=204)
                 return Response({'error': 'Такая должность не найдена или не предоставлен id'}, status=404)       
      def get(self, request, id=None):
+                id = request.query_params.get('id')
                 if id:  # If id is provided
                     job = Job.objects.filter(jobId=id).first()
                     if job:
@@ -49,11 +52,23 @@ class  JobManaging(APIView):
 class JobList(APIView):
 
     def post(self, request):
-                serializer = JobSerializer(data=request.data)
-                if serializer.is_valid():   
-                    job = serializer.save()  # Use save() instead of create()
-                    return Response(JobSerializer(job).data, status=201)  # Serialize the saved job
-                return Response(serializer.errors, status=400)    
+        serializer = JobSerializer(data=request.data)
+        if serializer.is_valid():
+        # Сначала сохраняем основную модель Job
+             job = serializer.save()
+        # Затем обрабатываем ManyToMany связь
+        if 'typicalfunctions' in request.data:
+            typical_function_ids = request.data['typicalfunctions']
+            try:
+                # Получаем объекты TypicalFunction
+                typical_functions = TypicalFunction.objects.filter(pk__in=typical_function_ids)
+                # Добавляем связи
+                job.typicalfunctions.set(typical_functions)
+            except Exception as e:
+                return Response({'error': str(e)}, status=400)
+            return Response(JobSerializer(job).data, status=201)
+        return Response(serializer.errors, status=400)
+
     def get(self, request):
         check_token(request)
         jobs = Job.objects.all()
