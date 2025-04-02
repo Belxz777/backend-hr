@@ -5,21 +5,20 @@ class Job(models.Model):
     # Модель для должностей, содержит информацию о каждой должности
     jobId = models.AutoField(primary_key=True)  # Уникальный идентификатор должности
     jobName = models.CharField(max_length=30, null=False) 
-    typicalFunctions = models.ManyToManyField("TypicalFunction")
-
+    typicalfunctions = models.ManyToManyField('TypicalFunction')
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
     departmentName = models.CharField(max_length=100, null=False) 
     departmentDescription = models.CharField(max_length=200, null=True) 
     headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)
-    typicalFunctions = models.ManyToManyField('TypicalFunction',on_delete=models.CASCADE,null=True) 
-
+    typicalFunctions = models.ManyToManyField('TypicalFunction') 
+    jobsList = models.ManyToManyField('Job')
 class LaborCosts(models.Model):
     # Модель для трудозатрат, содержит информацию о затратах труда
     laborCostId = models.AutoField(primary_key=True)  # Уникальный идентификатор трудозатрат
     employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
     departmentId = models.IntegerField(null=True)  # Идентификатор услуги
-    typicalFunctionId = models.ForeignKey('TypicalFunction', on_delete=models.CASCADE)  # Идентификатор услуги
+    typicalfunction = models.ForeignKey('TypicalFunction', on_delete=models.CASCADE)  # Идентификатор услуги
     worked_hours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
             MinValueValidator(0.5)
@@ -57,14 +56,14 @@ class TypicalFunction(models.Model):
             MaxValueValidator(20),
             MinValueValidator(0.5)
         ], null=False)
-    forjobIds = models.ManyToManyField(Job)
+    # No need for many-to-many here since Job model already has the relationship defined
     isMain = models.BooleanField(default=False) # по дефолту вспомогательная не главная
 
 
-
-
-
+# python manage.py makemigrations --empty main
+# python manage.py migrate main zero
+# python manage.py makemigrations
+# python manage.py migrate
 # Идентификатор отдела сотрудника
 
 #нужно продумать так что бы можно было интегрировать нейронку
-    

@@ -16,12 +16,11 @@ class AdminEmployeeSerializer(serializers.ModelSerializer):
 class JobSerializer(serializers.ModelSerializer):
       class Meta:
           model = Job
-          fields = ['jobId', 'jobName', 'typicalFunctions']  
+          fields = ['jobId', 'jobName', 'typicalfunctions']  
 
       def update(self, instance, validated_data):
           instance.jobName = validated_data.get('jobName', instance.jobName)
           instance.typicalFunctions.set(validated_data.get('typicalFunctions', instance.typicalFunctions.all()))
-          instance.indepart = validated_data.get('indepart', instance.indepart)
           instance.save()
           return instance
 
@@ -29,7 +28,7 @@ class JobSerializer(serializers.ModelSerializer):
 class DepartmentSerializer(serializers.ModelSerializer):
       class Meta:
           model = Department  
-          fields = ['departmentId', 'departmentName', 'departmentDescription', 'headId', 'typicalFunctions']
+          fields = ['departmentId', 'departmentName', 'departmentDescription', 'headId', 'typicalFunctions','jobsList']
 
 class PerformanceSerializer(serializers.Serializer):
       date = serializers.DateField()
@@ -39,7 +38,7 @@ class PerformanceSerializer(serializers.Serializer):
 class LaborCostsSerializer(serializers.ModelSerializer):
       class Meta:
           model = LaborCosts
-          fields = ['laborCostId', 'employeeId', 'departmentId', 'taskId', 'date', 'worked_hours', 'comment']
+          fields = ['laborCostId', 'employeeId', 'departmentId', 'typicalfunction', 'date', 'worked_hours', 'comment']
 
 from rest_framework import serializers
 
@@ -54,6 +53,5 @@ class TypicalFunctionSerializer(serializers.ModelSerializer):
             'typicalFunctionDescription',
             'departmentId',
             'time',
-            'forjobIds',
             'isMain'
         ]
