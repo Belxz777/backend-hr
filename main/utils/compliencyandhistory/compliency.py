@@ -79,9 +79,7 @@ class EmployeePerformanceView(APIView):
             # Filter using timezone-aware datetimes
             labor_costs = LaborCosts.objects.filter(
                 employeeId=employee.employeeId,  # Use ID or object depending on your model
-                date__gte=last_month_start,
-                date__lte=now
-            )
+            ).order_by('date')
             
             print("Raw labor costs:", list(labor_costs.values('laborCostId', 'date')))
             
@@ -91,22 +89,75 @@ class EmployeePerformanceView(APIView):
                     "message": f"No labor records found between {last_month_start.date()} and {today}",
                     "performance": []
                 }, status=200)
-            
-            # Extract date part for grouping
-            performance_data = labor_costs.annotate(
-                date_only=timezone.localtime(timezone.now()).date()
-            ).values('date_only').annotate(
-                report_count=Count('laborCostId'),
-                total_hours=Sum('worked_hours')
-            ).order_by('date_only')
-            
-            print("Performance data:", list(performance_data))
-            
-            serializer = PerformanceSerializer(performance_data, many=True)
-            
+
+            # Group by date and collect all records for each date
+            performance_by_date = {}
+            for cost in labor_costs:
+                date_str = cost.date.strftime('%Y-%m-%d')
+                if date_str not in performance_by_date:
+                    performance_by_date[date_str] = []
+                performance_by_date[date_str].append({
+                    "laborCostId": cost.laborCostId,
+                    "employeeId_id": cost.employeeId_id,
+                    "departmentId": cost.departmentId,
+                    "tf_id": cost.tf_id,
+                    "worked_hours": cost.worked_hours,
+                    "normal_hours": cost.normal_hours,
+
+                })
+
             return Response({
                 "employee_id": employee.employeeId,
-                "performance": serializer.data
+                "performance": performance_by_date
+            })
+            
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+        
+        
+class EmployeeCompliancyView(APIView):
+    def get(self, request):
+        try:
+            # Get current time with timezone
+            now = timezone.now()
+            today = now.date()
+            
+            employee_id = request.query_params.get("emp_id")
+            
+            if not employee_id:
+                return Response({"error": "Employee ID (emp_id) is required."}, status=400)
+            
+            try:
+                employee = Employee.objects.get(employeeId=employee_id)
+            except Employee.DoesNotExist:
+                return Response({"error": "Employee not found."}, status=404)
+            
+            last_month_start = now - timedelta(days=30)
+            
+            # Filter using timezone-aware datetimes
+            labor_costs = LaborCosts.objects.filter(
+                employeeId=employee.employeeId,
+            ).values('date').distinct()
+            
+            if not labor_costs.exists():
+                return Response({
+                    "employee_id": employee.employeeId,
+                    "message": f"No labor records found between {last_month_start.date()} and {today}",
+                    "performance": {}
+                }, status=200)
+
+            # Create a dict with all days in the last 30 days
+            performance_by_date = {}
+            current_date = last_month_start.date()
+    # Mark only days where employee worked
+            performance_by_date = {}
+            for record in labor_costs:
+                date_str = record['date'].strftime('%Y-%m-%d')
+                performance_by_date[date_str] = {"worked": True}
+
+            return Response({
+                "employee_id": employee.employeeId,
+                "performance": performance_by_date
             })
             
         except Exception as e:

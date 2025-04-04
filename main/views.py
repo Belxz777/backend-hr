@@ -61,9 +61,9 @@ class JobList(APIView):
             typical_function_ids = request.data['typicalfunctions']
             try:
                 # Получаем объекты TypicalFunction
-                typical_functions = TypicalFunction.objects.filter(pk__in=typical_function_ids)
+                tfs = TypicalFunction.objects.filter(pk__in=typical_function_ids)
                 # Добавляем связи
-                job.typicalfunctions.set(typical_functions)
+                job.tfs.set(tfs)
             except Exception as e:
                 return Response({'error': str(e)}, status=400)
             return Response(JobSerializer(job).data, status=201)

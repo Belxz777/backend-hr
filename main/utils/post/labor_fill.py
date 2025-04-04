@@ -23,10 +23,14 @@ def labor_fill(request):
 
         # Проверка, принадлежит ли задача сотруднику
         data = request.data
-        departmentId = employee.departmentid.departmentId
+        departmentId = employee.departmentid
+        
+        if not tf in employee.departmentid.tfs.all():
+            return Response({"error": "В вашем отделе нет этой задачи"}, status=403)
+       
         laborCost = LaborCosts.objects.create(
             employeeId=employee,
-            departmentId=departmentId,
+            departmentId=departmentId.departmentId,
             tf = tf,
             worked_hours =data['workingHours'],
             normal_hours = tf.time,

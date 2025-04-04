@@ -24,7 +24,7 @@ class FunctionView(APIView):
         print(serializer.errors)  # перед return Response(serializer.errors, status=400)
         return Response(serializer.errors, status=400)
     def patch(self, request):
-        function = TypicalFunction.objects.get( typicalFunctionId=request.query_params.get('id'))
+        function = TypicalFunction.objects.get( tfId=request.query_params.get('id'))
         if function is None:
             return Response({'message': 'Typical function not found'}, status=404)
         serializer = TypicalFunctionSerializer(function, data=request.data, partial=True)

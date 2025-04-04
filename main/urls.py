@@ -7,7 +7,7 @@ from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,D
 from main.utils import access_managing
 from .utils.post import labor_fill
 from .utils.report import getReport,getXlsxReport
-from .utils.compliencyandhistory.compliency import EmployeePerformanceView
+from .utils.compliencyandhistory.compliency import EmployeeCompliancyView, EmployeePerformanceView
 from .utils.compliencyandhistory.history import DepartmentPerformanceView
 from .utils.emp_tasks import  departmentTf, getDepEmp,jobTf
 urlpatterns = [
@@ -18,7 +18,7 @@ urlpatterns = [
     path('users/change_password',access_managing.Change_Password.as_view()),
     path('users/get_user',access_managing.GetUser.as_view()),
     path('users/deposition/',access_managing.Deposition.as_view()),
-    path('users/compliancy/',EmployeePerformanceView.as_view()),# типо как на github
+    path('users/compliancy/',EmployeeCompliancyView.as_view()),# типо как на github
     # path('users/delete/<id>',labor_fill.delete_user),
 
     path('users/',access_managing.UserList),
@@ -83,9 +83,9 @@ urlpatterns = [
 
     path('download/department/xlsx/persice/',getXlsxReport.get_xlsx_precise),
 
-    path('history/user/tasks/',EmployeePerformanceView.as_view()) , # чекаем все таски сотрудника  за промежуток времен
+    path('history/user/',EmployeePerformanceView.as_view()) , # чекаем все таски сотрудника  за промежуток времен
     
-    # path('history/department/tasks',DepartmentPerformanceView.as_view()),# чекаем все таски за промежуток времени
+    path('history/department/',DepartmentPerformanceView.as_view()),# чекаем все таски за промежуток времени
 
 
 

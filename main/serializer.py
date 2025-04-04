@@ -14,7 +14,7 @@ class AdminEmployeeSerializer(serializers.ModelSerializer):
           fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid',  'position', ]
         
 class JobSerializer(serializers.ModelSerializer):
-    typicalfunctions = serializers.PrimaryKeyRelatedField(
+    tfs = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=TypicalFunction.objects.all(),
         required=False
