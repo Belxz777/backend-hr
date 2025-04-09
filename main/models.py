@@ -5,14 +5,14 @@ class Job(models.Model):
     # Модель для должностей, содержит информацию о каждой должности
     jobId = models.AutoField(primary_key=True)  # Уникальный идентификатор должности
     jobName = models.CharField(max_length=30, null=False) 
-    tfs = models.ManyToManyField('TypicalFunction',null=True)
+    tfs = models.ManyToManyField('TypicalFunction')
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
     departmentName = models.CharField(max_length=100, null=False) 
     departmentDescription = models.CharField(max_length=200, null=True) 
     headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)
-    tfs = models.ManyToManyField('TypicalFunction',null=True) 
-    jobsList = models.ManyToManyField('Job',null=True)
+    tfs = models.ManyToManyField('TypicalFunction') 
+    jobsList = models.ManyToManyField('Job')
 class LaborCosts(models.Model):
     # Модель для трудозатрат, содержит информацию о затратах труда
     laborCostId = models.AutoField(primary_key=True)  # Уникальный идентификатор трудозатрат
@@ -38,7 +38,7 @@ class Employee(models.Model):
     lastName = models.CharField(max_length=30, null=False)  # Фамилия сотрудника
     patronymic = models.CharField(max_length=30, null=False)  # Отчество сотрудника
     login = models.CharField(max_length=30, null=False)  # Логин сотрудника
-    password = models.CharField(max_length=30, null=False)  # Пароль сотрудника
+    password = models.TextField(null=False)  # Пароль сотрудника
     jobid = models.ForeignKey(Job, on_delete=models.CASCADE) 
     position = models.IntegerField(default=1)
     #добавить иерархию

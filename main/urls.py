@@ -9,7 +9,7 @@ from .utils.post import labor_fill
 from .utils.report import getReport,getXlsxReport
 from .utils.compliencyandhistory.compliency import EmployeeCompliancyView, EmployeePerformanceView
 from .utils.compliencyandhistory.history import DepartmentPerformanceView
-from .utils.emp_tasks import  departmentTf, getDepEmp,jobTf
+from .utils.emp_tasks import  departmentTf, employeeTf, getDepEmp,jobTf
 urlpatterns = [
     path('users/create',access_managing.RegisterView.as_view()),#для регистрации пользователей
     path("users/login",access_managing.LoginView.as_view()),#дяя входина
@@ -49,6 +49,8 @@ urlpatterns = [
 
 
     path('entities/tf/',FunctionView.as_view()),
+
+    path('entities/tf/employee',employeeTf),
 
     path('entities/tf/department',departmentTf),
 

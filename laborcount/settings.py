@@ -70,7 +70,6 @@ if  ext_db:
      )  
     }   
 else:
-        print("db is local")
         DATABASES = { 
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -85,7 +84,6 @@ else:
 
 print(DATABASES)
 INSTALLED_APPS = [
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
+from django.contrib.auth.hashers import make_password,check_password
 
 import jwt,datetime
 from django.core.cache import cache
@@ -31,11 +32,16 @@ def check_token(request):
 class RegisterView(APIView):
     def post(self, request):
         serializer = EmployeeSerializer(data=request.data)
+        # Check if login already exists
+        if Employee.objects.filter(login=request.data.get('login')).exists():
+            return Response({'error': 'Этот логин уже занят'}, status=400)
+        
         if serializer.is_valid():
+            password = make_password(request.data.get('password'))
+            serializer.validated_data['password'] = password
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
-
 class LoginView(APIView):
     authentication_classes = []  # Disable authentication for login
     permission_classes = []      # Disable permissions for login
@@ -43,18 +49,23 @@ class LoginView(APIView):
     def post(self, request):
         data = request.data
         login = data['login']
-        password = data['password']
-        user =Employee.objects.filter(login=login).first()
+        if not login:
+            raise AuthenticationFailed('Не указан логин')
+        if not data['password']:
+            raise AuthenticationFailed('Не указан пароль')
+        user = Employee.objects.filter(login=login).first()
         if user is None:
             raise AuthenticationFailed('Такого пользователя  пока не существует')
-        if not user.password == password:
-            print(user.password, password)
-            raise AuthenticationFailed('Неверный пароль')
         
+        check_pass = check_password(data['password'], user.password)
+        if not check_pass:
+            raise AuthenticationFailed('Неверный пароль')
+        print(check_pass)
         payload = {
             'user': user.employeeId,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=10),
-            'iat': datetime.datetime.utcnow()
+            'iat': datetime.datetime.utcnow(),
+            'position': user.position,
         }
         token = jwt.encode(payload, 'secret', algorithm='HS256').decode('utf-8')
         response = Response()
@@ -77,9 +88,9 @@ class UserAuth(APIView):
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Токен истек')
-        user = Employee.objects.filter(employeeId=payload['user']).first()
-        serialize = EmployeeSerializer(user)
-        return Response({'message': 'Ты аутетифицирован', 'token': token, 'userData': serialize.data})
+        # user = Employee.objects.filter(employeeId=payload['user']).first()
+        # serialize = EmployeeSerializer(user)
+        return Response({'message': 'Ты аутетифицирован', 'userData': payload})
 
 
 class refresh_token(APIView):
