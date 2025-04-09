@@ -5,14 +5,14 @@ class Job(models.Model):
     # Модель для должностей, содержит информацию о каждой должности
     jobId = models.AutoField(primary_key=True)  # Уникальный идентификатор должности
     jobName = models.CharField(max_length=30, null=False) 
-    tfs = models.ManyToManyField('TypicalFunction')
+    tfs = models.ManyToManyField('TypicalFunction',null=True)
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
     departmentName = models.CharField(max_length=100, null=False) 
     departmentDescription = models.CharField(max_length=200, null=True) 
     headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)
-    tfs = models.ManyToManyField('TypicalFunction') 
-    jobsList = models.ManyToManyField('Job')
+    tfs = models.ManyToManyField('TypicalFunction',null=True) 
+    jobsList = models.ManyToManyField('Job',null=True)
 class LaborCosts(models.Model):
     # Модель для трудозатрат, содержит информацию о затратах труда
     laborCostId = models.AutoField(primary_key=True)  # Уникальный идентификатор трудозатрат
@@ -50,7 +50,7 @@ class Employee(models.Model):
 class TypicalFunction(models.Model):
     # Модель для типовых функций, содержит информацию о типовых функциях
     tfId = models.AutoField(primary_key=True)  # Уникальный идентификатор типовой функции
-    tfName = models.CharField(max_length=50, null=False)  # Название типовой функции
+    tfName = models.CharField(max_length=200, null=False)  # Название типовой функции
     tfDescription = models.CharField(max_length=150, null=True)  # Описание типовой функции
     time = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),

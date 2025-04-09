@@ -33,7 +33,7 @@ class FunctionView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
     def delete(self, request):
-        function = TypicalFunction.objects.get( typicalFunctionId=request.query_params.get('id'))
+        function = TypicalFunction.objects.get( tfId=request.query_params.get('id'))
         function.delete()
         return Response(status=204)
         
