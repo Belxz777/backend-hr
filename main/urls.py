@@ -19,7 +19,7 @@ urlpatterns = [
     path('users/get_user',access_managing.GetUser.as_view()),
     path('users/deposition/',access_managing.Deposition.as_view()),
     path('users/compliancy/',EmployeeCompliancyView.as_view()),# типо как на github
-    # path('users/delete/<id>',labor_fill.delete_user),
+    path('users/delete/<id>',labor_fill.delete_user),
 
     path('users/',access_managing.UserList),
 
