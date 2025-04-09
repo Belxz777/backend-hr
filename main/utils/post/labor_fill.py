@@ -25,8 +25,8 @@ def labor_fill(request):
         data = request.data
         departmentId = employee.departmentid
         
-        if not tf in employee.departmentid.tfs.all():
-            return Response({"error": "В вашем отделе нет этой задачи"}, status=403)
+        # if not tf in employee.departmentid.tfs.all():
+        #     return Response({"error": "В вашем отделе нет этой задачи"}, status=403)
        
         laborCost = LaborCosts.objects.create(
             employeeId=employee,
