@@ -17,10 +17,23 @@ class FunctionView(APIView):
         serializer = TypicalFunctionSerializer(functions, many=True)
         return Response(serializer.data)
     def post(self, request):
-        serializer = TypicalFunctionSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
+
+        if isinstance(request.data, list):
+            responses = []
+            for item in request.data:
+                serializer = TypicalFunctionSerializer(data=item)
+                if serializer.is_valid():
+                    serializer.save()
+                    responses.append(serializer.data)
+                else:
+                    return Response(serializer.errors, status=400)
+            return Response(responses, status=201)
+        else:
+            serializer = TypicalFunctionSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)        
         print(serializer.errors)  # перед return Response(serializer.errors, status=400)
         return Response(serializer.errors, status=400)
     def patch(self, request):
