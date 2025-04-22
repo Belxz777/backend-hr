@@ -1,56 +1,28 @@
-# version: '3.12'
-
-# services:
-#   backend:
-#     build: .
-#     command: python manage.py runserver 0.0.0.0:8000
-#     network_mode: host
-#     depends_on:
-#       - db
-#     volumes:
-#       - ./:/usr/src/app
-#     ports:
-#       - 8000:8000
-#   db:
-#     image: postgres:15
-#     container_name: db
-#     volumes:
-#       - postgres-data:/var/lib/postgresql/data
-#     environment:
-#       - "POSTGRES_HOST_AUTH_METHOD=trust"
-#       - "DEBUG=FALSE"
-#       - "SECRET_KEY=django-insecure-%xr3kz0z7d3jpo!t%c6%&wkvra=6lm=5qx+#ua8zu#184l#he@"
-      
-#     ports:
-#       - 5432:5432
-
-
-# volumes:
-#   postgres-data:
-#     driver: local
-version: '3.12'
+version: '3.8'
 
 services:
-  postgres:
-    image: postgres:15
-    ports:
-      - 5432:5432
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./postgres:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=somepassword
-      - POSTGRES_USER=djangouser
-      - POSTGRES_DB=djangodb
-  django:
-    build:
-        context: .
-        dockerfile: Dockerfile
+      - .:/app
     ports:
-      - 8000:8000
-    depends_on:
-      - postgres
+      - "8000:8000"
     environment:
-      - DB_HOST=postgres
-      - DB_NAME=djangodb
-      - DB_USER=djangouser
-      - DB_PASSWORD=somepassword
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+volumes:
+  postgres_data:

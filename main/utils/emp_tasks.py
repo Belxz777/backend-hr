@@ -49,17 +49,7 @@ def getDepEmp(request):
         employees = Employee.objects.filter(departmentid_id=user.departmentid.departmentId).exclude(employeeId=user.employeeId)
     return Response(employees.values('employeeId', 'firstName', 'lastName','position'))    
 
-@api_view(['GET'])
-def employeeTf(request):
-    if request.method == 'GET':
-        user = get_user(request)
-        if not user:
-            return Response({'error': 'Не указан id'})
-        tfs = Department.objects.filter(departmentId = user.departmentid.departmentId).values('tfs')
-        tfs = TypicalFunction.objects.filter(tfId__in=tfs).values('tfId', 'tfName','isMain')
-        byjob = Job.objects.filter(jobId=user.jobid.jobId).values('tfs')
-        byjob = TypicalFunction.objects.filter(tfId__in=byjob).values('tfId', 'tfName','isMain')
-        return Response(tfs.union(byjob))
+ 
 @api_view(['GET'])
 def departmentTf(request):
     if request.method == 'GET':
@@ -68,6 +58,23 @@ def departmentTf(request):
         type = TypicalFunction.objects.filter(tfId__in=tfs).values('tfId', 'tfName','isMain','time')
         return Response(type)
 
+@api_view(['GET'])
+def employeeTf(request):
+    if request.method == 'GET':
+        user = get_user(request)
+        if not user:
+            return Response({'error': 'Не указан id'})
+
+        # Get department TFs
+        dept_tfs = user.departmentid.tfs.all().values('tfId', 'tfName', 'isMain')
+
+        # Get job TFs
+        job_tfs = user.jobid.tfs.all().values('tfId', 'tfName', 'isMain')
+
+        # Combine both querysets and remove duplicates
+        all_tfs = dept_tfs.union(job_tfs)
+
+        return Response(all_tfs)
 
 @api_view(['GET'])
 def jobTf(request):

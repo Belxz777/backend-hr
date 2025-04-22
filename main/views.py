@@ -20,6 +20,8 @@ class  JobManaging(APIView):
              id = request.query_params.get('id')
              job = Job.objects.filter(jobId=id).first()
              if job:
+                    exs_tfs = job.tfs.all()
+                    request.data['tfs'] = list(set(list(exs_tfs) + request.data.get('tfs', [])))
                     serializer = JobSerializer(job, data=request.data, partial=True)
                     if serializer.is_valid():
                         job = serializer.save()
@@ -90,6 +92,9 @@ class DepartmentManaging(APIView):
         if not department:
             return Response({"error": "Department not found"}, status=404)
         
+        exs_tfs = department.tfs.all()
+        request.data['tfs'] = list(set(list(exs_tfs) + request.data.get('tfs', [])))
+
         # Обновляем отдел
         serializer = DepartmentSerializer(department, data=request.data, partial=True)
         
