@@ -28,3 +28,29 @@
 # volumes:
 #   postgres-data:
 #     driver: local
+version: '3.12'
+
+services:
+  postgres:
+    image: postgres:15
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=somepassword
+      - POSTGRES_USER=djangouser
+      - POSTGRES_DB=djangodb
+  django:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=djangodb
+      - DB_USER=djangouser
+      - DB_PASSWORD=somepassword
