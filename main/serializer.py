@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Employee, Job,  Department, LaborCosts, TypicalFunction
+from .models import Employee, Job, Department, LaborCosts, Deputy, Functions
 
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,29 +11,19 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class AdminEmployeeSerializer(serializers.ModelSerializer):
     class Meta:
           model = Employee
-          fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid',  'position', ]
+          fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid', 'position']
         
 class JobSerializer(serializers.ModelSerializer):
-    tfs = serializers.PrimaryKeyRelatedField(
-        many=True,
-        queryset=TypicalFunction.objects.all(),
-        required=False
-    )
+    mainFunc = serializers.PrimaryKeyRelatedField(queryset=Functions.objects.all(), required=False)
 
     class Meta:
         model = Job
-        fields = ['jobId', 'jobName', 'tfs']
+        fields = ['jobId', 'jobName', 'mainFunc']
 
-    def create(self, validated_data):
-        typicalfunctions_data = validated_data.pop('tfs', [])
-        job = Job.objects.create(**validated_data)
-        job.tfs.set(typicalfunctions_data)
-        return job
 class DepartmentSerializer(serializers.ModelSerializer):
       class Meta:
           model = Department  
-          fields = ['departmentId', 'departmentName', 'departmentDescription', 'headId', 'tfs','jobsList']
-
+          fields = ['departmentId', 'departmentName', 'departmentDescription', 'headId', 'jobsList']
 
 class PerformanceSerializer(serializers.Serializer):
     date = serializers.DateField()
@@ -43,19 +33,27 @@ class PerformanceSerializer(serializers.Serializer):
 class LaborCostsSerializer(serializers.ModelSerializer):
       class Meta:
           model = LaborCosts
-          fields = ['laborCostId', 'employeeId', 'departmentId', 'tf', 'date', 'worked_hours','normal_hours', 'comment']
+          fields = ['laborCostId', 'employeeId', 'departmentId', 'tf', 'date', 'worked_hours', 'normal_hours', 'comment']
 
-from rest_framework import serializers
-
-class TypicalFunctionSerializer(serializers.ModelSerializer):
-  
+class DeputySerializer(serializers.ModelSerializer):
+    functions = serializers.PrimaryKeyRelatedField(many=True, queryset=Functions.objects.all(), required=False)
 
     class Meta:
-        model = TypicalFunction
+        model = Deputy
         fields = [
             'tfId', 
             'tfName', 
             'tfDescription',
+            'isExt',
+            'functions'
+        ]
+
+class FunctionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Functions
+        fields = [
+            'funcId',
+            'funcName',
             'time',
-            'isMain'
+            'consistent'
         ]

@@ -5,8 +5,8 @@ from openpyxl import Workbook
 from requests import Response
 from rest_framework.decorators import api_view
 from openpyxl.utils import get_column_letter
-from main.models import Employee,LaborCosts, TypicalFunction
-from main.serializer import LaborCostsSerializer
+from main.models import Employee,LaborCosts, Functions
+from main.serializer import LaborCostsSerializer, FunctionsSerializer
 from main.utils.auth import get_user
 
 
@@ -29,12 +29,12 @@ def get_labor_costs_xlsx(request):
 
     # Заполняем данными
     for cost in serializer.data:
-        tf = TypicalFunction.objects.get(tfId=cost['tf'])
+        func = Functions.objects.get(funcId=cost['tf'])
         row = [
             cost['laborCostId'],
             cost['employeeId'],
-            tf.tfId,
-            tf.tfName,
+            func.funcId,
+            func.funcName,
             cost['normal_hours'],
             cost['worked_hours'],
             cost['date'],
@@ -109,12 +109,12 @@ def get_xlsx_precise(request):
         column_widths = {i: len(header) for i, header in enumerate(headers, start=1)}
 
         for cost in serializer.data:
-            tf = TypicalFunction.objects.get(tfId=cost['tf'])
+            func = Functions.objects.get(funcId=cost['tf'])
             row = [
                 cost['laborCostId'],
                 cost['employeeId'],
-                tf.tfId,
-                tf.tfName,
+                func.funcId,
+                func.funcName,
                 cost['normal_hours'],
                 cost['worked_hours'],
                 cost['date'],
@@ -141,60 +141,4 @@ def get_xlsx_precise(request):
 
         return response
 
-    return HttpResponseBadRequest("Invalid request method. Only POST requests are allowed.")# @api_view(['GET'])
-# def get_all_labor_costs_xlsx(request):
-#     # Check for security code in params
-#     code = request.GET.get('code')
-#     # Example URL: http://your-domain.com/api/get-report?code=3245
-#     if code != '3245':
-#         return HttpResponseForbidden("Invalid security code")
-    
-#     # Get all labor costs
-#     labor_costs = LaborCosts.objects.all()
-#     serializer = LaborCostsSerializer(labor_costs, many=True)
-#     print(serializer.data)
-#     output = io.BytesIO()
-#     wb = Workbook()
-#     ws = wb.active
-#     ws.title = "Все трудозатраты"
-
-#     # Headers
-#     headers = ['report_id', 'employee_id','department_id', 'task_id', "task_name", "task_from_date", 'report_date', 'worked_hours', 'left_hours', 'comment']
-#     ws.append(headers)
-#     column_widths = {i: len(header) for i, header in enumerate(headers, start=1)}
-
-#     # Fill data
-#     for cost in serializer.data:
-#         task = Task.objects.get(taskId=cost['taskId'])
-#         row = [
-#             cost['laborCostId'],
-#             cost['employeeId'],
-#             cost['departmentId'],
-#             cost['taskId'],
-#             task.taskName,
-#             task.fromDate.date(),
-#             cost['date'],
-#             cost['workingHours'],
-#             None if task.hourstodo == 0 else task.hourstodo,
-#             cost['comment']
-#         ]
-#         ws.append(row)
-#         for i, value in enumerate(row, start=1):
-#             column_widths[i] = max(column_widths[i], len(str(value)))
-
-#     # Set column widths
-#     for i, width in column_widths.items():
-#         ws.column_dimensions[get_column_letter(i)].width = width + 2
-
-#     wb.save(output)
-#     output.seek(0)
-    
-#     today_date = datetime.now().strftime('%Y-%m-%d')
-#     filename = f'all_labor_costs_{today_date}.xlsx'
-
-#     response = StreamingHttpResponse(
-#         output,
-#         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-#     )
-#     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-#     return response
+    return HttpResponseBadRequest("Invalid request method. Only POST requests are allowed.")
