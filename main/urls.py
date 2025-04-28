@@ -1,7 +1,7 @@
 from django.urls import path
 
 from main.utils.compliencyandhistory.regdata import departsdata
-from main.utils.func.crud import FunctionView
+from main.utils.func.crud import DeputyView , FunctionsView
 from main.utils.work.statistics import get_app_status_data
 from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList
 from main.utils import access_managing
@@ -25,8 +25,8 @@ urlpatterns = [
 
     path('users/<pk>',access_managing.UserDetail),
 
- # ! это рабочее
-    
+    # ! это рабочее
+        
 
 
     path('entities/job/',JobManaging.as_view()),
@@ -48,15 +48,17 @@ urlpatterns = [
     
 
 
-    path('entities/tf/',FunctionView.as_view()),
+    path('entities/functions/',FunctionsView.as_view()),
 
-    path('entities/tf/employee',employeeTf),
+    # path('entities/main/',EmployeePerformanceView.as_view()),
 
-    path('entities/tf/department',departmentTf),
+    # path('entities/tf/employee',employeeTf),
 
-    path('entities/tf/jobs',jobTf),
+    # path('entities/tf/department',departmentTf),
 
+    # path('entities/tf/jobs',jobTf),
 
+    path('entities/deputy/',DeputyView.as_view()),
 
 
 

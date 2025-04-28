@@ -5,9 +5,8 @@ from rest_framework.exceptions import AuthenticationFailed
 
 import jwt
 
-from main.utils.auth import get_user
-from main.utils.closeDate import calculate_close_date
-from .models import Job,Department,Employee, TypicalFunction
+
+from .models import Job,Department,Employee
 from .serializer import JobSerializer,DepartmentSerializer,EmployeeSerializer
 from rest_framework.views import APIView
 
@@ -20,8 +19,6 @@ class  JobManaging(APIView):
              id = request.query_params.get('id')
              job = Job.objects.filter(jobId=id).first()
              if job:
-                    exs_tfs = job.tfs.all()
-                    request.data['tfs'] = list(set(list(exs_tfs) + request.data.get('tfs', [])))
                     serializer = JobSerializer(job, data=request.data, partial=True)
                     if serializer.is_valid():
                         job = serializer.save()
@@ -57,17 +54,7 @@ class JobList(APIView):
         serializer = JobSerializer(data=request.data)
         if serializer.is_valid():
         # Сначала сохраняем основную модель Job
-             job = serializer.save()
-        # Затем обрабатываем ManyToMany связь
-        if 'typicalfunctions' in request.data:
-            typical_function_ids = request.data['typicalfunctions']
-            try:
-                # Получаем объекты TypicalFunction
-                tfs = TypicalFunction.objects.filter(pk__in=typical_function_ids)
-                # Добавляем связи
-                job.tfs.set(tfs)
-            except Exception as e:
-                return Response({'error': str(e)}, status=400)
+            job = serializer.save()
             return Response(JobSerializer(job).data, status=201)
         return Response(serializer.errors, status=400)
 

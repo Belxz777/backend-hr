@@ -1,8 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from main.utils.auth import get_user
-from ..models import Department, Employee, Job, TypicalFunction
-from ..serializer import EmployeeSerializer
+from ..models import Department, Employee, Job, Functions
+from ..serializer import EmployeeSerializer, FunctionsSerializer
 from rest_framework.response import Response
 # class EmployeeTasksbystatus(APIView):
 #     def get(self, request):
@@ -66,21 +66,30 @@ def employeeTf(request):
             return Response({'error': 'Не указан id'})
 
         # Get department TFs
-        dept_tfs = user.departmentid.tfs.all().values('tfId', 'tfName', 'isMain')
-
+        dept_tfs = Department.objects.filter(departmentId=user.departmentid.departmentId).values_list('tfs', flat=True)
+        dept_tfs = Functions.objects.filter(funcId__in=dept_tfs).values('funcId', 'funcName', 'consistent')
+        
         # Get job TFs
-        job_tfs = user.jobid.tfs.all().values('tfId', 'tfName', 'isMain')
-
+        job_tfs = Job.objects.filter(jobId=user.jobid.jobId).values_list('tfs', flat=True)
+        job_tfs = Functions.objects.filter(funcId__in=job_tfs).values('funcId', 'funcName', 'consistent')
+        
         # Combine both querysets and remove duplicates
         all_tfs = dept_tfs.union(job_tfs)
 
         return Response(all_tfs)
+@api_view(['GET'])
+def departmentTf(request):
+    if request.method == 'GET':
+        id = request.query_params.get('id')
+        tfs = Department.objects.filter(departmentId=id).values('tfs')
+        type = Functions.objects.filter(funcId__in=tfs).values('funcId', 'funcName','consistent','time')
+        return Response(type)
+
 
 @api_view(['GET'])
 def jobTf(request):
     if request.method == 'GET':
         id = request.query_params.get('id')
         tfs = Job.objects.filter(jobId=id).values('tfs')
-        type = TypicalFunction.objects.filter(tfId__in=tfs).values('tfId', 'tfName','isMain','time')
+        type = Functions.objects.filter(funcId__in=tfs).values('funcId', 'funcName','consistent','time')
         return Response(type)
-

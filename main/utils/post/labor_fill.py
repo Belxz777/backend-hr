@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from datetime import datetime
-from main.models import Employee, LaborCosts,TypicalFunction
+from main.models import Employee, LaborCosts,Functions
 from main.serializer import LaborCostsSerializer
 from main.utils.auth import get_user
 from main.utils.closeDate import isExpired
@@ -17,7 +17,7 @@ def labor_fill(request):
         if tf is None:
             return Response({"error": "Не указан tf"}, status=400)
         try:
-            tf =TypicalFunction.objects.get(tfId=tf)
+            tf =Functions.objects.get(tfId=tf)
         except tf.DoesNotExist:
             return Response({"error": "Задача не найдена"}, status=404)
 
