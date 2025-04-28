@@ -41,11 +41,11 @@ class DeputySerializer(serializers.ModelSerializer):
     class Meta:
         model = Deputy
         fields = [
-            'tfId', 
-            'tfName', 
-            'tfDescription',
-            'isExt',
-            'functions'
+            'deputyId', 
+            'deputyName', 
+            'deputyDescription',
+            'compulsory',
+            'deputy_functions'
         ]
 
 class FunctionsSerializer(serializers.ModelSerializer):

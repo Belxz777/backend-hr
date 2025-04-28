@@ -20,7 +20,7 @@ class LaborCosts(models.Model):
     laborCostId = models.AutoField(primary_key=True)  # Уникальный идентификатор трудозатрат
     employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
     departmentId = models.IntegerField(null=True)  # Идентификатор услуги
-    tf = models.ForeignKey('Functions', on_delete=models.CASCADE,null=True)  # Идентификатор услуги
+    functionId = models.ForeignKey('Functions', on_delete=models.CASCADE,null=True)
     worked_hours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
             MinValueValidator(0.5)
@@ -49,10 +49,10 @@ class Employee(models.Model):
 
 class Deputy(models.Model):
     # Модель для типовых функций, содержит информацию о типовых функциях
-    tfId = models.AutoField(primary_key=True)  # Уникальный идентификатор типовой функции
-    tfName = models.CharField(max_length=200, null=False)  # Название типовой функции
-    tfDescription = models.CharField(max_length=150, null=True)  # Описание типовой функции
-    isExt = models.BooleanField(default=False)
+    deputyId = models.AutoField(primary_key=True)  # Уникальный идентификатор типовой функции
+    deputyName = models.CharField(max_length=200, null=False)  # Название типовой функции
+    deputyDescription = models.CharField(max_length=150, null=True)  # Описание типовой функции
+    compulsory = models.BooleanField(default=True)
     deputy_functions = models.ManyToManyField('Functions', related_name='deputy_functions')
 
 class Functions(models.Model):

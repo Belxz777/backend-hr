@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from main.utils.auth import get_user
-from ..models import Department, Employee, Job, Functions
+from ..models import Department, Employee, Job, Functions,Deputy
 from ..serializer import EmployeeSerializer, FunctionsSerializer
 from rest_framework.response import Response
 # class EmployeeTasksbystatus(APIView):
@@ -59,24 +59,29 @@ def departmentTf(request):
         return Response(type)
 
 @api_view(['GET'])
-def employeeTf(request):
+def employeeFuncs(request):
     if request.method == 'GET':
         user = get_user(request)
         if not user:
             return Response({'error': 'Не указан id'})
+        job  = Job.objects.filter(jobId=user.jobid.jobId).values('mainFunc')
+
+        if not job:
+            return Response({'error': 'Не указан id'})
+        
+        deputy = Deputy.objects.filter(deputyId=job)
+        if not deputy:
+            return Response({'error': 'Не указан id'})
+        
+        non_forcable = Deputy.objects.filter(compulsory=False)
 
         # Get department TFs
-        dept_tfs = Department.objects.filter(departmentId=user.departmentid.departmentId).values_list('tfs', flat=True)
-        dept_tfs = Functions.objects.filter(funcId__in=dept_tfs).values('funcId', 'funcName', 'consistent')
-        
-        # Get job TFs
-        job_tfs = Job.objects.filter(jobId=user.jobid.jobId).values_list('tfs', flat=True)
-        job_tfs = Functions.objects.filter(funcId__in=job_tfs).values('funcId', 'funcName', 'consistent')
-        
+     
         # Combine both querysets and remove duplicates
-        all_tfs = dept_tfs.union(job_tfs)
+        all_tfs = deputy.union(non_forcable)
 
         return Response(all_tfs)
+    
 @api_view(['GET'])
 def departmentTf(request):
     if request.method == 'GET':
