@@ -14,11 +14,10 @@ class AdminEmployeeSerializer(serializers.ModelSerializer):
           fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid', 'position']
         
 class JobSerializer(serializers.ModelSerializer):
-    mainFunc = serializers.PrimaryKeyRelatedField(queryset=Functions.objects.all(), required=False)
 
     class Meta:
         model = Job
-        fields = ['jobId', 'jobName', 'mainFunc']
+        fields = ['jobId', 'jobName', 'deputy']
 
 class DepartmentSerializer(serializers.ModelSerializer):
       class Meta:
@@ -41,12 +40,11 @@ class DeputySerializer(serializers.ModelSerializer):
     class Meta:
         model = Deputy
         fields = [
-            'tfId', 
-            'tfName', 
-            'tfDescription',
+            'deputyId', 
+            'deputyName', 
+            'deputyDescription',
             'isExt',
-            'functions'
-        ]
+"deputy_functions"       ]
 
 class FunctionsSerializer(serializers.ModelSerializer):
     class Meta:
