@@ -1,6 +1,7 @@
+from datetime import timezone
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+from django.utils import timezone
 class Job(models.Model):
     # Модель для должностей, содержит информацию о каждой должности
     jobId = models.AutoField(primary_key=True)  # Уникальный идентификатор должности
@@ -13,7 +14,7 @@ class Department(models.Model):
     departmentDescription = models.CharField(max_length=200, null=True) 
     headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)
     # tfs = models.ManyToManyField('TypicalFunction',null=True) 
-    jobsList = models.ManyToManyField('Job',null=True)
+    jobsList = models.ManyToManyField('Job', blank=True)
 
 class LaborCosts(models.Model):
     # Модель для трудозатрат, содержит информацию о затратах труда
@@ -21,6 +22,8 @@ class LaborCosts(models.Model):
     employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
     departmentId = models.IntegerField(null=True)  # Идентификатор услуги
     functionId = models.ForeignKey('Functions', on_delete=models.CASCADE,null=True)
+    deputyId = models.ForeignKey('Deputy', on_delete=models.CASCADE,null=True)
+    compulsory = models.BooleanField(default=True)
     worked_hours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
             MinValueValidator(0.5)
@@ -29,8 +32,9 @@ class LaborCosts(models.Model):
             MaxValueValidator(20),
             MinValueValidator(0.5)
         ], null=False)
+
     comment = models.CharField(max_length=300, null=True)  # Комментарий к трудозатратам
-    date = models.DateTimeField( auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now) 
     
 
 class Employee(models.Model):

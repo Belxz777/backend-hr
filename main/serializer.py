@@ -32,7 +32,8 @@ class PerformanceSerializer(serializers.Serializer):
 class LaborCostsSerializer(serializers.ModelSerializer):
       class Meta:
           model = LaborCosts
-          fields = ['laborCostId', 'employeeId', 'departmentId', 'tf', 'date', 'worked_hours', 'normal_hours', 'comment']
+          fields = ['laborCostId', 'employeeId', 'departmentId', 'functionId','deputyId','compulsory', 'worked_hours', 'normal_hours', 'comment', 'date']
+
 
 class DeputySerializer(serializers.ModelSerializer):
     deputy_functions = serializers.PrimaryKeyRelatedField(many=True, queryset=Functions.objects.all(), required=False)

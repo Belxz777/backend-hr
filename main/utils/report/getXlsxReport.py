@@ -5,7 +5,7 @@ from openpyxl import Workbook
 from requests import Response
 from rest_framework.decorators import api_view
 from openpyxl.utils import get_column_letter
-from main.models import Employee,LaborCosts, Functions
+from main.models import Deputy, Employee,LaborCosts, Functions
 from main.serializer import LaborCostsSerializer, FunctionsSerializer
 from main.utils.auth import get_user
 
@@ -23,23 +23,39 @@ def get_labor_costs_xlsx(request):
     ws.title = "Трудозатраты"
 
     # Заголовки столбцов
-    headers = ['report_id', 'employee_id', 'function_id',  "avg_time", 'spent_time', 'date', 'comment']
+    headers = ['report_id', 'employee_id', 'function_id', 'function_name',"is_compulsory", "avg_time", 'spent_time', 'date', 'comment']
     ws.append(headers)
     column_widths = {i: len(header) for i, header in enumerate(headers, start=1)}
 
     # Заполняем данными
     for cost in serializer.data:
-        func = Functions.objects.get(funcId=cost['t'])
-        row = [
+        if cost['deputyId'] is None:
+            func = Functions.objects.get(funcId=cost['functionId'])
+            row = [
             cost['laborCostId'],
             cost['employeeId'],
             func.funcId,
             func.funcName,
+            cost['compulsory'],
             cost['normal_hours'],
             cost['worked_hours'],
             cost['date'],
             cost['comment']
         ]
+        else:
+            func = Deputy.objects.get(deputyId=cost['deputyId'])
+            row = [
+            cost['laborCostId'],
+            cost['employeeId'],
+            cost['deputyId'],
+            func.deputyName,
+            cost['compulsory'],
+            cost['normal_hours'],
+            cost['worked_hours'],
+            cost['date'],
+            cost['comment']
+        ]
+    
         ws.append(row)
         for i, value in enumerate(row, start=1):
             column_widths[i] = max(column_widths[i], len(str(value)))
@@ -59,8 +75,7 @@ def get_labor_costs_xlsx(request):
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-    return response   # Создаем HTTP ответ с содержимым Excel файла
-
+    return response   # Создаем HTTP ответ с содержимым Excel файла@api_view(['POST'])
 @api_view(['POST'])
 def get_xlsx_precise(request):
     if request.method == 'POST':

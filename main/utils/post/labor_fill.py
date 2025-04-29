@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from datetime import datetime
-from main.models import Employee, LaborCosts,Functions
+from main.models import Deputy, Employee, LaborCosts,Functions
 from main.serializer import LaborCostsSerializer
 from main.utils.auth import get_user
 from main.utils.closeDate import isExpired
@@ -14,35 +14,46 @@ def labor_fill(request):
             return Response({"error": "Рабочий под таким номером не существует"}, status=404)
         data = request.data
         function = data.get('func_id')
-        if function is None:
-            return Response({"error": "Не указан function"}, status=400)
+        deputy = data.get('deputy_id')
+        if function is None and deputy is None:
+            return Response({"error": "Не указан deputy"}, status=400)
+        
         try:
-            function = Functions.objects.get(funcId=function)
-        except Functions.DoesNotExist:
-            return Response({"error": "Задача не найдена"}, status=404)
-
+            if function:
+                function = Functions.objects.get(funcId=function)
+            elif deputy:
+                deputy_obj = Deputy.objects.get(deputyId=deputy)
+        except (Functions.DoesNotExist, Deputy.DoesNotExist):
+            return Response({"error": "Функция или депути не найдены"}, status=404)
         # Проверка, принадлежит ли задача сотруднику
         data = request.data
         departmentId = employee.departmentid
         
         # if not function in employee.departmentid.functions.all():
         #     return Response({"error": "В вашем отделе нет этой задачи"}, status=403)
-       
-        laborCost = LaborCosts.objects.create(
+        if function:
+            laborCost = LaborCosts.objects.create(
             employeeId=employee,
             departmentId=departmentId.departmentId,
             functionId = function,
+            deputyId = function.consistent,
             worked_hours =data['workingHours'],
             normal_hours = function.time,
             comment=data['comment']
         )
-
+        else:
+            laborCost = LaborCosts.objects.create(
+            employeeId=employee,
+            departmentId=departmentId.departmentId,
+            deputyId = deputy_obj,
+            compulsory = False,
+            worked_hours =data['workingHours'],
+            normal_hours = 0,
+            comment=data['comment']
+        )
         if not laborCost:
-            return Response({'error': 'Возможно вы отправили неправильные данные | Посмотрите тело запроса.'}, status=400)
-
-        return Response({'message': 'Запись о проделанной работе сделана. Хорошего вам дня!'}, status=201)
-        
-# @api_view(['POST'])
+            return Response({'error': 'Возможно вы отправили неправильные данные | Посмотрите тело запроса.'}, status=400)      
+        return Response({'message': 'Запись о проделанной работе сделана. Хорошего вам дня!'}, status=201)# @api_view(['POST'])
 # def labor_fill(request):
 #     if request.method == 'POST':
 #         employee = get_user(request)

@@ -11,4 +11,4 @@ def get_labor_costs(request):
     id = request.query_params.get("department_id")  
     labor_costs = LaborCosts.objects.filter(departmentId=id)
     serializer = LaborCostsSerializer(labor_costs, many=True)
-    return Response(serializer.data)
+    return Response(serializer.data)    
