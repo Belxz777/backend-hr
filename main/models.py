@@ -4,7 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 class Job(models.Model):
     # Модель для должностей, содержит информацию о каждой должности
     jobId = models.AutoField(primary_key=True)  # Уникальный идентификатор должности
-    jobName = models.CharField(max_length=30, null=False) 
+    jobName = models.CharField(max_length=75, null=False) 
     mainFunc = models.ForeignKey('Functions',on_delete=models.CASCADE,null=True)
 
 class Department(models.Model):
@@ -53,7 +53,7 @@ class Deputy(models.Model):
     deputyName = models.CharField(max_length=200, null=False)  # Название типовой функции
     deputyDescription = models.CharField(max_length=150, null=True)  # Описание типовой функции
     compulsory = models.BooleanField(default=True)
-    deputy_functions = models.ManyToManyField('Functions', related_name='deputy_functions')
+    deputy_functions = models.ManyToManyField('Functions', related_name='deputy_functions', blank=True)
 
 class Functions(models.Model):
     # Модель для основных функций, содержит информацию о основных функциях
