@@ -2,6 +2,7 @@ from django.urls import path
 
 from main.utils.compliencyandhistory.regdata import departsdata
 from main.utils.func.crud import DeputyView , FunctionsView
+from main.utils.personal.code import get_user_functions
 from main.utils.work.statistics import get_app_status_data
 from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList
 from main.utils import access_managing
@@ -24,6 +25,8 @@ urlpatterns = [
     path('users/',access_managing.UserList),
 
     path('users/<pk>',access_managing.UserDetail),
+
+
 
     # ! это рабочее
         
@@ -78,7 +81,7 @@ urlpatterns = [
     # path('entities/user/tasks/reported/', ToReportTasks.as_view()),
 
 
-
+    path('report/functions/',get_user_functions),
 
     path('fill/progress/', labor_fill.labor_fill),
 

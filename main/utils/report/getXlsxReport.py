@@ -23,13 +23,13 @@ def get_labor_costs_xlsx(request):
     ws.title = "Трудозатраты"
 
     # Заголовки столбцов
-    headers = ['report_id', 'employee_id', 'task_id', "tf_name", "avg_time", 'spent_time', 'date', 'comment']
+    headers = ['report_id', 'employee_id', 'function_id',  "avg_time", 'spent_time', 'date', 'comment']
     ws.append(headers)
     column_widths = {i: len(header) for i, header in enumerate(headers, start=1)}
 
     # Заполняем данными
     for cost in serializer.data:
-        func = Functions.objects.get(funcId=cost['tf'])
+        func = Functions.objects.get(funcId=cost['t'])
         row = [
             cost['laborCostId'],
             cost['employeeId'],

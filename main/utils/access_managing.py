@@ -3,12 +3,12 @@ from rest_framework.decorators import api_view
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password,check_password
-
+from django.db.models import Q
 import jwt,datetime
 from django.core.cache import cache
 
 from main.utils.auth import get_user
-from ..models import Department, Employee
+from ..models import Department, Deputy, Employee, Functions, Job
 from ..serializer import AdminEmployeeSerializer, EmployeeSerializer
 
 def check_token(request):
@@ -144,10 +144,28 @@ class GetUser(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Токен истек')
         user = Employee.objects.filter(employeeId=payload['user']).values('employeeId','firstName','lastName','jobid','departmentid','position').first()   
+        
         if not user:
             raise AuthenticationFailed('Пользователь не найден')
-        return Response(user)
-    
+        
+        job = Job.objects.filter(jobId=user['jobid']).values('jobName', 'deputy').first()
+        if job['deputy'] is None:
+            deputy = None
+            return Response({'user': user, 'job': job, 'deputy': deputy, })
+
+    # Получаем функции для всех отфильтрованных deputy
+
+
+
+        # functions = Functions.objects.filter(consistent=deputy['deputyId']).values('funcName')
+        deputies = Deputy.objects.filter(Q(deputyId=user['jobid'] ) | Q(compulsory=False)).values('deputyId', 'deputyName', 'compulsory')
+        # Получаем функции для всех отфильтрованных deputy
+# Получаем функции для всех отфильтрованных deputy
+        return Response({
+        'user': user,
+        'job': job,
+        'deputy': list(deputies),
+    },status=200)    
 class Deposition(APIView):
         def patch(self,request):
             new_pos = request.data['position']

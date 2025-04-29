@@ -14,11 +14,10 @@ class AdminEmployeeSerializer(serializers.ModelSerializer):
           fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid', 'position']
         
 class JobSerializer(serializers.ModelSerializer):
-    mainFunc = serializers.PrimaryKeyRelatedField(queryset=Functions.objects.all(), required=False)
 
     class Meta:
         model = Job
-        fields = ['jobId', 'jobName', 'mainFunc']
+        fields = ['jobId', 'jobName', 'deputy']
 
 class DepartmentSerializer(serializers.ModelSerializer):
       class Meta:

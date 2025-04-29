@@ -5,7 +5,7 @@ class Job(models.Model):
     # Модель для должностей, содержит информацию о каждой должности
     jobId = models.AutoField(primary_key=True)  # Уникальный идентификатор должности
     jobName = models.CharField(max_length=75, null=False) 
-    mainFunc = models.ForeignKey('Functions',on_delete=models.CASCADE,null=True)
+    deputy = models.ForeignKey('Deputy',on_delete=models.CASCADE,null=True)
 
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги

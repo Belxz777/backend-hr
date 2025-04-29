@@ -13,27 +13,27 @@ def labor_fill(request):
         if not employee:
             return Response({"error": "Рабочий под таким номером не существует"}, status=404)
         data = request.data
-        tf = data.get('tf_id')
-        if tf is None:
-            return Response({"error": "Не указан tf"}, status=400)
+        function = data.get('func_id')
+        if function is None:
+            return Response({"error": "Не указан function"}, status=400)
         try:
-            tf =Functions.objects.get(tfId=tf)
-        except tf.DoesNotExist:
+            function = Functions.objects.get(funcId=function)
+        except Functions.DoesNotExist:
             return Response({"error": "Задача не найдена"}, status=404)
 
         # Проверка, принадлежит ли задача сотруднику
         data = request.data
         departmentId = employee.departmentid
         
-        # if not tf in employee.departmentid.tfs.all():
+        # if not function in employee.departmentid.functions.all():
         #     return Response({"error": "В вашем отделе нет этой задачи"}, status=403)
        
         laborCost = LaborCosts.objects.create(
             employeeId=employee,
             departmentId=departmentId.departmentId,
-            tf = tf,
+            functionId = function,
             worked_hours =data['workingHours'],
-            normal_hours = tf.time,
+            normal_hours = function.time,
             comment=data['comment']
         )
 
