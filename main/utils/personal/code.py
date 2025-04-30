@@ -24,4 +24,4 @@ def get_user_functions(request):
 
     non_compulsory_deputies = Deputy.objects.filter(compulsory=False).values('deputyId', 'deputyName')
 
-    return Response({ 'non-compulsory':  non_compulsory_deputies, 'functions': function})
+    return Response({ 'nonCompulsory':  non_compulsory_deputies, 'functions': function})

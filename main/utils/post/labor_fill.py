@@ -22,7 +22,7 @@ def labor_fill(request):
             if function:
                 function = Functions.objects.get(funcId=function)
             elif deputy:
-                deputy_obj = Deputy.objects.get(deputyId=deputy)
+                deputy = Deputy.objects.get(deputyId=deputy)
         except (Functions.DoesNotExist, Deputy.DoesNotExist):
             return Response({"error": "Функция или депути не найдены"}, status=404)
         # Проверка, принадлежит ли задача сотруднику
@@ -31,21 +31,22 @@ def labor_fill(request):
         
         # if not function in employee.departmentid.functions.all():
         #     return Response({"error": "В вашем отделе нет этой задачи"}, status=403)
+    
         if function:
             laborCost = LaborCosts.objects.create(
             employeeId=employee,
             departmentId=departmentId.departmentId,
             functionId = function,
-            deputyId = function.consistent,
             worked_hours =data['workingHours'],
             normal_hours = function.time,
             comment=data['comment']
         )
+            print(laborCost)
         else:
             laborCost = LaborCosts.objects.create(
             employeeId=employee,
             departmentId=departmentId.departmentId,
-            deputyId = deputy_obj,
+            deputyId = deputy,
             compulsory = False,
             worked_hours =data['workingHours'],
             normal_hours = 0,

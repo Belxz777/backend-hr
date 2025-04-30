@@ -55,7 +55,9 @@ class DepartmentPerformanceView(APIView):
                     "laborCostId": cost.laborCostId,
                     "employeeId_id": cost.employeeId_id,
                     "departmentId": cost.departmentId,
-                    "tf_id": cost.tf_id,
+                    "functionId": cost.functionId_id,
+                    "deputyId": cost.deputyId_id,
+                    "compulsory": cost.compulsory,
                     "worked_hours": cost.worked_hours,
                     "normal_hours": cost.normal_hours,
 

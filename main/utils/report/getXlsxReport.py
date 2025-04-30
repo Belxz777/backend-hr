@@ -29,40 +29,43 @@ def get_labor_costs_xlsx(request):
 
     # Заполняем данными
     for cost in serializer.data:
-        if cost['deputyId'] is None:
-            func = Functions.objects.get(funcId=cost['functionId'])
-            row = [
-            cost['laborCostId'],
-            cost['employeeId'],
-            func.funcId,
-            func.funcName,
-            cost['compulsory'],
-            cost['normal_hours'],
-            cost['worked_hours'],
-            cost['date'],
-            cost['comment']
-        ]
-        else:
-            func = Deputy.objects.get(deputyId=cost['deputyId'])
-            row = [
-            cost['laborCostId'],
-            cost['employeeId'],
-            cost['deputyId'],
-            func.deputyName,
-            cost['compulsory'],
-            cost['normal_hours'],
-            cost['worked_hours'],
-            cost['date'],
-            cost['comment']
-        ]
-    
-        ws.append(row)
-        for i, value in enumerate(row, start=1):
-            column_widths[i] = max(column_widths[i], len(str(value)))
+        try:
+            if cost['deputyId'] is None:
+                func = Functions.objects.get(funcId=cost['functionId'])
+                row = [
+                    cost['laborCostId'],
+                    cost['employeeId'],
+                    func.funcId,
+                    func.funcName,
+                    cost['compulsory'],
+                    cost['normal_hours'],
+                    cost['worked_hours'],
+                    cost['date'],
+                    cost['comment']
+                ]
+            else:
+                func = Deputy.objects.get(deputyId=cost['deputyId'])
+                row = [
+                    cost['laborCostId'],
+                    cost['employeeId'],
+                    cost['deputyId'],
+                    func.deputyName,
+                    cost['compulsory'],
+                    cost['normal_hours'],
+                    cost['worked_hours'],
+                    cost['date'],
+                    cost['comment']
+                ]
+        
+            ws.append(row)
+            for i, value in enumerate(row, start=1):
+                column_widths[i] = max(column_widths[i], len(str(value)))
+        except (Functions.DoesNotExist, Deputy.DoesNotExist):
+            continue
 
     # Устанавливаем ширину столбцов с небольшим запасом
     for i, width in column_widths.items():
-        ws.column_dimensions[get_column_letter(i)].width = width + 2  # Доб
+        ws.column_dimensions[get_column_letter(i)].width = width + 2
 
     wb.save(output) 
     output.seek(0)  
@@ -75,7 +78,7 @@ def get_labor_costs_xlsx(request):
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-    return response   # Создаем HTTP ответ с содержимым Excel файла@api_view(['POST'])
+    return response
 @api_view(['POST'])
 def get_xlsx_precise(request):
     if request.method == 'POST':
