@@ -20,7 +20,7 @@ def get_user_functions(request):
         return Response({ 'status':"Обязанностей нет"}, status=200)
     else:
         deputy = Deputy.objects.filter(deputyId=job['deputy'] ).values('deputyId', 'deputyName', 'compulsory').first()
-        function = Functions.objects.filter(consistent=deputy['deputyId']).values('funcName')
+        function = Functions.objects.filter(consistent=deputy['deputyId']).values('funcId','funcName')
 
     non_compulsory_deputies = Deputy.objects.filter(compulsory=False).values('deputyId', 'deputyName')
 
