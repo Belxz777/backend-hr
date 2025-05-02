@@ -63,6 +63,7 @@ class Functions(models.Model):
     # Модель для основных функций, содержит информацию о основных функциях
     funcId = models.AutoField(primary_key=True)  # Уникальный идентификатор основной функции
     funcName = models.CharField(max_length=150, null=True)  # Описание основной функции
+    funcdescription = models.CharField(max_length=150, null=True)  # Описание основной функции
     time = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(20),
             MinValueValidator(0.5)
@@ -73,6 +74,7 @@ class Functions(models.Model):
 # python manage.py migrate main zero
 # python manage.py makemigrations
 # python manage.py migrate
+# Идентификатор отдела сотрудника
 # Идентификатор отдела сотрудника
 
 
