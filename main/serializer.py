@@ -14,7 +14,6 @@ class AdminEmployeeSerializer(serializers.ModelSerializer):
           fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid', 'position']
         
 class JobSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Job
         fields = ['jobId', 'jobName', 'deputy']
@@ -32,8 +31,7 @@ class PerformanceSerializer(serializers.Serializer):
 class LaborCostsSerializer(serializers.ModelSerializer):
       class Meta:
           model = LaborCosts
-          fields = ['laborCostId', 'employeeId', 'departmentId', 'functionId','deputyId','compulsory', 'worked_hours', 'normal_hours', 'comment', 'date']
-
+          fields = ['laborCostId', 'employeeId', 'departmentId', 'function', 'deputy', 'compulsory', 'worked_hours', 'comment', 'date']
 
 class DeputySerializer(serializers.ModelSerializer):
     deputy_functions = serializers.PrimaryKeyRelatedField(many=True, queryset=Functions.objects.all(), required=False)
@@ -45,7 +43,7 @@ class DeputySerializer(serializers.ModelSerializer):
             'deputyName', 
             'deputyDescription',
             'compulsory',
-            'deputy_functions'
+            'deputy_functions'  
         ]
 
 class FunctionsSerializer(serializers.ModelSerializer):
@@ -54,6 +52,5 @@ class FunctionsSerializer(serializers.ModelSerializer):
         fields = [
             'funcId',
             'funcName',
-            'time',
-            'consistent'
+            'consistent',
         ]

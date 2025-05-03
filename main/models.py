@@ -15,22 +15,6 @@ class Department(models.Model):
     headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)
     jobsList = models.ManyToManyField('Job', blank=True)
 
-class LaborCosts(models.Model):
-    # Модель для трудозатрат, содержит информацию о затратах труда
-    laborCostId = models.AutoField(primary_key=True)  # Уникальный идентификатор трудозатрат
-    employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
-    departmentId = models.IntegerField(null=True)  # Идентификатор услуги
-    functionId = models.ForeignKey('Functions', on_delete=models.CASCADE,null=True)
-    deputyId = models.ForeignKey('Deputy', on_delete=models.CASCADE,null=True)
-    compulsory = models.BooleanField(default=True)
-    worked_hours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
-            MaxValueValidator(20),
-            MinValueValidator(0.5)
-        ], null=False)
-    comment = models.CharField(max_length=300, null=True)  # Комментарий к трудозатратам
-    date = models.DateTimeField(default=timezone.now) 
-    
-
 class Employee(models.Model):
     # Модель для сотрудников, содержит информацию о работниках
     employeeId = models.AutoField(primary_key=True)   
@@ -44,9 +28,24 @@ class Employee(models.Model):
     departmentid = models.ForeignKey(Department, on_delete=models.CASCADE) 
 
 
+class  LaborCosts(models.Model):
+    # Модель для трудозатрат, содержит информацию о затратах труда
+    laborCostId = models.AutoField(primary_key=True)  # Уникальный идентификатор трудозатрат
+    employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
+    departmentId = models.IntegerField(null=True)  # Идентификатор услуги
+    function = models.ForeignKey('Functions', on_delete=models.CASCADE,null=True)
+    deputy = models.ForeignKey('Deputy', on_delete=models.CASCADE,null=True)
+    compulsory = models.BooleanField(default=True)
+    worked_hours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
+            MaxValueValidator(20),
+            MinValueValidator(0.5)
+        ], null=False)
+    comment = models.CharField(max_length=300, null=True)  # Комментарий к трудозатратам
+    date = models.DateTimeField(default=timezone.now) 
+    
 
-class Deputy(models.Model):Фриланс и поиски себя
 
+class Deputy(models.Model):
     # Модель для типовых функций, содержит информацию о типовых функциях
     deputyId = models.AutoField(primary_key=True)  # Уникальный идентификатор типовой функции
     deputyName = models.CharField(max_length=200, null=False)  # Название типовой функции
@@ -55,7 +54,6 @@ class Deputy(models.Model):Фриланс и поиски себя
     deputy_functions = models.ManyToManyField('Functions', related_name='deputy_functions', blank=True)
 
 class Functions(models.Model):
-    Хваставство шляпой
 
 
     # Модель для основных функций, содержит информацию о основных функциях

@@ -3,18 +3,22 @@ from pathlib import Path
 from urllib.parse import urlparse
 import dj_database_url
 from dotenv import load_dotenv
-import psycopg2
 load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = os.getenv('DEBUG')
-if DEBUG:
+
+PRODUCTION = os.getenv('IS_PRODUCTION')
+
+if PRODUCTION == True:
     ALLOWED_HOSTS = ["*"]
-    print("Приложение запущено в debug mode")
+    DEBUG=False
+    print("Приложение запущено в рабочей версии 🤖")
 else:
-    ALLOWED_HOSTS = ["*"]#specify certain
-    print("Приложение запущено в production mode")
+    ALLOWED_HOSTS = ["*"]
+    DEBUG = True
+    print("Приложение запущено в режиме разработки 🚀")
+
 
 
 # Database connection
@@ -58,13 +62,10 @@ else:
 #     print(f"Connection failed: {e}")
 # Replace the SQLite DATABASES configuration with PostgreSQL:
 # connection for render database external via url
-ext_db = os.getenv('EXTERNAL_DB')
-print(ext_db)
-if  ext_db:
-    print("db is external")
+url_db = os.getenv('IS_URL')
+if  url_db==True:
     DATABASES = {
         'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
             default=os.getenv('DATABASE_URL') or 'postgresql://postgresd:xIenuJ2m7X0AhIKfi8KTX1NCYt5w6R79@dpg-cv9f8s9u0jms73ejfgtg-a.frankfurt-postgres.render.com/smt_wvo0',
             conn_max_age=600
      )  
@@ -73,16 +74,15 @@ else:
         DATABASES = { 
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.getenv('PGDATABASE') or 'labor',
-            'USER': os.getenv('PGUSER') or 'postgres',
-            'PASSWORD': os.getenv('PGPASSWORD') or '123',  # Ensure a default empty string if not set
-            'HOST': os.getenv('PG_HOST') or 'localhost',  # Default to localhost if not set
-            'PORT': 5432, 
+            'NAME': os.getenv('DATABASE_NAME') or 'ANY',
+            'USER': os.getenv('DATABASE_USER') or 'postgres',
+            'PASSWORD': os.getenv('DATABASE_PASSWORD') or 'ANY',  
+            'HOST': os.getenv('DATABASE_HOST') or 'localhost',  
+            'PORT': os.getenv('DATABASE_PORT') or 5432, 
         }
     }
 
 
-print(DATABASES)
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

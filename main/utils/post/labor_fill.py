@@ -36,20 +36,17 @@ def labor_fill(request):
             laborCost = LaborCosts.objects.create(
             employeeId=employee,
             departmentId=departmentId.departmentId,
-            functionId = function,
+            function = function,
             worked_hours =data['workingHours'],
-            normal_hours = function.time,
             comment=data['comment']
         )
-            print(laborCost)
         else:
             laborCost = LaborCosts.objects.create(
             employeeId=employee,
             departmentId=departmentId.departmentId,
-            deputyId = deputy,
+            deputy = deputy,
             compulsory = False,
             worked_hours =data['workingHours'],
-            normal_hours = 0,
             comment=data['comment']
         )
         if not laborCost:

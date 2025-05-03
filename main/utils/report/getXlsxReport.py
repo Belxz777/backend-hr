@@ -13,8 +13,14 @@ from main.utils.auth import get_user
 @api_view(['GET'])
 def get_labor_costs_xlsx(request):
     user = get_user(request)
-    
-    labor_costs = LaborCosts.objects.filter(departmentId=user.departmentid.departmentId)
+
+    dep_id = request.query_params.get('id')
+
+    if dep_id:
+        labor_costs = LaborCosts.objects.filter(departmentId=user.departmentid.departmentId)
+    else:
+        labor_costs = LaborCosts.objects.filter(departmentId=dep_id)
+
     serializer = LaborCostsSerializer(labor_costs, many=True)
     
     output = io.BytesIO()
@@ -23,7 +29,7 @@ def get_labor_costs_xlsx(request):
     ws.title = "Трудозатраты"
 
     # Заголовки столбцов
-    headers = ['report_id', 'employee_id', 'function_id', 'function_name',"is_compulsory", "avg_time", 'spent_time', 'date', 'comment']
+    headers = ['report_id', 'employee_id', 'function_id', 'function_name',"is_compulsory", 'spent_time', 'date', 'comment']
     ws.append(headers)
     column_widths = {i: len(header) for i, header in enumerate(headers, start=1)}
 
@@ -38,7 +44,6 @@ def get_labor_costs_xlsx(request):
                     func.funcId,
                     func.funcName,
                     cost['compulsory'],
-                    cost['normal_hours'],
                     cost['worked_hours'],
                     cost['date'],
                     cost['comment']

@@ -1,6 +1,8 @@
 from django.urls import path
 
-from main.utils.compliencyandhistory.regdata import departsdata
+from main.utils.analytics.code import get_department_hours_report, get_employee_hours_report
+from main.utils.analytics.percentage.code import get_employee_tasks_distribution, get_tasks_distribution
+from main.utils.compliencyandhistory.regdata import departsdata 
 from main.utils.func.crud import DeputyView , FunctionsView
 from main.utils.personal.code import get_user_functions
 from main.utils.work.statistics import get_app_status_data
@@ -50,35 +52,12 @@ urlpatterns = [
     path('entities/department/employees/select/',getDepEmp),
     
 
-
     path('entities/functions/',FunctionsView.as_view()),
 
-    # path('entities/main/',EmployeePerformanceView.as_view()),
-
-    # path('entities/tf/employee',employeeTf),
-
-    # path('entities/tf/department',departmentTf),
-
-    # path('entities/tf/jobs',jobTf),
 
     path('entities/deputy/',DeputyView.as_view()),
 
 
-
-
-
-
-
-
-    # path('entities/task/',TaskManaging.as_view()),
-    
-    # path('entities/task/ext',TaskManaging.as_view()),
-
-    # path('entities/user/tasks/bystatus/',  EmployeeTasksbystatus.as_view(), name='employee-tasks-bystatus'),
-    
-    # path('entities/user/tasks/', AllEmployeeTasks.as_view()),
-
-    # path('entities/user/tasks/reported/', ToReportTasks.as_view()),
 
 
     path('report/functions/',get_user_functions),
@@ -93,6 +72,18 @@ urlpatterns = [
 
     path('download/department/xlsx/persice/',getXlsxReport.get_xlsx_precise),
 
+
+    path('analytics/department/',get_department_hours_report),
+
+    path('analytics/employee/',get_employee_hours_report),
+
+
+    path('analytics/department/percentage/',get_tasks_distribution),
+
+    path('analytics/employee/percentage/',get_employee_tasks_distribution),
+
+    # path('analytics/employee/compliancy/',)
+
     path('history/user/',EmployeePerformanceView.as_view()) , # чекаем все таски сотрудника  за промежуток времен
     
     path('history/department/',DepartmentPerformanceView.as_view()),# чекаем все таски за промежуток времени
@@ -100,8 +91,6 @@ urlpatterns = [
 
 
 
-# эндпоинты для администрирования
-# path('reports/all',getXlsxReport.get_all_labor_costs_xlsx),
 
 path('app/statistics',get_app_status_data)
 
