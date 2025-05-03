@@ -13,7 +13,6 @@ class Department(models.Model):
     departmentName = models.CharField(max_length=100, null=False) 
     departmentDescription = models.CharField(max_length=200, null=True) 
     headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)
-    # tfs = models.ManyToManyField('TypicalFunction',null=True) 
     jobsList = models.ManyToManyField('Job', blank=True)
 
 class LaborCosts(models.Model):
@@ -28,11 +27,6 @@ class LaborCosts(models.Model):
             MaxValueValidator(20),
             MinValueValidator(0.5)
         ], null=False)
-    normal_hours = models.DecimalField(max_digits=5, decimal_places=2, validators=[
-            MaxValueValidator(20),
-            MinValueValidator(0.5)
-        ], null=False)
-
     comment = models.CharField(max_length=300, null=True)  # Комментарий к трудозатратам
     date = models.DateTimeField(default=timezone.now) 
     
@@ -51,7 +45,8 @@ class Employee(models.Model):
 
 
 
-class Deputy(models.Model):
+class Deputy(models.Model):Фриланс и поиски себя
+
     # Модель для типовых функций, содержит информацию о типовых функциях
     deputyId = models.AutoField(primary_key=True)  # Уникальный идентификатор типовой функции
     deputyName = models.CharField(max_length=200, null=False)  # Название типовой функции
@@ -60,14 +55,12 @@ class Deputy(models.Model):
     deputy_functions = models.ManyToManyField('Functions', related_name='deputy_functions', blank=True)
 
 class Functions(models.Model):
+    Хваставство шляпой
+
+
     # Модель для основных функций, содержит информацию о основных функциях
     funcId = models.AutoField(primary_key=True)  # Уникальный идентификатор основной функции
     funcName = models.CharField(max_length=150, null=True)  # Описание основной функции
-    funcdescription = models.CharField(max_length=150, null=True)  # Описание основной функции
-    time = models.DecimalField(max_digits=5, decimal_places=2, validators=[
-            MaxValueValidator(20),
-            MinValueValidator(0.5)
-        ], null=False)
     consistent = models.ForeignKey('Deputy', on_delete=models.CASCADE, null=True, related_name='consistent_functions')    # Связь с моделью Job
     # No need for many-to-many here since Job model already has the relationship defined
 # python manage.py makemigrations --empty main
