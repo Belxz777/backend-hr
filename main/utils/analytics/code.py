@@ -6,7 +6,7 @@ from datetime import datetime
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from main.models import LaborCosts
+from main.models import Department, LaborCosts
 
 @api_view(['GET'])
 def get_department_hours_report(request):
@@ -23,7 +23,7 @@ def get_department_hours_report(request):
                 {'error': 'Параметр department_id обязателен'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+        department = Department.objects.filter(departmentId=department_id).values('departmentName')
         # Проверяем, что передана либо конкретная дата, либо период
         if not date and not (start_date and end_date):
             return Response(
@@ -87,6 +87,7 @@ def get_department_hours_report(request):
         # Формируем ответ
         response_data = {
             'department_id': department_id,
+            'department_name':department.departmentName,
             'time_period': {
                 'type': time_period_type,
                 'date': date if time_period_type == 'single_day' else None,

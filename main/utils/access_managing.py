@@ -149,8 +149,10 @@ class GetUser(APIView):
             raise AuthenticationFailed('Пользователь не найден')
         
         job = Job.objects.filter(jobId=user['jobid']).values('jobName', 'deputy').first()
+        
         if job['deputy'] is None:
             deputy = None
+            print("none")
             return Response({'user': user, 'job': job, 'deputy': deputy, })
 
     # Получаем функции для всех отфильтрованных deputy
@@ -158,7 +160,7 @@ class GetUser(APIView):
 
 
         # functions = Functions.objects.filter(consistent=deputy['deputyId']).values('funcName')
-        deputies = Deputy.objects.filter(Q(deputyId=user['jobid'] ) | Q(compulsory=False)).values('deputyId', 'deputyName', 'compulsory')
+        deputies = Deputy.objects.filter(Q(deputyId=job['deputy'] ) | Q(compulsory=False)).values('deputyId', 'deputyName', 'compulsory')
         # Получаем функции для всех отфильтрованных deputy
 # Получаем функции для всех отфильтрованных deputy
         return Response({

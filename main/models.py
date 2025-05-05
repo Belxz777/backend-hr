@@ -64,7 +64,7 @@ class Functions(models.Model):
 # python manage.py makemigrations --empty main
 # python manage.py migrate main zero
 # python manage.py makemigrations
-# python manage.py migrate
+# python manage.py migrate  
 # Идентификатор отдела сотрудника
 # Идентификатор отдела сотрудника
 

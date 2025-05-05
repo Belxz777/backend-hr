@@ -8,16 +8,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 
-PRODUCTION = os.getenv('IS_PRODUCTION')
+DEGUG = True
 
-if PRODUCTION == True:
+if DEGUG:
     ALLOWED_HOSTS = ["*"]
-    DEBUG=False
-    print("Приложение запущено в рабочей версии 🤖")
+ 
+    
+    print("Приложение запущено в режиме разработки 🚀")
 else:
     ALLOWED_HOSTS = ["*"]
-    DEBUG = True
-    print("Приложение запущено в режиме разработки 🚀")
+
+    print("Приложение запущено в рабочей версии 🤖")
 
 
 
