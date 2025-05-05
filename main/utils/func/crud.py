@@ -60,22 +60,19 @@ class FunctionsView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        if isinstance(request.data, list):
-            responses = []
-            for item in request.data:
-                serializer = FunctionsSerializer(data=item)
-                if serializer.is_valid():
-                    serializer.save()
-                    responses.append(serializer.data)
-                else:
-                    return Response(serializer.errors, status=400)
-            return Response(responses, status=201)
-        else:
-            serializer = FunctionsSerializer(data=request.data)
+        data = request.data
+        try : 
+            serializer = FunctionsSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
+                deputy =  Deputy.objects.filter(deputyId=data['consistent'])
+                if deputy:
+                    deputy.deputy_functions.append(serializer.data)
                 return Response(serializer.data, status=201)
             return Response(serializer.errors, status=400)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
+        
 
     def patch(self, request):
         function = Functions.objects.get(funcId=request.query_params.get('id'))
