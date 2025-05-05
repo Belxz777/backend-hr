@@ -60,52 +60,20 @@ class FunctionsView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        if isinstance(request.data, list):
-            responses = []
-            for item in request.data:
-                serializer = FunctionsSerializer(data=item)
-                if serializer.is_valid():
-                # Сохраняем функцию
-                    function = serializer.save()
-                
-                # Проверяем наличие поля consistent и добавляем связь
-                    if 'consistent' in item and item['consistent']:
-                        try:
-                            deputy = Deputy.objects.get(deputyId=item['consistent'])
-                        # Добавляем связь между депутатом и функцией
-                            deputy.deputy_functions.add(function.functionid)
-                            deputy.save()
-                        except Deputy.DoesNotExist:
-                            return Response(
-                            {"error": f"Deputy with id {item['consistent']} not found"},
-                            status=404
-                        )
-                
-                        responses.append(serializer.data)
-                else:
-                    return Response(serializer.errors, status=400)
-                return Response(responses, status=201)
-        else:
-        # Обработка одиночного объекта (не списка)
-            serializer = FunctionsSerializer(data=request.data)
-        if serializer.is_valid():
-            function = serializer.save()
-            
-            # Проверяем наличие поля consistent и добавляем связь
-            if 'consistent' in request.data and request.data['consistent']:
-                try:
-                    deputy = Deputy.objects.get(deputyId=request.data['consistent'])
-                    # Добавляем связь между депутатом и функцией
-                    deputy.deputy_functions.add(function.functionid)
-                    deputy.save()
-                except Deputy.DoesNotExist:
-                    return Response(
-                        {"error": f"Deputy with id {request.data['consistent']} not found"},
-                        status=404
-                    )
-            
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        data = request.data
+        try : 
+            serializer = FunctionsSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                deputy =  Deputy.objects.filter(deputyId=data['consistent'])
+                if deputy:
+                    deputy.deputy_functions.append(serializer.data)
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
+        
+
     def patch(self, request):
         function = Functions.objects.get(funcId=request.query_params.get('id'))
         if function is None:
