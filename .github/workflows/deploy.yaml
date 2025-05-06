@@ -32,4 +32,4 @@ jobs:
           DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
           DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
         run: |
-          echo "Environment variables updated"
+          echo "Environment variables updated {{ secrets.SECRET_KEY }} is"
