@@ -32,4 +32,9 @@ jobs:
           DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
           DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
         run: |
-          echo "Environment variables updated {{ secrets.SECRET_KEY }} is"
+          echo "SECRET_KEY=${SECRET_KEY:?'SECRET_KEY is not set'}"
+          echo "DEBUG=${DEBUG:?'DEBUG is not set'}"
+          echo "IS_URL=${IS_URL:?'IS_URL is not set'}"
+          echo "DATABASE_NAME=${DATABASE_NAME:?'DATABASE_NAME is not set'}"
+          echo "DATABASE_HOST=${DATABASE_HOST:?'DATABASE_HOST is not set'}"
+          echo "DATABASE_PASSWORD=${DATABASE_PASSWORD:?'DATABASE_PASSWORD is not set'}"
