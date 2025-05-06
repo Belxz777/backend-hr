@@ -25,12 +25,12 @@ jobs:
 
       - name: Update Django environment
         env:
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DEBUG: ${{ secrets.DEBUG }}
-          IS_URL: ${{ secrets.IS_URL }}
-          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          SECRET_KEY: "Cm#~6$3gKv;OP5=_UC|rV'H.;T1b0b,M6Rs)snyd2%rNc*xvIA"
+          DEBUG: False
+          IS_URL: False
+          DATABASE_NAME: tracker
+          DATABASE_HOST: 81.200.158.11
+          DATABASE_PASSWORD: UqNAZgZr%5C6.9Vk
         run: |
           echo "SECRET_KEY=${SECRET_KEY:?'SECRET_KEY is not set'}"
           echo "DEBUG=${DEBUG:?'DEBUG is not set'}"
