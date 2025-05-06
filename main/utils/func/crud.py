@@ -31,7 +31,7 @@ class DeputyView(APIView):
             return Response(serializer.errors, status=400)
 
     def patch(self, request):
-        deputy = Deputy.objects.get(tfId=request.query_params.get('id'))
+        deputy = Deputy.objects.get(deputyId=request.query_params.get('id'))
         if deputy is None:
             return Response({'message': 'Deputy not found'}, status=404)
         serializer = DeputySerializer(deputy, data=request.data, partial=True)

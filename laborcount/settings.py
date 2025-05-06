@@ -8,61 +8,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 
-DEGUG = True
+DEBUG = True
 
-if DEGUG:
+if DEBUG:
     ALLOWED_HOSTS = ["*"]
- 
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    }
     
     print("Приложение запущено в режиме разработки 🚀")
 else:
     ALLOWED_HOSTS = ["*"]
-
     print("Приложение запущено в рабочей версии 🤖")
 
-
-
-# Database connection
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'main_agry',
-#         'USER': 'postgres1',
-#         'PASSWORD': 'awpbMho0QStEeHfPUl96bY0ApIEnoBOm' ,  # Ensure a default empty string if not set
-#         'HOST': 'dpg-cti3fnogph6c73d4kekg-a.frankfurt-postgres.render.com',  # Default to localhost if not set
-#         'PORT': os.getenv('PGPORT') or 5432,  # Default to 5432 if not set
-#     }
-# }  
-    # DATABASES = {
-    # 'default': dj_database_url.config(
-    #     # Replace this value with your local database's connection string.        default='postgresql://postgres:postgres@localhost:5432/mysite',        conn_max_age=600    
-        
-    #     )
-    #     }
-# DATABASES = { 
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': os.getenv('PGDATABASE') or 'labor',
-#         'USER': os.getenv('PGUSER') or 'postgres',
-#         'PASSWORD': os.getenv('PGPASSWORD') or '123',  # Ensure a default empty string if not set
-#         'HOST': os.getenv('PG_HOST') or 'localhost',  # Default to localhost if not set
-#         'PORT': 5432, 
-#     }
-# }
-# try:
-#     conn = psycopg2.connect(
-#         dbname="test_pyco",
-#         user="test_pyco_user",
-#         password="zhsN9ck24KHRfx8JVVvGESCAwooM0Civ",
-#         host="dpg-cuhl54jtq21c73bbpai0-a",
-#         port=5432
-#     )
-#     print("Connection successful!")
-#     conn.close()
-# except Exception as e:
-#     print(f"Connection failed: {e}")
-# Replace the SQLite DATABASES configuration with PostgreSQL:
-# connection for render database external via url
 url_db = os.getenv('IS_URL')
 if  url_db==True:
     DATABASES = {

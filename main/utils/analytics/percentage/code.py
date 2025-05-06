@@ -4,16 +4,23 @@ from rest_framework import status
 from django.db.models import Sum, Q, Count, F
 from datetime import datetime
 from main import models
-from main.models import Deputy, Employee, LaborCosts, Functions
+from main.models import Department, Deputy, Employee, LaborCosts, Functions
 
 @api_view(['GET'])
 def get_tasks_distribution(request):
     try:
         # Получаем параметры запроса
         date = request.query_params.get('date')
+        department_id = request.query_params.get('department_id')
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
-        
+        if not department_id:
+            return Response(
+                {'error': 'Параметр department_id обязателен'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        department = Department.objects.filter(departmentId=department_id).values('departmentName')
+        print(department)
         # Проверяем, что передана либо конкретная дата, либо период
         if not date and not (start_date and end_date):
             return Response(
@@ -22,7 +29,7 @@ def get_tasks_distribution(request):
             )
         
         # Строим фильтр по дате
-        date_filter = Q()
+        date_filter = Q(departmentId=department_id)
         
         if date:
             try:
@@ -63,11 +70,13 @@ def get_tasks_distribution(request):
         # Если нет данных
         if total_hours == 0:
             return Response({
+                'department_id': department_id,
+            'department_name':department.first()['departmentName'],
                 'message': 'Нет данных за указанный период',
                 'total_hours': 0,
                 'distribution': {}
             }, status=status.HTTP_200_OK)
-        
+        # ! продумать логику вывода 
         # 2. Считаем распределение по функциям (типовым и нетиповым)
         function_distribution = LaborCosts.objects.filter(
             date_filter & Q(function__isnull=False)
@@ -150,11 +159,13 @@ def get_tasks_distribution(request):
                 'deputy_name': dep['deputy__deputyName'],
                 'hours': dep_hours,
                 'percent': round(dep_hours / total_hours * 100, 2),
-                'entries_count': dep['count']
+                'reports_count': dep['count']
             })
 
         # Формируем полный ответ
         response_data = {
+            'department_id': department_id,
+            'department_name':department.first()['departmentName'],
             'time_period': {
                 'type': time_period_type,
                 'date': date if time_period_type == 'single_day' else None,
@@ -173,7 +184,6 @@ def get_tasks_distribution(request):
             {'error': f'Ошибка сервера: {str(e)}'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         ) 
-
 @api_view(['GET'])
 def get_employee_tasks_distribution(request):
     try:
@@ -200,7 +210,11 @@ def get_employee_tasks_distribution(request):
         # Получаем сотрудника и его должность с обязанностями
         try:
             employee = Employee.objects.select_related('jobid', 'jobid__deputy').get(employeeId=employee_id)
+             
             employee_deputy = employee.jobid.deputy if employee.jobid else None
+            employee_typical = Functions.objects.filter(consistent = employee_deputy.deputyId)
+            print(
+                  employee_typical)
         except Employee.DoesNotExist:
             return Response(
                 {'error': 'Сотрудник не найден'},
@@ -240,30 +254,93 @@ def get_employee_tasks_distribution(request):
 
         function_distribution = LaborCosts.objects.filter(
             base_filter & Q(function__isnull=False)
-        ).select_related('function').annotate(
-            is_in_job_deputy_functions=Exists(
-                Deputy.deputy_functions.through.objects.filter(
-                    deputy_id=employee_deputy.id if employee_deputy else None,
-                    functions_id=OuterRef('function_id')
-                )
-            ) if employee_deputy else models.Value(False)
-        ).values(
+        ).select_related('function').values(
             'function_id',
             'function__funcName',
             'function__consistent',
-            'is_in_job_deputy_functions'
         ).annotate(
             hours=Sum('worked_hours'),
             count=Count('laborCostId')
         ).order_by('-hours')
+    
+        # Инициализируем структуру распределения
+        distribution = {
+            'by_functions': {
+                'typical': [],
+                'non_typical': []
+            },
+            'extra': []
+        }
 
-        # Остальная часть кода остается такой же, как в вашем оригинальном запросе
-        # с использованием обновленного function_distribution
+        # Вычисляем общее количество часов
+        total_hours = sum(float(func['hours'] or 0) for func in function_distribution)
+
+        # Получаем список ID типичных функций сотрудника
+        typical_function_ids = set(employee_typical.values_list('funcId', flat=True))
+
+        # Добавляем распределение по функциям
+        # Calculate total hours including both functions and deputy hours
+        deputies = LaborCosts.objects.filter(
+            base_filter & Q(function__isnull=True) & Q(deputy__isnull=False) & Q(compulsory=False)
+        ).select_related('deputy').values(
+            'deputy__deputyName',
+            'deputy__deputyId',
+            'worked_hours'
+        ).annotate(
+            total_hours=Sum('worked_hours')
+        )
+    
+        total_combined_hours = float(total_hours) + float(sum(deputy['total_hours'] for deputy in deputies))
+
+        for func in function_distribution:
+            func_hours = float(func['hours'] or 0)
+            func_data = {
+                'function_id': func['function_id'],
+                'function_name': func['function__funcName'],
+                'hours': func_hours,
+                'percent': round(float(func_hours) / float(total_combined_hours) * 100, 2) if total_combined_hours > 0 else 0,
+                'entries_count': func['count']
+            }
+            
+            if func['function_id'] in typical_function_ids:
+                distribution['by_functions']['typical'].append(func_data)
+            else:
+                distribution['by_functions']['non_typical'].append(func_data)     
+                
+        deputy_hours = float(sum(deputy['total_hours'] for deputy in deputies))
+        for deputy in deputies:
+            deputy_total_hours = float(deputy['total_hours'])
+            distribution['extra'].append({
+                'type': 'deputy',
+                'deputy_id': deputy['deputy__deputyId'],
+                'deputy_name': deputy['deputy__deputyName'],
+                'hours': deputy_total_hours,
+                'percent': round(deputy_total_hours / float(total_combined_hours) * 100, 2) if total_combined_hours > 0 else 0,
+                'entries_count': 1,
+            })        
+        response_data = {
+            'employee': {
+                'employee_id': employee_id,
+                'employee_name': employee.firstName,
+              'employee_surname': employee.lastName,
+              'employee_patronymic': employee.patronymic,
+            },
+            'time_period': {
+                'type': time_period_type,
+                'date': date if time_period_type == 'single_day' else None,
+                'start_date': start_date if time_period_type == 'range' else None,
+                'end_date': end_date if time_period_type == 'range' else None,
+            },
+            'total_hours': total_hours,
+        #    'typical': [{'function_id': func.funcId, 'function_name': func.funcName} for func in employee_typical],        
+            'total_reports': LaborCosts.objects.filter(base_filter).count(),
+            'distribution': distribution
+        }
         
-        # ... (остальной код обработки и формирования ответа)
+        return Response(response_data, status=status.HTTP_200_OK)
     
     except Exception as e:
-            return Response(
-                {'error': f'Ошибка сервера: {str(e)}'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        return Response(
+            {'error': f'Ошибка сервера: {str(e)}'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

@@ -6,7 +6,7 @@ from datetime import datetime
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from main.models import Department, LaborCosts
+from main.models import Department, Employee, LaborCosts
 
 @api_view(['GET'])
 def get_department_hours_report(request):
@@ -24,6 +24,7 @@ def get_department_hours_report(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
         department = Department.objects.filter(departmentId=department_id).values('departmentName')
+        print(department)
         # Проверяем, что передана либо конкретная дата, либо период
         if not date and not (start_date and end_date):
             return Response(
@@ -57,8 +58,11 @@ def get_department_hours_report(request):
                 )
         
         # Базовый запрос для статистики по сотрудникам
-        employee_stats = LaborCosts.objects.filter(date_filter).values(
-            'employeeId'
+        employee_stats = LaborCosts.objects.select_related('employeeId').filter(date_filter).values(
+            'employeeId',
+            'employeeId__firstName',
+            'employeeId__lastName',
+            'employeeId__patronymic',
         ).annotate(
             total_hours=Sum('worked_hours'),
             function_hours=Sum('worked_hours', filter=Q(function__isnull=False)),
@@ -87,7 +91,7 @@ def get_department_hours_report(request):
         # Формируем ответ
         response_data = {
             'department_id': department_id,
-            'department_name':department.departmentName,
+            'department_name':department.first()['departmentName'],
             'time_period': {
                 'type': time_period_type,
                 'date': date if time_period_type == 'single_day' else None,
@@ -103,6 +107,9 @@ def get_department_hours_report(request):
             'employee_stats': [
                 {
                     'employee_id': stat['employeeId'],
+                    'first_name': stat['employeeId__firstName'],
+                    'last_name': stat['employeeId__lastName'],
+                    'patronymic': stat['employeeId__patronymic'],
                     'total_hours': float(stat['total_hours'] or 0),
                     'function_hours': float(stat['function_hours'] or 0),
                     'deputy_hours': float(stat['deputy_hours'] or 0)
@@ -154,6 +161,7 @@ def get_employee_hours_report(request):
             )
         
         # Строим фильтр по дате
+        employee = Employee.objects.filter(employeeId=employee_id).first()
         date_filter = Q()
         
         if date:
@@ -228,7 +236,12 @@ def get_employee_hours_report(request):
                 summary[key] = 0.0
         
         response_data = {
-            'employee_id': employee_id,
+            'employee': {
+                'employee_id': employee_id,
+                'employee_name': employee.firstName,
+              'employee_surname': employee.lastName,
+              'employee_patronymic': employee.patronymic,
+            },
             'summary': summary,
             'reports': list(time_entries),
             'reports_count': len(time_entries),
