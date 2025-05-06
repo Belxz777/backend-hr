@@ -15,8 +15,11 @@ RUN apt-get update && apt-get install -y \
        && rm -rf /var/lib/apt/lists/*
 RUN pip install --upgrade pip
 
+
 COPY requirements.txt ./requirements.txt
-RUN pip install -r requirements.txt
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --no-warn-script-location -r requirements.txt
 
 COPY . .
 
