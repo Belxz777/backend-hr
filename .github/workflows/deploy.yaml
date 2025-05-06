@@ -5,7 +5,7 @@ on:
     branches: [master, deploy]
 
 jobs:
-  deploy:
+  deployss:
     runs-on: self-hosted
     steps:
       - name: Checkout code
