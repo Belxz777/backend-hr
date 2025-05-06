@@ -10,7 +10,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+      - name: Docker setup
+        run: |
+          sudo chmod 666 /var/run/docker.sock || true
+          docker --version
+          
       - name: Pull and rebuild Docker
         run: |
           git pull origin master
