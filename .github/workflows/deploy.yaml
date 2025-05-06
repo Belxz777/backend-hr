@@ -1,0 +1,22 @@
+name = "Deploy"
+
+on: 
+  push:
+    branches:[master,deploy]
+    jobs:
+    deploy:
+    runs-on: self-hosted
+    steps:
+    - name: checkout
+    uses: actions/checkout@v2
+    - name: rebuild
+    run: 
+    git pull origin master
+    docker stop backend-pulse
+    docker rm backend-pulse
+    docker build -t backend-pulse .
+    docker run -d -p 8080:8080 backend-pulse
+    sudo service nginx restart
+    
+    
+ 
