@@ -21,7 +21,7 @@ jobs:
           docker stop backend-pulse || true
           docker rm backend-pulse || true
           docker build -t backend-pulse .
-          docker run -d -p 8000:8000  backend-pulse  --name backend-pulse
+          docker run -d -p 8000:8000   --name backend-pulse backend-pulse 
 
       - name: Update Django environment
         env:
