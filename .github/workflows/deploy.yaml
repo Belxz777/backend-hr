@@ -5,7 +5,7 @@ on:
     branches: [master, deploy]
 
 jobs:
-  deployss:
+  deploy:
     runs-on: self-hosted
     steps:
       - name: Checkout code
@@ -21,7 +21,15 @@ jobs:
           docker stop backend-pulse || true
           docker rm backend-pulse || true
           docker build -t backend-pulse .
-          docker run -d -p 8000:8000   --name backend-pulse backend-pulse 
+          docker run -d -p 8000:8000 \
+            --name backend-pulse \
+            -e SECRET_KEY="Cm#~6$3gKv;OP5=_UC|rV'H.;T1b0b,M6Rs)snyd2%rNc*xvIA" \
+            -e DEBUG="False" \
+            -e IS_URL="False" \
+            -e DATABASE_NAME="tracker" \
+            -e DATABASE_HOST="81.200.158.11" \
+            -e DATABASE_PASSWORD="UqNAZgZr%5C6.9Vk" \
+            backend-pulse
 
       - name: Update Django environment
         env:
