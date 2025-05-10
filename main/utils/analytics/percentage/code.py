@@ -20,7 +20,6 @@ def get_tasks_distribution(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
         department = Department.objects.filter(departmentId=department_id).values('departmentName')
-        print(department)
         # Проверяем, что передана либо конкретная дата, либо период
         if not date and not (start_date and end_date):
             return Response(
@@ -29,7 +28,7 @@ def get_tasks_distribution(request):
             )
         
         # Строим фильтр по дате
-        date_filter = Q(departmentId=department_id)
+        date_filter = Q(department=department_id)
         
         if date:
             try:
@@ -222,7 +221,7 @@ def get_employee_tasks_distribution(request):
             )
 
         # Строим базовый фильтр
-        base_filter = Q(employeeId=employee_id)
+        base_filter = Q(employee=employee_id)
         
         # Добавляем фильтр по дате
         if date:

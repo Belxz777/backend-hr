@@ -5,6 +5,8 @@ import psutil
 from rest_framework.decorators import api_view
 
 from rest_framework.response import Response
+
+from main.utils.recreatate.d import recreate_table
 @api_view(['GET'])
 def get_app_status_data(request):
     """

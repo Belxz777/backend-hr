@@ -33,7 +33,7 @@ def get_department_hours_report(request):
             )
         
         # Строим фильтр по дате
-        date_filter = Q(departmentId=department_id)
+        date_filter = Q(department=department_id)
         
         if date:
             try:
@@ -58,23 +58,23 @@ def get_department_hours_report(request):
                 )
         
         # Базовый запрос для статистики по сотрудникам
-        employee_stats = LaborCosts.objects.select_related('employeeId').filter(date_filter).values(
-            'employeeId',
-            'employeeId__firstName',
-            'employeeId__lastName',
-            'employeeId__patronymic',
+        employee_stats = LaborCosts.objects.select_related('employee').filter(date_filter).values(
+            'employee',
+            'employee__firstName',
+            'employee__lastName',
+            'employee__patronymic',
         ).annotate(
             total_hours=Sum('worked_hours'),
             function_hours=Sum('worked_hours', filter=Q(function__isnull=False)),
             deputy_hours=Sum('worked_hours', filter=Q(deputy__isnull=False))
-        ).order_by('employeeId')
+        ).order_by('employee')
         
         # Общая статистика по отделу
         department_stats = LaborCosts.objects.filter(date_filter).aggregate(
             total_hours=Sum('worked_hours'),
             function_hours=Sum('worked_hours', filter=Q(function__isnull=False)),
             deputy_hours=Sum('worked_hours', filter=Q(deputy__isnull=False)),
-            unique_employees=Count('employeeId', distinct=True)
+            unique_employees=Count('employee', distinct=True)
         )
         
         # Дополнительная статистика по дням, если выбран период
@@ -106,10 +106,10 @@ def get_department_hours_report(request):
             },
             'employee_stats': [
                 {
-                    'employee_id': stat['employeeId'],
-                    'first_name': stat['employeeId__firstName'],
-                    'last_name': stat['employeeId__lastName'],
-                    'patronymic': stat['employeeId__patronymic'],
+                    'employee_id': stat['employee'],
+                    'first_name': stat['employee__firstName'],
+                    'last_name': stat['employee__lastName'],
+                    'patronymic': stat['employee__patronymic'],
                     'total_hours': float(stat['total_hours'] or 0),
                     'function_hours': float(stat['function_hours'] or 0),
                     'deputy_hours': float(stat['deputy_hours'] or 0)
@@ -186,10 +186,10 @@ def get_employee_hours_report(request):
         
         # Получаем все записи сотрудника
         time_entries = LaborCosts.objects.filter(
-            Q(employeeId=employee_id) & date_filter
+            Q(employee=employee_id) & date_filter
         ).values(
             'laborCostId',
-            'departmentId',
+            'department',
             'function',
             'deputy',
             'compulsory',
@@ -200,7 +200,7 @@ def get_employee_hours_report(request):
         
         # Группируем данные по типам задач
         summary = LaborCosts.objects.filter(
-            Q(employeeId=employee_id) & date_filter
+            Q(employee=employee_id) & date_filter
         ).aggregate(
             total_hours=Sum('worked_hours'),
             function_hours=Sum('worked_hours', filter=Q(function__isnull=False)),
@@ -213,7 +213,7 @@ def get_employee_hours_report(request):
         daily_summary = []
         if start_date and end_date:
             daily_data = LaborCosts.objects.filter(
-                Q(employeeId=employee_id) & date_filter
+                Q(employee=employee_id) & date_filter
             ).values('date__date').annotate(
                 day_total=Sum('worked_hours'),
                 day_function=Sum('worked_hours', filter=Q(function__isnull=False)),

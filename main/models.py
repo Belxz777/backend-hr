@@ -11,7 +11,7 @@ class Job(models.Model):
 class Department(models.Model):
     departmentId = models.AutoField(primary_key=True)  # Уникальный идентификатор услуги
     departmentName = models.CharField(max_length=100, null=False) 
-    departmentDescription = models.CharField(max_length=200, null=True) 
+    # departmentDescription = models.CharField(max_length=200, null=True) 
     headId = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True)
     jobsList = models.ManyToManyField('Job', blank=True)
 
@@ -29,10 +29,9 @@ class Employee(models.Model):
 
 
 class  LaborCosts(models.Model):
-    # Модель для трудозатрат, содержит информацию о затратах труда
-    laborCostId = models.AutoField(primary_key=True)  # Уникальный идентификатор трудозатрат
-    employeeId = models.ForeignKey('Employee', on_delete=models.CASCADE) # Идентификатор сотрудника
-    departmentId = models.IntegerField(null=True)  # Идентификатор услуги
+    laborCostId = models.AutoField(primary_key=True)  
+    employee = models.ForeignKey('Employee', on_delete=models.CASCADE) 
+    department= models.ForeignKey(Department, on_delete=models.CASCADE)
     function = models.ForeignKey('Functions', on_delete=models.CASCADE,null=True)
     deputy = models.ForeignKey('Deputy', on_delete=models.CASCADE,null=True)
     compulsory = models.BooleanField(default=True)

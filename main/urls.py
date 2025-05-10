@@ -1,7 +1,9 @@
 from django.urls import path
 
 from main.utils.analytics.code import get_department_hours_report, get_employee_hours_report
+from main.utils.analytics.common.common import get_all_departments_hours_report, get_combined_top_duties_and_functions, get_top_duties_and_functions
 from main.utils.analytics.percentage.code import get_employee_tasks_distribution, get_tasks_distribution
+from main.utils.analytics.workers.top import get_top_employees_by_department
 from main.utils.compliencyandhistory.regdata import departsdata 
 from main.utils.func.crud import DeputyView , FunctionsView
 from main.utils.personal.code import get_user_functions
@@ -81,6 +83,17 @@ urlpatterns = [
     path('analytics/department/percentage/',get_tasks_distribution),
 
     path('analytics/employee/percentage/',get_employee_tasks_distribution),
+
+    path('analytics/department/performance/top',get_top_employees_by_department),
+
+    path('common/departments/',get_all_departments_hours_report),
+
+    path('common/functions/separated',get_top_duties_and_functions),   
+
+
+    path('common/functions/united',get_combined_top_duties_and_functions),   
+
+
 
     # path('analytics/employee/compliancy/',)
 
