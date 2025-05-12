@@ -143,33 +143,54 @@ class GetUser(APIView):
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Токен истек')
-        user = Employee.objects.filter(employeeId=payload['user']).values('employeeId','firstName','lastName','jobid','departmentid','position').first()   
+        user = Employee.objects.select_related('jobid', 'departmentid').filter(employeeId=payload['user']).values(
+            'employeeId',
+            'firstName',
+            'lastName',
+            'jobid',
+            'departmentid__departmentName',
+            'position',
+            'jobid__jobName',
+            'jobid__deputy'
+        ).first()   
         
         if not user:
             raise AuthenticationFailed('Пользователь не найден')
         
-        job = Job.objects.filter(jobId=user['jobid']).values('jobName', 'deputy').first()
-        
-        if job['deputy'] is None:
+        if user['jobid__deputy'] is None:
             deputy = None
-            print("none")
-            return Response({'user': user, 'job': job, 'deputy': deputy, })
-
-    # Получаем функции для всех отфильтрованных deputy
-
-
-
-        # functions = Functions.objects.filter(consistent=deputy['deputyId']).values('funcName')
-        deputies = Deputy.objects.filter(Q(deputyId=job['deputy'] ) | Q(compulsory=False)).values('deputyId', 'deputyName', 'compulsory')
-        # Получаем функции для всех отфильтрованных deputy
-# Получаем функции для всех отфильтрованных deputy
-        return Response({
-        'user': user,
-        'job': job,
-        'deputy': list(deputies),
-    },status=200)    
+            return Response({
+                'user': {
+                    'employeeId': user['employeeId'],
+                    'firstName': user['firstName'],
+                    'lastName': user['lastName'],
+                    'position': user['position']
+                },
+                'department': user['departmentid___departmentName'],
+                'job': {
+                    'jobName': user['jobid__jobName'],
+                    'deputy': user['jobid__deputy']
+                },
+                'deputy': deputy,
+            },status=200)
+        else:
+            deputies = Deputy.objects.filter(Q(deputyId=user['jobid__deputy']) | Q(compulsory=False)).values('deputyId', 'deputyName', 'compulsory')
+            return Response({
+                'user': {
+                    'employeeId': user['employeeId'],
+                    'firstName': user['firstName'],
+                    'lastName': user['lastName'],
+                    'position': user['position']
+                },
+                'department': user['departmentid__departmentName'],
+                'job': {
+                    'jobName': user['jobid__jobName'],
+                    'deputy': user['jobid__deputy']
+                },
+                'deputy': list(deputies),
+            },status=200)
 class Deposition(APIView):
-        def patch(self,request):
+    def patch(self,request):
             new_pos = request.data['position']
             print(new_pos)
             change = Employee.objects.filter(employeeId = request.data['empid']).update(position=new_pos)
