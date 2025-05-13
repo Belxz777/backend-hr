@@ -19,10 +19,10 @@ def get_app_status_data(request):
         'memory_usage': get_memory_usage(),
         'cpu_usage': get_cpu_usage(),
         'active_connections': get_active_connections(),
-        'error_count': get_error_count(),
-        'requests_per_minute': calculate_requests_per_minute(),
         'last_updated': datetime.now().isoformat()
     }
+    print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    
     return Response(status_data)
 
 def get_system_uptime():
@@ -60,13 +60,3 @@ def get_active_connections():
         return connections
     except:
         return 0
-
-def get_error_count():
-    """Get count of errors in last hour"""
-    # Placeholder - implement actual error logging/counting
-    return 0
-
-def calculate_requests_per_minute():
-    """Calculate average requests per minute"""
-    # Placeholder - implement actual request tracking
-    return 0
