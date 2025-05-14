@@ -30,7 +30,7 @@ if DEBUG:
 else:
     ALLOWED_HOSTS = ["*"]
     print("Приложение запущено в рабочей версии 🤖")
-
+    print(os.getenv('SECRET_KEY'),os.getenv('DATABASE_NAME'))
 url_db = os.getenv('IS_URL')
 if  url_db==True:
     DATABASES = {
