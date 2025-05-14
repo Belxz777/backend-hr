@@ -28,9 +28,9 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DEBUG: False
           IS_URL: False
-          DATABASE_NAME: ${{ main.DATABASE_NAME }}
-          DATABASE_HOST: ${{ main.DATABASE_HOST }}
-          DATABASE_PASSWORD: ${{ main.DATABASE_PASSWORD }}
+          DATABASE_NAME: ${{ vars.DATABASE_NAME }}
+          DATABASE_HOST: ${{ vars.DATABASE_HOST }}
+          DATABASE_PASSWORD: ${{ vars.DATABASE_PASSWORD }}
         run: |
           echo "${{ secrets.SECRET_KEY }} APP SHOULD WORK "
           echo "DEBUG=${DEBUG:?'DEBUG is not set'}"
