@@ -10,9 +10,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = os.getenv('DEBUG')
 
-if DEBUG:
+if DEBUG==True:
     ALLOWED_HOSTS = ["*"]
-    print("Приложение запущено в режиме разработки 🚀")
+    print("Приложение запущено в режиме разработки 🚀",DEBUG)
     LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
