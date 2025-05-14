@@ -21,24 +21,16 @@ jobs:
           docker stop backend-pulse || true
           docker rm backend-pulse || true
           docker build -t backend-pulse .
-          docker run -d -p 8000:8000 \
-            --name backend-pulse \
-            -e SECRET_KEY="Cm#~6$3gKv;OP5=_UC|rV'H.;T1b0b,M6Rs)snyd2%rNc*xvIA" \
-            -e DEBUG="False" \
-            -e IS_URL="False" \
-            -e DATABASE_NAME="tracker" \
-            -e DATABASE_HOST="81.200.158.11" \
-            -e DATABASE_PASSWORD="UqNAZgZr%5C6.9Vk" \
-            backend-pulse
+          docker run -d -p 8000:8000 backend-pulse
 
       - name: Update Django environment
         env:
-          SECRET_KEY: "Cm#~6$3gKv;OP5=_UC|rV'H.;T1b0b,M6Rs)snyd2%rNc*xvIA"
+          SECRET_KEY: "$SECRET_KEY"
           DEBUG: False
           IS_URL: False
-          DATABASE_NAME: tracker
-          DATABASE_HOST: 81.200.158.11
-          DATABASE_PASSWORD: UqNAZgZr%5C6.9Vk
+          DATABASE_NAME: "$DATABASE_NAME"
+          DATABASE_HOST: "$DATABASE_HOST"
+          DATABASE_PASSWORD: "$DATABASE_PASSWORD"
         run: |
           echo "SECRET_KEY=${SECRET_KEY:?'SECRET_KEY is not set'}"
           echo "DEBUG=${DEBUG:?'DEBUG is not set'}"
