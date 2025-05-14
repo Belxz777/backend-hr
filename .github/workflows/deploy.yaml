@@ -21,7 +21,14 @@ jobs:
           docker stop backend-pulse || true
           docker rm backend-pulse || true
           docker build -t backend-pulse .
-          docker run -d -p 8000:8000 --name backend-pulse backend-pulse
+          docker run -d -p 8000:8000 --name backend-pulse \
+            -e SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+            -e DEBUG=False \
+            -e IS_URL=False \
+            -e DATABASE_NAME="${{ secrets.DATABASE_NAME }}" \
+            -e DATABASE_HOST="${{ secrets.DATABASE_HOST }}" \
+            -e DATABASE_PASSWORD="${{ secrets.DATABASE_PASSWORD }}" \
+            backend-pulse
 
       - name: Update Django environment
         env:
@@ -35,4 +42,3 @@ jobs:
           echo "${{ secrets.SECRET_KEY }} APP SHOULD WORK "
           echo "DEBUG=${DEBUG:?'DEBUG is not set'}"
           echo "IS_URL=${IS_URL:?'IS_URL is not set'}"
-      
