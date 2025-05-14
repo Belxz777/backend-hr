@@ -25,14 +25,14 @@ jobs:
 
       - name: Update Django environment
         env:
-          SECRET_KEY: "$SECRET_KEY"
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
           DEBUG: False
           IS_URL: False
-          DATABASE_NAME: "$DATABASE_NAME"
-          DATABASE_HOST: "$DATABASE_HOST"
-          DATABASE_PASSWORD: "$DATABASE_PASSWORD"
+          DATABASE_NAME: ${{ main.DATABASE_NAME }}
+          DATABASE_HOST: ${{ main.DATABASE_HOST }}
+          DATABASE_PASSWORD: ${{ main.DATABASE_PASSWORD }}
         run: |
-          echo "SECRET_KEY=${SECRET_KEY:?'SECRET_KEY is not set'}"
+          echo "${{ secrets.SECRET_KEY }}"
           echo "DEBUG=${DEBUG:?'DEBUG is not set'}"
           echo "IS_URL=${IS_URL:?'IS_URL is not set'}"
           echo "DATABASE_NAME=${DATABASE_NAME:?'DATABASE_NAME is not set'}"
