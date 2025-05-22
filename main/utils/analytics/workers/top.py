@@ -27,7 +27,10 @@ def get_top_employees_by_department(request):
             )
 
         # Строим фильтр по дате
-        date_filter = Q(department=department_id)
+        date_filter = Q()
+        
+        if department_id:
+            date_filter &= Q(department_id=department_id)
         
         if date:
             try:
@@ -49,20 +52,24 @@ def get_top_employees_by_department(request):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-        # Получаем все отделы
+        # Получаем отделы
         departments = Department.objects.all()
+        if department_id:
+            departments = departments.filter(departmentId=department_id)
+            
         result = {}
 
         for department in departments:
             # Получаем топ сотрудников отдела
-            top_employeeIds = LaborCosts.objects.filter(
+            top_employees = LaborCosts.objects.filter(
                 date_filter,
                 department=department
             ).select_related('employee').values(
-               'employee',
-            'employee__firstName',
-            'employee__lastName',
-            'employee__patronymic',
+                'employee_id',
+                'employee__firstName',
+                'employee__lastName',
+                'employee__patronymic',
+                'employee__jobid__jobName'
             ).annotate(
                 total_hours=Sum('worked_hours'),
                 function_hours=Sum('worked_hours', filter=Q(function__isnull=False)),
@@ -70,20 +77,20 @@ def get_top_employees_by_department(request):
             ).order_by('-total_hours')[:limit_per_dept]
 
             # Добавляем в результат
-            # result[department.departmentName] = {
-            #     'department_id': department.departmentId,
-            #     'top_employee': [
-            #         {
-            #             'employee_id': emp['mployeeId'],
-            #             'full_name': f"{emp['lastName']} {emp['firstName']} {emp['patronymic']}",
-            #             'job_title': emp['jobid__jobName'],
-            #             'total_hours': float(emp['total_hours'] or 0),
-            #             'function_hours': float(emp['function_hours'] or 0),
-            #             'deputy_hours': float(emp['deputy_hours'] or 0)
-            #         }
-            #         for emp in top_employeeIds
-            #     ]
-            # }
+            result[department.departmentName] = {
+                'department_id': department.departmentId,
+                'top_employees': [
+                    {
+                        'employee_id': emp['employee_id'],
+                        'full_name': f"{emp['employee__lastName']} {emp['employee__firstName']} {emp['employee__patronymic']}",
+                        'job_title': emp['employee__jobid__jobName'],
+                        'total_hours': float(emp['total_hours'] or 0),
+                        'function_hours': float(emp['function_hours'] or 0),
+                        'deputy_hours': float(emp['deputy_hours'] or 0)
+                    }
+                    for emp in top_employees
+                ]
+            }
         return Response(result, status=status.HTTP_200_OK)
     except Exception as e:
         return Response(
