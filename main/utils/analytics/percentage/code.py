@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import Sum, Q, Count, F
+from django.db.models import Sum, Q, Count, F,Case,When,BooleanField
 from datetime import datetime
 from main import models
 from main.models import Department, Deputy, Employee, LaborCosts, Functions
@@ -51,55 +51,85 @@ def get_tasks_distribution(request):
                     {'error': 'Неверный формат даты. Используйте YYYY-MM-DD.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+        # 1. Считаем общее время всех отчетов с одним запросом
+        labor_costs = LaborCosts.objects.filter(date_filter).select_related(
+            'employee__jobid__deputy',
+            'function',
+            'deputy'
+        )
         
-        # 1. Считаем общее время всех отчетов
-        total_stats = LaborCosts.objects.filter(date_filter).aggregate(
+        total_stats = labor_costs.aggregate(
             total_hours=Sum('worked_hours'),
             total_function_hours=Sum('worked_hours', filter=Q(function__isnull=False)),
             total_deputy_hours=Sum('worked_hours', filter=Q(deputy__isnull=False)),
             total_compulsory_hours=Sum('worked_hours', filter=Q(compulsory=True)),
             total_non_compulsory_hours=Sum('worked_hours', filter=Q(compulsory=False)),
-            total_typical_hours=Sum('worked_hours', filter=Q(function__consistent__isnull=False)),
-            total_non_typical_hours=Sum('worked_hours', filter=Q(function__consistent__isnull=True))
-         )
-        
-        # Преобразуем None в 0
+        )
+
         total_hours = float(total_stats['total_hours'] or 0)
         
-        # Если нет данных
+        # Если нет данных - быстрый возврат
         if total_hours == 0:
             return Response({
                 'department_id': department_id,
-            'department_name':department.first()['departmentName'],
+                'department_name': department.first()['departmentName'],
                 'message': 'Нет данных за указанный период',
                 'total_hours': 0,
                 'distribution': {}
             }, status=status.HTTP_200_OK)
-        # ! продумать логику вывода 
-        # 2. Считаем распределение по функциям (типовым и нетиповым)
-        function_distribution = LaborCosts.objects.filter(
-            date_filter & Q(function__isnull=False)
-        ).select_related('function').values(
+
+        # Используем annotate для подсчета типовых/нетиповых функций
+        function_stats = labor_costs.filter(
+            function__isnull=False
+        ).annotate(
+            is_typical=Case(
+                When(function__consistent=F('employee__jobid__deputy'), then=True),
+                default=False,
+                output_field=BooleanField(),
+            )
+        ).aggregate(
+            typical_hours=Sum('worked_hours', filter=Q(is_typical=True)),
+            non_typical_hours=Sum('worked_hours', filter=Q(is_typical=False)),
+            typical_count=Count('laborCostId', filter=Q(is_typical=True)),
+            non_typical_count=Count('laborCostId', filter=Q(is_typical=False))
+        )
+
+        typical_stats = {
+            'hours': float(function_stats['typical_hours'] or 0),
+            'count': function_stats['typical_count']
+        }
+        
+        non_typical_stats = {
+            'hours': float(function_stats['non_typical_hours'] or 0),
+            'count': function_stats['non_typical_count']
+        }
+
+        total_typical_hours = typical_stats['hours'] + non_typical_stats['hours']
+
+        # Оптимизированный запрос для распределения функций
+        function_distribution = labor_costs.filter(
+            function__isnull=False
+        ).values(
             'function_id',
             'function__funcName',
-            'function__consistent'  # Для разделения на типовые/нетиповые
+            'function__consistent',
+            'employee__jobid__deputy'
         ).annotate(
             hours=Sum('worked_hours'),
             count=Count('laborCostId')
         ).order_by('-hours')
-        
-        # 3. Считаем распределение по замещениям
-        deputy_distribution = LaborCosts.objects.filter(
-            date_filter & Q(deputy__isnull=False)
-        ).select_related('deputy').values(
+
+        # Оптимизированный запрос для распределения замещений
+        deputy_distribution = labor_costs.filter(
+            deputy__isnull=False
+        ).values(
             'deputy_id',
             'deputy__deputyName'
         ).annotate(
             hours=Sum('worked_hours'),
             count=Count('laborCostId')
         ).order_by('-hours')
-        
-        # 4. Формируем итоговый отчет
+
         distribution = {
             'by_type': {
                 'functions': {
@@ -119,12 +149,12 @@ def get_tasks_distribution(request):
                     'percent': round(float(total_stats['total_non_compulsory_hours'] or 0) / total_hours * 100, 2)
                 },
                 'typical': {
-                    'hours': float(total_stats['total_typical_hours'] or 0),
-                    'percent': round(float(total_stats['total_typical_hours'] or 0) / total_hours * 100, 2)
+                    'hours': typical_stats['hours'],
+                    'percent': round(typical_stats['hours'] / total_typical_hours * 100 if total_typical_hours else 0, 2)
                 },
                 'non_typical': {
-                    'hours': float(total_stats['total_non_typical_hours'] or 0),
-                    'percent': round(float(total_stats['total_non_typical_hours'] or 0) / total_hours * 100, 2)
+                    'hours': non_typical_stats['hours'],
+                    'percent': round(non_typical_stats['hours'] / total_typical_hours * 100 if total_typical_hours else 0, 2)
                 }
             },
             'by_functions': {
@@ -133,8 +163,8 @@ def get_tasks_distribution(request):
             },
             'by_deputies': []
         }
-        
-        # Добавляем распределение по конкретным функциям (разделяем на типовые и нетиповые)
+
+        # Оптимизированное распределение функций
         for func in function_distribution:
             func_hours = float(func['hours'] or 0)
             func_data = {
@@ -145,26 +175,23 @@ def get_tasks_distribution(request):
                 'entries_count': func['count']
             }
             
-            if func['function__consistent'] is None:
-                distribution['by_functions']['non_typical'].append(func_data)
-            else:
+            if func['function__consistent'] == func['employee__jobid__deputy']:
                 distribution['by_functions']['typical'].append(func_data)
-        
-        # Добавляем распределение по конкретным замещениям
-        for dep in deputy_distribution:
-            dep_hours = float(dep['hours'] or 0)
-            distribution['by_deputies'].append({
-                'deputy_id': dep['deputy_id'],
-                'deputy_name': dep['deputy__deputyName'],
-                'hours': dep_hours,
-                'percent': round(dep_hours / total_hours * 100, 2),
-                'reports_count': dep['count']
-            })
+            else:
+                distribution['by_functions']['non_typical'].append(func_data)
 
-        # Формируем полный ответ
+        # Оптимизированное распределение замещений
+        distribution['by_deputies'] = [{
+            'deputy_id': dep['deputy_id'],
+            'deputy_name': dep['deputy__deputyName'],
+            'hours': float(dep['hours'] or 0),
+            'percent': round(float(dep['hours'] or 0) / total_hours * 100, 2),
+            'reports_count': dep['count']
+        } for dep in deputy_distribution]
+
         response_data = {
             'department_id': department_id,
-            'department_name':department.first()['departmentName'],
+            'department_name': department.first()['departmentName'],
             'time_period': {
                 'type': time_period_type,
                 'date': date if time_period_type == 'single_day' else None,
@@ -172,7 +199,7 @@ def get_tasks_distribution(request):
                 'end_date': end_date if time_period_type == 'range' else None,
             },
             'total_hours': total_hours,
-            'total_entries': LaborCosts.objects.filter(date_filter).count(),
+            'total_entries': labor_costs.count(),
             'distribution': distribution
         }
         
@@ -182,7 +209,7 @@ def get_tasks_distribution(request):
         return Response(
             {'error': f'Ошибка сервера: {str(e)}'},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        ) 
+        )
 @api_view(['GET'])
 def get_employee_tasks_distribution(request):
     try:
