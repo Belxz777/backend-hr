@@ -121,10 +121,10 @@ def get_all_departments_hours_report(request):
                 },
                 'employee_stats': [
                     {
-                        'employee_id': stat['employeeId'],
-                        'first_name': stat['employeeId__firstName'],
-                        'last_name': stat['employeeId__lastName'],
-                        'patronymic': stat['employeeId__patronymic'],
+                        'employee_id': stat['employee'],
+                        'first_name': stat['employee__firstName'],
+                        'last_name': stat['employee__lastName'],
+                        'patronymic': stat['employee__patronymic'],
                         'total_hours': float(stat['total_hours'] or 0),
                         'function_hours': float(stat['function_hours'] or 0),
                         'deputy_hours': float(stat['deputy_hours'] or 0)
