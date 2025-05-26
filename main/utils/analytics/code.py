@@ -190,8 +190,8 @@ def get_employee_hours_report(request):
         ).values(
             'laborCostId',
             'department',
-            'function',
-            'deputy',
+            'function__funcName',
+            'deputy__deputyName',
             'compulsory',
             'worked_hours',
             'comment',
@@ -235,18 +235,20 @@ def get_employee_hours_report(request):
             if summary[key] is None:
                 summary[key] = 0.0
         
+        employee_data = {
+            'employee_id': employee_id,
+            'employee_name': employee.firstName,
+            'employee_surname': employee.lastName,
+            'employee_patronymic': employee.patronymic,
+            'job_title': employee.jobid.jobName,
+        }
+    
         response_data = {
-            'employee': {
-                'employee_id': employee_id,
-                'employee_name': employee.firstName,
-              'employee_surname': employee.lastName,
-              'employee_patronymic': employee.patronymic,
-            },
+            'employee': employee_data,
             'summary': summary,
             'reports': list(time_entries),
             'reports_count': len(time_entries),
-            'query_params': {
-                'date': date,
+            'query_params': {                'date': date,
                 'start_date': start_date,
                 'end_date': end_date
             }

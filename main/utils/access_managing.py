@@ -132,7 +132,20 @@ class Change_Password(APIView):
             user.save()
             return Response({'message': 'Пароль успешно изменен'})
         
-
+class PasswordRecovery(APIView):
+    def post(self, request):
+        passf = request.data['new_password']
+        emp_id = request.data['employeeId']
+        if not passf:
+            raise AuthenticationFailed('Не указан email')       
+        user = Employee.objects.filter(employeeId=emp_id).first()
+        if not user:
+            raise AuthenticationFailed('Пользователь не найден')
+        
+        user.password = passf
+        user.save()
+        return Response({'message': 'Пароль успешно изменен'})
+        
 
 class GetUser(APIView):
     def get(self, request):
