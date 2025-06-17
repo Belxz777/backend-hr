@@ -8,9 +8,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 
-DEBUG = os.getenv('DEBUG')
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-if DEBUG==True:
+if DEBUG:
     ALLOWED_HOSTS = ["*"]
     print("Приложение запущено в режиме разработки 🚀",DEBUG)
     LOGGING = {
@@ -30,7 +30,7 @@ if DEBUG==True:
 else:
     ALLOWED_HOSTS = ["*"]
     print("Приложение запущено в рабочей версии 🤖")
-    print(os.getenv('SECRET_KEY'),os.getenv('DATABASE_NAME'))
+        
 url_db = os.getenv('IS_URL')
 if  url_db==True:
     DATABASES = {
