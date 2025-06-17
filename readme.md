@@ -1,6 +1,3 @@
-<p align="right">
-  <a href="" target="blank"><img src="https://storage.yandexcloud.net/filesup/info.png" width="300" style="border-radius: 15px;" alt="" /></a>
-</p>
 
 # Оценка эффективности трудозатрат серверная часть
 
