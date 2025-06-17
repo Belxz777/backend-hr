@@ -20,7 +20,7 @@ IS_URL = False # если true то ссылка на бд должна быть
 
 DATABASE_NAME = "имя базы данных"
 
-DATABASE_HOST = 81.200.158.11 # хост
+DATABASE_HOST = 81.22.32.123 || "localhost" || "db" # адрес хоста
 
 DATABASE_PASSWORD = "пароль для подключения к бд"
 
@@ -99,7 +99,7 @@ docker-compose up  --build
 
 
 
-# Документация эндпоинтов:
+# Документация эндпоинтов REST API:
 ### https://documenter.getpostman.com/view/29025992/2sAYX5LiFH
 
 
