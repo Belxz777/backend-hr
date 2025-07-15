@@ -6,7 +6,7 @@ from django.contrib.auth.hashers import make_password,check_password
 from django.db.models import Q
 import jwt,datetime
 from django.core.cache import cache
-
+from rest_framework import status
 from main.utils.auth import get_user
 from ..models import Department, Deputy, Employee, Functions, Job
 from ..serializer import AdminEmployeeSerializer, EmployeeSerializer
@@ -48,11 +48,19 @@ class LoginView(APIView):
     
     def post(self, request):
         data = request.data
-        login = data['login']
-        if not login:
-            raise AuthenticationFailed('Не указан логин')
-        if not data['password']:
-            raise AuthenticationFailed('Не указан пароль')
+        login = request.data.get('login')
+        password = request.data.get('password')
+        
+        # Валидация входных данных
+        if not login or not password:
+            return Response(
+                {
+                    'success': False,
+                    'error': 'Требуется логин и пароль',
+                    'code': 'MISSING_CREDENTIALS'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
         user = Employee.objects.filter(login=login).first()
         if user is None:
             raise AuthenticationFailed('Такого пользователя  пока не существует')

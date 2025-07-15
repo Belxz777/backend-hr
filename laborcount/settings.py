@@ -12,7 +12,7 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
-    print("Приложение запущено в режиме разработки 🚀",DEBUG)
+    print("Приложение запущено в режиме разработки 🚀")
     LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -31,27 +31,26 @@ else:
     ALLOWED_HOSTS = ["*"]
     print("Приложение запущено в рабочей версии 🤖")
         
-url_db = os.getenv('IS_URL')
-if  url_db==True:
+use_db_url = os.getenv('IS_URL', '').lower() in ('true', '1', 'yes')
+
+if use_db_url:
     DATABASES = {
         'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL') or 'postgresql://postgresd:xIenuJ2m7X0AhIKfi8KTX1NCYt5w6R79@dpg-cv9f8s9u0jms73ejfgtg-a.frankfurt-postgres.render.com/smt_wvo0',
+            default=os.getenv('DATABASE_URL') , 
             conn_max_age=600
-     )  
-    }   
+        )
+    }
 else:
-        DATABASES = { 
+    DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.getenv('DATABASE_NAME') or 'ANY',
-            'USER': os.getenv('DATABASE_USER') or 'postgres',
-            'PASSWORD': os.getenv('DATABASE_PASSWORD') or 'ANY',  
-            'HOST': os.getenv('DATABASE_HOST') or 'localhost',  
-            'PORT': os.getenv('DATABASE_PORT') or 5432, 
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',  # Исправлено: ENGINE -> ENGINE, postgresql_psycopg2
+            'NAME': os.getenv('DATABASE_NAME', 'ANY'),
+            'USER': os.getenv('DATABASE_USER', 'postgres'),
+            'PASSWORD': os.getenv('DATABASE_PASSWORD', 'ANY'),
+            'HOST': os.getenv('DATABASE_HOST', 'localhost'),
+            'PORT': os.getenv('DATABASE_PORT', '5432'),  # Лучше строку, так как порт может быть переменной окружения
         }
     }
-
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

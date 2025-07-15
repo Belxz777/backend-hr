@@ -21,7 +21,7 @@ class JobSerializer(serializers.ModelSerializer):
 class DepartmentSerializer(serializers.ModelSerializer):
       class Meta:
           model = Department  
-          fields = ['departmentId', 'departmentName', 'departmentDescription', 'headId', 'jobsList']
+          fields = ['departmentId', 'departmentName', 'headId', 'jobsList']
 
 class PerformanceSerializer(serializers.Serializer):
     date = serializers.DateField()
