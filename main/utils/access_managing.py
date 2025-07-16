@@ -290,3 +290,35 @@ def Reset_Password(request):
         except Exception as e:
             return Response({'message': 'Произошла ошибка при сбросе пароля', 'error': str(e)})
 
+
+@api_view(['GET'])
+def UserQuickView(request):
+    try:
+        # Получаем параметр поиска из query string
+        search_query = request.GET.get('search', '').strip()
+        
+        # Базовый запрос
+        queryset = Employee.objects.all()
+        
+        # Применяем фильтр по фамилии, если есть поисковый запрос
+        if search_query:
+            queryset = queryset.filter(
+                Q(lastName__icontains=search_query) | 
+                Q(firstName__icontains=search_query)
+            )
+        
+        # Получаем 15 случайных записей (или меньше, если их меньше 15)
+        users = queryset.order_by('?')[:15].values(
+            'employeeId', 
+            'firstName', 
+            'lastName',
+            'position'
+        )
+        
+        return Response(users)
+        
+    except Exception as e:
+        return Response(
+            {'message': f'Произошла ошибка при получении данных: {str(e)}'},
+            status=500
+        )

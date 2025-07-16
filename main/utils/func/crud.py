@@ -87,7 +87,7 @@ class FunctionsView(APIView):
     def delete(self, request):
         function = Functions.objects.get(funcId=request.query_params.get('id'))
         function.delete()
-        return Response(status=204)
+        return Response({'message': 'Функция удалена','name':function.funcName,'id':function.funcId}, status=204)
 
     def get_object(self, pk):
         try:
