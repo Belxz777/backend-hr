@@ -50,7 +50,6 @@ class DeputyView(APIView):
             return Deputy.objects.get(pk=pk)
         except Deputy.DoesNotExist:
             raise Http404
-
 class FunctionsView(APIView):
     def get(self, request):
         functions = Functions.objects.all()
@@ -65,9 +64,10 @@ class FunctionsView(APIView):
             serializer = FunctionsSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
-                deputy =  Deputy.objects.filter(deputyId=data['consistent'])
+                deputy = Deputy.objects.get(deputyId=data['consistent'])
                 if deputy:
-                    deputy.deputy_functions.append(serializer.data)
+                    deputy.deputy_functions.add(serializer.instance)
+                    deputy.save()
                 return Response(serializer.data, status=201)
             return Response(serializer.errors, status=400)
         except Exception as e:

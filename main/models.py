@@ -22,10 +22,11 @@ class Employee(models.Model):
     lastName = models.CharField(max_length=30, null=False)  # Фамилия сотрудника
     patronymic = models.CharField(max_length=30, null=False)  # Отчество сотрудника
     login = models.CharField(max_length=30, null=False)  # Логин сотрудника
-    password = models.TextField(null=False)  # Пароль сотрудника
+    password = models.CharField(max_length=128, null=False)  # Пароль сотрудника
     jobid = models.ForeignKey(Job, on_delete=models.CASCADE) 
     position = models.IntegerField(default=1)
     departmentid = models.ForeignKey(Department, on_delete=models.CASCADE) 
+    email = models.EmailField(max_length=254, null=True)
 
 
 class  LaborCosts(models.Model):
@@ -53,8 +54,6 @@ class Deputy(models.Model):
     deputy_functions = models.ManyToManyField('Functions', related_name='deputy_functions', blank=True)
 
 class Functions(models.Model):
-
-
     # Модель для основных функций, содержит информацию о основных функциях
     funcId = models.AutoField(primary_key=True)  # Уникальный идентификатор основной функции
     funcName = models.CharField(max_length=150, null=True)  # Описание основной функции

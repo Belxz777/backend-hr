@@ -2,6 +2,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
+from dotenv import load_dotenv
+import os
 from django.contrib.auth.hashers import make_password,check_password
 from django.db.models import Q
 import jwt,datetime
@@ -31,17 +33,25 @@ def check_token(request):
 
 class RegisterView(APIView):
     def post(self, request):
-        serializer = EmployeeSerializer(data=request.data)
-        # Check if login already exists
-        if Employee.objects.filter(login=request.data.get('login')).exists():
-            return Response({'error': 'Этот логин уже занят'}, status=400)
-        
-        if serializer.is_valid():
-            password = make_password(request.data.get('password'))
-            serializer.validated_data['password'] = password
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+        try:
+            # Check if login already exists
+            if Employee.objects.filter(login=request.data.get('login')).exists():
+                return Response({'error': 'Этот логин уже занят'}, status=400)
+            
+            data = request.data.copy()
+            # Validate password length
+            password = request.data.get('password')
+            if not password or len(password) < 12:
+                return Response({'error': 'Пароль должен содержать минимум 12 символов'}, status=400)
+            serializer = EmployeeSerializer(data=data)
+            if serializer.is_valid():
+                hashed_password = make_password(password)
+                serializer.validated_data['password'] = hashed_password
+                serializer.save()
+                return Response(serializer.data, status=201)
+            return Response(serializer.errors, status=400)
+        except Exception as e:
+            return Response({'error': str(e)}, status=400)
 class LoginView(APIView):
     authentication_classes = []  # Disable authentication for login
     permission_classes = []      # Disable permissions for login
@@ -66,8 +76,15 @@ class LoginView(APIView):
             raise AuthenticationFailed('Такого пользователя  пока не существует')
         
         check_pass = check_password(data['password'], user.password)
+    
+        print(check_pass)
         if not check_pass:
-            raise AuthenticationFailed('Неверный пароль')
+            raise AuthenticationFailed({
+                'success': False,
+            'error': 'Неверный пароль',
+                'code': 'INVALID_CREDENTIALS',
+        
+            })
         print(check_pass)
         payload = {
             'user': user.employeeId,
@@ -246,3 +263,30 @@ def UserDetail(request, pk):
             return Response({'message': 'У вас нет доступа к этой странице'})
     else:
         return Response({'message': 'Ты не аутетифицирован '})
+    
+
+@api_view(['POST'])
+def Reset_Password(request):
+        try:
+            admin_password = request.data.get('admin_password')
+            user_id = request.data.get('user_id')
+            new_password = request.data.get('new_password')
+            
+            ADMIN_PASSWORD = os.getenv('RESET_PASSWORD_COMMAND')
+            if admin_password != ADMIN_PASSWORD:
+                return Response({'message': 'Неверный пароль администратора'})
+            try:
+                userfound = Employee.objects.get(employeeId=user_id)
+            except Employee.DoesNotExist:
+                return Response({'message': 'Пользователь не найден'})
+            
+            hashed_password = make_password(new_password)
+            userfound.password = hashed_password if new_password else userfound.password
+
+            userfound.save()
+        
+            return Response({'message': 'Пароль пользователя успешно изменен'})
+        
+        except Exception as e:
+            return Response({'message': 'Произошла ошибка при сбросе пароля', 'error': str(e)})
+

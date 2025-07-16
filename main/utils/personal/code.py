@@ -4,7 +4,6 @@ from main.models import Deputy, Functions, Job
 from main.utils.auth import get_user
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
-
 @api_view(['GET'])
 def get_user_functions(request):
     try:
@@ -32,13 +31,14 @@ def get_user_functions(request):
         }
 
         # Check if job has deputy assigned
-        if job.deputy:
+        if hasattr(job, 'deputy') and job.deputy:
             try:
                 deputy = Deputy.objects.get(deputyId=job.deputy.deputyId)
                 response_data['deputy'] = {
                     'id': deputy.deputyId,
                     'name': deputy.deputyName,
-                    'isCompulsory': deputy.compulsory
+                    'isCompulsory': deputy.compulsory,
+                    'functions': list(deputy.deputy_functions.values('funcId', 'funcName'))
                 }
             except ObjectDoesNotExist:
                 pass
@@ -47,11 +47,17 @@ def get_user_functions(request):
         functions = Functions.objects.all().values('funcId', 'funcName')  # Adjust fields as needed
         response_data['functions'] = list(functions)
 
-        # Get non-compulsory deputies (using values() for proper serialization)
-        non_compulsory_deputies = Deputy.objects.filter(compulsory=False).values(
-            'deputyId', 'deputyName'
-        )
-        response_data['nonCompulsory'] = list(non_compulsory_deputies)
+        # Get non-compulsory deputies with their functions
+        non_compulsory_deputies = Deputy.objects.filter(compulsory=False).prefetch_related('deputy_functions')
+        non_compulsory_data = []
+        for deputy in non_compulsory_deputies:
+            deputy_data = {
+                'deputyId': deputy.deputyId,
+                'deputyName': deputy.deputyName,
+                'functions': list(deputy.deputy_functions.values('funcId', 'funcName'))
+            }
+            non_compulsory_data.append(deputy_data)
+        response_data['nonCompulsory'] = non_compulsory_data
 
         return Response(response_data, status=status.HTTP_200_OK)
 

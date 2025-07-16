@@ -8,13 +8,14 @@ from main.utils.compliencyandhistory.regdata import departsdata
 from main.utils.func.crud import DeputyView , FunctionsView
 from main.utils.personal.code import get_user_functions
 from main.utils.work.statistics import get_app_status_data
-from .views import JobList, JobManaging,DepartmentManaging,DepartmentEmployees,DepartmentList
+from .views import JobList, JobManaging,DepartmentManaging,DepartmentList
 from main.utils import access_managing
 from .utils.post import labor_fill
 from .utils.report import getReport,getXlsxReport
 from .utils.compliencyandhistory.compliency import EmployeeCompliancyView, EmployeePerformanceView
 from .utils.compliencyandhistory.history import DepartmentPerformanceView
-from .utils.emp_tasks import  departmentTf,  getDepEmp,jobTf
+from .utils.emp_tasks import  getDepEmp
+from .utils.access_managing import Reset_Password
 urlpatterns = [
     path('users/create',access_managing.RegisterView.as_view()),#для регистрации пользователей
     path("users/login",access_managing.LoginView.as_view()),#дяя входина
@@ -31,6 +32,7 @@ urlpatterns = [
 
     path('users/<pk>',access_managing.UserDetail),
 
+    path('reset/password',access_managing.Reset_Password),
 
 
     # ! это рабочее
@@ -106,7 +108,7 @@ urlpatterns = [
 
 
 
-path('app/statistics',get_app_status_data)
+    path('app/statistics',get_app_status_data)
 
 
 # & сделать создание функциональных обязаностей и должностей
