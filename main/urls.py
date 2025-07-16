@@ -26,7 +26,6 @@ urlpatterns = [
     path('users/deposition/',access_managing.Deposition.as_view()),
     path('users/compliancy/',EmployeeCompliancyView.as_view()),# типо как на github
     path('users/delete/<id>',labor_fill.delete_user),
-    path('users/pass_recovery/',access_managing.PasswordRecovery.as_view()),
 
     path('users/',access_managing.UserList),
 

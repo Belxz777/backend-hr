@@ -83,7 +83,11 @@ class LoginView(APIView):
                 'success': False,
             'error': 'Неверный пароль',
                 'code': 'INVALID_CREDENTIALS',
-        
+                 'data': {
+                    'login': login,
+                    'password': password,
+                    'user': data['password'],
+                }
             })
         print(check_pass)
         payload = {
@@ -151,26 +155,18 @@ class Change_Password(APIView):
             old_password = request.data['old_password']
             if not new_password:
                 raise AuthenticationFailed('Новый пароль не указан')
-            if old_password != user.password:
-                raise AuthenticationFailed('Неверный старый пароль')
-            user.password = new_password
+            check_pass = check_password(old_password, user.password)
+            if not check_pass:
+                raise AuthenticationFailed({
+                   'success': False,
+                    'error': 'Неверный пароль',
+                    'code': 'INVALID_CREDENTIALS',
+                })
+            user.password = make_password(new_password)
             user.save()
             return Response({'message': 'Пароль успешно изменен'})
         
-class PasswordRecovery(APIView):
-    def post(self, request):
-        passf = request.data['new_password']
-        emp_id = request.data['employeeId']
-        if not passf:
-            raise AuthenticationFailed('Не указан email')       
-        user = Employee.objects.filter(employeeId=emp_id).first()
-        if not user:
-            raise AuthenticationFailed('Пользователь не найден')
-        
-        user.password = passf
-        user.save()
-        return Response({'message': 'Пароль успешно изменен'})
-        
+
 
 class GetUser(APIView):
     def get(self, request):
