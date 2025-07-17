@@ -7,24 +7,33 @@ from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
 from main.models import Department, Employee, LaborCosts
+from main.utils.auth import get_user
 
 @api_view(['GET'])
 def get_department_hours_report(request):
     try:
+        
         # Получаем параметры запроса
+        is_auto = request.query_params.get('is_auto', '').lower() == 'true'
         department_id = request.query_params.get('department_id')
         date = request.query_params.get('date')
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
-        
-        # Проверяем обязательные параметры
-        if not department_id:
-            return Response(
-                {'error': 'Параметр department_id обязателен'},
+        if is_auto:
+            try:
+                department_id = get_user(request).departmentid.departmentId
+            except Exception as e:
+                return Response(
+                {'error': f'Ошибка получения department_id пользователя: {str(e)}'},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        # Проверяем наличие department_id
+        if not department_id:
+            return Response(
+            {'error': 'Параметр department_id обязателен'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
         department = Department.objects.filter(departmentId=department_id).values('departmentName')
-        print(department)
         # Проверяем, что передана либо конкретная дата, либо период
         if not date and not (start_date and end_date):
             return Response(

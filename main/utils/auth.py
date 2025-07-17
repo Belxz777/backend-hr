@@ -7,7 +7,6 @@ from main.models import Employee
 def get_user(request):
     token = request.COOKIES.get('jwt')
     if token is None:
-        print("dfsfsdfsdf")
         raise AuthenticationFailed('Ты не аутетифицирован')
     try:
         payload = jwt.decode(token, 'secret', algorithms=['HS256'])

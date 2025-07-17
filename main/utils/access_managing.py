@@ -292,9 +292,14 @@ def UserQuickView(request):
     try:
         # Получаем параметр поиска из query string
         search_query = request.GET.get('search', '').strip()
-        
+        only_mydepartment = request.GET.get('only_mydepartment', 'false').lower() == 'true'
         # Базовый запрос
-        queryset = Employee.objects.all()
+        if only_mydepartment:
+            department_id = get_user(request).departmentid.departmentId
+            queryset = Employee.objects.filter(departmentid=department_id)  
+        else:
+            queryset = Employee.objects.all()
+        
         
         # Применяем фильтр по фамилии, если есть поисковый запрос
         if search_query:
@@ -308,7 +313,8 @@ def UserQuickView(request):
             'employeeId', 
             'firstName', 
             'lastName',
-            'position'
+            'position',
+            'departmentid__departmentName',
         )
         
         return Response(users)
