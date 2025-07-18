@@ -8,6 +8,7 @@ from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 
 from main.models import Department, Employee, LaborCosts
+from main.utils.auth import get_user
 
 @api_view(['GET'])
 def get_all_departments_hours_report(request):
@@ -16,7 +17,12 @@ def get_all_departments_hours_report(request):
         date = request.query_params.get('date')
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
-        
+        access = get_user(request).position 
+        if access < 4:
+            return Response(
+                {'error': 'У вас нет прав на просмотр данных'},
+                status=status.HTTP_403_FORBIDDEN
+            )
         # Check date parameters
         if not date and not (start_date and end_date):
             return Response(

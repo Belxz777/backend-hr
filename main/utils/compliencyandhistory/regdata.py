@@ -25,7 +25,7 @@ def departsdata(request):
         
         # Increment request count and set expiry
         cache.set(request_key, request_count + 1, timeout=60)  # Reset after 60 seconds
-    
+        
         if request.method == 'GET':
             departments = Department.objects.all().values('departmentId', 'departmentName')
             if not departments:

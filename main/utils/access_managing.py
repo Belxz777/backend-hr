@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from dotenv import load_dotenv
 import os
 from django.contrib.auth.hashers import make_password,check_password
-from django.db.models import Q
+from django.db.models import Q,F
 import jwt,datetime
 from django.core.cache import cache
 from rest_framework import status
@@ -83,11 +83,6 @@ class LoginView(APIView):
                 'success': False,
             'error': 'Неверный пароль',
                 'code': 'INVALID_CREDENTIALS',
-                 'data': {
-                    'login': login,
-                    'password': password,
-                    'user': data['password'],
-                }
             })
         print(check_pass)
         payload = {
@@ -100,7 +95,7 @@ class LoginView(APIView):
         response = Response()
         response.set_cookie(key='jwt', value=token, httponly=True)
         response.data = {
-            'message': 'Успешно вошли',
+            'message': 'Вы успешно вошли в систему',
             'token': token,
             'time':  datetime.datetime.now().strftime("%H:%M:%S")
         }
@@ -309,15 +304,16 @@ def UserQuickView(request):
             )
         
         # Получаем 15 случайных записей (или меньше, если их меньше 15)
-        users = queryset.order_by('?')[:15].values(
+        users = queryset.order_by('-position')[:15].values(
             'employeeId', 
             'firstName', 
             'lastName',
             'position',
-            'departmentid__departmentName',
-        )
-        
-        return Response(users)
+          'position',
+            job=F('jobid__jobName'),
+    )
+    
+        return Response(list(users))
         
     except Exception as e:
         return Response(
