@@ -9,23 +9,51 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+# settings.py
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'django.log',
+            'formatter': 'verbose',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'when': 'midnight',  # ротация каждый день
+            'backupCount': 7,    # хранить 7 дней логов
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'myapp': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
     print("Приложение запущено в режиме разработки 🚀")
-    LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-}
+    
     
 else:
     ALLOWED_HOSTS = ["*"]
@@ -77,6 +105,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'laborcount.urls'
+
+
+
 
 TEMPLATES = [
     {
@@ -137,3 +168,41 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": "belx001#22",  # Если установлен
+            "SOCKET_CONNECT_TIMEOUT": 5,  # Таймаут подключения (сек)
+            "SOCKET_TIMEOUT": 5,  
+            # Таймаут операций (сек)
+        },
+        "KEY_PREFIX": "django_"  # Префикс ключей
+    }
+}
+# CACHES = { кеширование на основе файлов , медленее но без отдельных сервисов
+#     # we use "default" as the alias.
+#     "default": {
+#         # Here, we're using the file-based cache backend.
+#         "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+
+#         # LOCATION parameter to specify the file system path where cached data will be stored.
+#         "LOCATION": "/var/tmp/django_cache",
+#     }
+# }
+
+# CACHES = {
+#     # we use "default" as the alias.
+#     "default": {
+#         # Here, we're using the database-backed cache backend.
+#         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+
+#         # Provide a LOCATION parameter to specify the database table name where cached data will be stored.
+#         "LOCATION": "cache_table",
+#     }
+# }

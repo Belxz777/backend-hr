@@ -5,8 +5,6 @@ from django.dispatch import receiver
 
 from main.models import Deputy, Employee
 
-import logging
-logger = logging.getLogger(__name__)
 
 @receiver(post_save, sender=Employee)
 @receiver(post_delete, sender=Employee)

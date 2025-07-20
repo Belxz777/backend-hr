@@ -2,6 +2,28 @@ from datetime import timezone
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
+
+class Logs(models.Model):
+    LEVEL_CHOICES = [
+        ('DEBUG', 'Debug'),
+        ('INFO', 'Info'),
+        ('WARNING', 'Warning'),
+        ('ERROR', 'Error'),
+        ('CRITICAL', 'Critical'),
+    ]
+    
+    level = models.CharField(max_length=10, choices=LEVEL_CHOICES)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    module = models.CharField(max_length=100, blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.level} - {self.message[:50]}"
+    
+    class Meta:
+        ordering = ['-created_at']
+        
+        
 class Job(models.Model):
     # Модель для должностей, содержит информацию о каждой должности
     jobId = models.AutoField(primary_key=True)  # Уникальный идентификатор должности

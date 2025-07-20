@@ -6,12 +6,22 @@ from rest_framework.views import APIView
 
 class DeputyView(APIView):
     def get(self, request):
-        deputies = Deputy.objects.all()
-        if not deputies:
+        only_compulsory = request.query_params.get('only_compulsory', 'false').lower()
+        
+        # Оптимизированный запрос с prefetch_related и select_related
+        deputies = Deputy.objects.prefetch_related(
+            'deputy_functions'  # Это загрузит все связанные функции одним запросом
+        )
+        
+        if only_compulsory == 'true':
+            deputies = deputies.filter(compulsory=True)
+        
+        if not deputies.exists():
             return Response({'message': 'No deputies found'}, status=404)
+        
         serializer = DeputySerializer(deputies, many=True)
         return Response(serializer.data)
-
+    
     def post(self, request):
         if isinstance(request.data, list):
             responses = []
@@ -41,7 +51,7 @@ class DeputyView(APIView):
         return Response(serializer.errors, status=400)
 
     def delete(self, request):
-        deputy = Deputy.objects.get(tfId=request.query_params.get('id'))
+        deputy = Deputy.objects.get(deputyId=request.query_params.get('id'))
         deputy.delete()
         return Response(status=204)
 

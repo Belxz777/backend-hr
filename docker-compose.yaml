@@ -3,26 +3,54 @@ version: '3.8'
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    container_name: django_app  
     volumes:
-      - .:/app
+      - static:/app/staticfiles
+      - ./:/app  
+    environment:
+      SECRET_KEY: "super_secret"
+      DEBUG: "False"
+      DATABASE_URL: "postgresql://postgres:shit@5.129.207.182:5432/hr_eff"
+      REDIS_URL: "redis://:belx001#22@redis:6379/0"  # Добавлено подключение к Redis
+      IS_URL: "True"
+      RESET_PASSWORD_COMMAND: "hello"
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
     ports:
       - "8000:8000"
-    environment:
-      - POSTGRES_NAME=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
     depends_on:
-      - db
+      redis:
+        condition: service_healthy
+    networks:
+      - backend_network  # Исправлена опечатка (было bacckend_network)
+    restart: always
+    command: >
+      sh -c "python manage.py makemigrations &&
+              python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             python manage.py createcachetable &&
+             python manage.py runserver 0.0.0.0:8000 "
 
-  db:
-    image: postgres:15
+  redis:
+    image: redis:7.2-alpine
+    container_name: hr_redis
+    ports:
+      - "6379:6379"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - redis_data:/data
+    command: redis-server --requirepass belx001#22
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "belx001#22", "ping"]  # Добавлен пароль
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    networks:
+      - backend_network
 
 volumes:
-  postgres_data:
+  redis_data:
+  static:
+
+networks:
+  backend_network:  # Единая сеть для всех сервисов
+    driver: bridge

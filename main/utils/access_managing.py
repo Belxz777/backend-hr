@@ -13,6 +13,10 @@ from main.utils.auth import get_user
 from ..models import Department, Deputy, Employee, Functions, Job
 from ..serializer import AdminEmployeeSerializer, EmployeeSerializer
 
+import logging
+from django.core.cache import cache
+logger = logging.getLogger('users')
+
 def check_token(request):
     token = request.COOKIES.get('jwt')
     if not token:
@@ -165,14 +169,33 @@ class Change_Password(APIView):
 
 class GetUser(APIView):
     def get(self, request):
+        # Логирование попытки подключения к Redis
+        try:
+            cache.get('test_connection', 'test') 
+            print("connecte")# Проверка соединения
+        except Exception as e:
+            logger.error(f"Ошибка подключения к кеш-системе: {str(e)}")
+
         token = request.COOKIES.get('jwt')
-        if token is None:
-            raise AuthenticationFailed({'message': 'Ты не аутетифицирован '})
+        if not token:
+            logger.warning('Пользователь не аутентифицирован')
+            raise AuthenticationFailed({'message': 'Ты не аутентифицирован'})
+        
+        # Ключ кэша = user_{payload['user']}_v2
+        cache_key = f"user_{token}_data"
+        
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data)
+            
         try:
             payload = jwt.decode(token, 'secret', algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Токен истек')
-        user = Employee.objects.select_related('jobid', 'departmentid').filter(employeeId=payload['user']).values(
+        
+        user = Employee.objects.select_related('jobid', 'departmentid').filter(
+            employeeId=payload['user']
+        ).values(
             'employeeId',
             'firstName',
             'lastName',
@@ -181,50 +204,53 @@ class GetUser(APIView):
             'position',
             'jobid__jobName',
             'jobid__deputy'
-        ).first()   
+        ).first()
         
         if not user:
             raise AuthenticationFailed('Пользователь не найден')
         
+        # Формируем базовую структуру ответа
+        response_data = {
+            'user': {
+                'employeeId': user['employeeId'],
+                'firstName': user['firstName'],
+                'lastName': user['lastName'],
+                'position': user['position']
+            },
+            'department': user['departmentid__departmentName'],
+            'job': {
+                'jobName': user['jobid__jobName'],
+                'deputy': user['jobid__deputy']
+            }
+        }
+
         if user['jobid__deputy'] is None:
-            deputy = None
-            return Response({
-                'user': {
-                    'employeeId': user['employeeId'],
-                    'firstName': user['firstName'],
-                    'lastName': user['lastName'],
-                    'position': user['position']
-                },
-                'department': user['departmentid___departmentName'],
-                'job': {
-                    'jobName': user['jobid__jobName'],
-                    'deputy': user['jobid__deputy']
-                },
-                'deputy': deputy,
-            },status=200)
+            response_data['deputy'] = None
         else:
-            deputies = Deputy.objects.filter(Q(deputyId=user['jobid__deputy']) | Q(compulsory=False)).values('deputyId', 'deputyName', 'compulsory')
-            return Response({
-                'user': {
-                    'employeeId': user['employeeId'],
-                    'firstName': user['firstName'],
-                    'lastName': user['lastName'],
-                    'position': user['position']
-                },
-                'department': user['departmentid__departmentName'],
-                'job': {
-                    'jobName': user['jobid__jobName'],
-                    'deputy': user['jobid__deputy']
-                },
-                'deputy': list(deputies),
-            },status=200)
+            deputies = Deputy.objects.filter(
+                Q(deputyId=user['jobid__deputy']) | Q(compulsory=False)
+            ).values('deputyId', 'deputyName', 'compulsory')
+            response_data['deputy'] = list(deputies)
+        
+        # Кэшируем на 1 час (3600 секунд)
+        cache.set(cache_key, response_data, timeout=3600)
+                
+        return Response(response_data, status=200)
 class Deposition(APIView):
     def patch(self,request):
-            new_pos = request.data['position']
-            print(new_pos)
-            change = Employee.objects.filter(employeeId = request.data['empid']).update(position=new_pos)
-            print(change)
-            return Response({'message': 'Должность успешно изменена'})
+            is_admin = get_user(request)
+            if is_admin.position >= 4:
+                new_pos = request.data['position']
+                change = Employee.objects.filter(employeeId = request.data['empid']).update(position=new_pos)
+                if change:
+                    logger.info('Должность изменена, пользователь: {user}', is_admin.employeeId)
+                    return Response({'message': 'Должность успешно изменена'})
+                else:
+                    logger.warning('Должность не изменена, пользователь: {user}', is_admin.employeeId)
+                    return Response({'message': 'Должность не изменена'})
+            else:
+                logger.warning('Пользователь не аутетифицирован , попытка изменения должности id : {}'.format(is_admin.employeeId))
+                return Response({'message': 'У вас нет доступа к этой странице'})
         
 @api_view(['GET'])
 def UserList(request):
@@ -289,8 +315,9 @@ def UserQuickView(request):
         search_query = request.GET.get('search', '').strip()
         only_mydepartment = request.GET.get('only_mydepartment', 'false').lower() == 'true'
         # Базовый запрос
-        if only_mydepartment:
-            department_id = get_user(request).departmentid.departmentId
+        sender = get_user(request)
+        if only_mydepartment and sender.position < 4:
+            department_id = sender.departmentid.departmentId
             queryset = Employee.objects.filter(departmentid=department_id)  
         else:
             queryset = Employee.objects.all()

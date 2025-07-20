@@ -33,8 +33,19 @@ class LaborCostsSerializer(serializers.ModelSerializer):
           model = LaborCosts
           fields = ['laborCostId', 'employeeId', 'departmentId', 'function', 'deputy', 'compulsory', 'worked_hours', 'comment', 'date']
 
+
+
+class FunctionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Functions
+        fields = [
+            'funcId',
+            'funcName',
+            'consistent',
+        ]
+        
 class DeputySerializer(serializers.ModelSerializer):
-    deputy_functions = serializers.PrimaryKeyRelatedField(many=True, queryset=Functions.objects.all(), required=False)
+    deputy_functions = deputy_functions = FunctionsSerializer(many=True, read_only=True)
 
     class Meta:
         model = Deputy
@@ -44,13 +55,4 @@ class DeputySerializer(serializers.ModelSerializer):
             'deputyDescription',
             'compulsory',
             'deputy_functions'  
-        ]
-
-class FunctionsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Functions
-        fields = [
-            'funcId',
-            'funcName',
-            'consistent',
         ]

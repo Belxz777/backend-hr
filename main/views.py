@@ -5,6 +5,8 @@ from rest_framework.exceptions import AuthenticationFailed
 
 import jwt
 
+from main.utils.auth import get_user
+
 
 from .models import Job,Department,Employee
 from .serializer import JobSerializer,DepartmentSerializer,EmployeeSerializer
@@ -69,6 +71,9 @@ class DepartmentManaging(APIView):
     def patch(self, request):
         # Получаем id из query parameters
         department_id = request.query_params.get('id')
+        is_admin = get_user(request).position == 5
+        if not is_admin:
+            return Response({'error': 'У вас нет прав на это действие'}, status=403)
         
         if not department_id:
             return Response({"error": "ID is required"}, status=400)
@@ -78,10 +83,6 @@ class DepartmentManaging(APIView):
         
         if not department:
             return Response({"error": "Department not found"}, status=404)
-        
-        exs_tfs = department.tfs.all()
-        request.data['tfs'] = list(set(list(exs_tfs) + request.data.get('tfs', [])))
-
         # Обновляем отдел
         serializer = DepartmentSerializer(department, data=request.data, partial=True)
         
@@ -93,6 +94,9 @@ class DepartmentManaging(APIView):
        
     def delete(self, request):   
                 id = request.query_params.get('id')
+                is_admin = get_user(request).position == 5
+                if not is_admin:
+                    return Response({'error': 'У вас нет прав на это действие'}, status=403)
                 department = Department.objects.filter(departmentId=id)
                 if department:
                     department.delete()
@@ -129,7 +133,6 @@ class DepartmentEmployees(APIView):
             raise AuthenticationFailed('Пользователь не найден')
         department = Department.objects.get(departmentId=id)
         serializer = EmployeeSerializer(user)
-        print(user.employeeId,department.departmentId)
         #если пользователь является сотрудником этого отдела, то он может получить список сотрудников этого отдела
         if user.employeeId == department.departmentId:
             employees = Employee.objects.filter(departmentid=id)
