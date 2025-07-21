@@ -164,7 +164,7 @@ USE_TZ = True
 
 
 
-TATIC_URL = '/static/'  # Обязательная настройка
+STATIC_URL = '/static/'  # Обязательная настройка
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Куда собирать статику
 
 # Настройки WhiteNoise
@@ -175,19 +175,16 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
-
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
+        "LOCATION": os.getenv("REDIS_URL", "redis://:belx001%2322@hr_redis:6379/0"),
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": "belx001#22",  # Если установлен
-            "SOCKET_CONNECT_TIMEOUT": 5,  # Таймаут подключения (сек)
-            "SOCKET_TIMEOUT": 5,  
-            # Таймаут операций (сек)
+            "SOCKET_CONNECT_TIMEOUT": 5,
+            "SOCKET_TIMEOUT": 5,
         },
-        "KEY_PREFIX": "django_"  # Префикс ключей
+        "KEY_PREFIX": "django_"
     }
 }
 # CACHES = { кеширование на основе файлов , медленее но без отдельных сервисов
