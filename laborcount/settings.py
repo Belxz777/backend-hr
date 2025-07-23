@@ -174,19 +174,19 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv("REDIS_URL", "redis://:belx001%2322@hr_redis:6379/0"),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "SOCKET_CONNECT_TIMEOUT": 5,
-            "SOCKET_TIMEOUT": 5,
-        },
-        "KEY_PREFIX": "django_"
-    }
-}
+# REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": os.getenv("REDIS_URL", "redis://:belx001%2322@hr_redis:6379/0"),
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#             "SOCKET_CONNECT_TIMEOUT": 5,
+#             "SOCKET_TIMEOUT": 5,
+#         },
+#         "KEY_PREFIX": "django_"
+#     }
+# }
 # CACHES = { кеширование на основе файлов , медленее но без отдельных сервисов
 #     # we use "default" as the alias.
 #     "default": {
@@ -198,13 +198,13 @@ CACHES = {
 #     }
 # }
 
-# CACHES = {
-#     # we use "default" as the alias.
-#     "default": {
-#         # Here, we're using the database-backed cache backend.
-#         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+CACHES = { # кеширование на основе базы данных всегда работает
+    # we use "default" as the alias.
+    "default": {
+        # Here, we're using the database-backed cache backend.
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
 
-#         # Provide a LOCATION parameter to specify the database table name where cached data will be stored.
-#         "LOCATION": "cache_table",
-#     }
-# }
+        # Provide a LOCATION parameter to specify the database table name where cached data will be stored.
+        "LOCATION": "cache_table",
+    }
+}

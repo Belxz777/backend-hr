@@ -172,7 +172,6 @@ class GetUser(APIView):
         # Логирование попытки подключения к Redis
         try:
             cache.get('test_connection', 'test') 
-            print("connecte")# Проверка соединения
         except Exception as e:
             logger.error(f"Ошибка подключения к кеш-системе: {str(e)}")
 
