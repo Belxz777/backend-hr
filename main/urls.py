@@ -26,10 +26,9 @@ urlpatterns = [
     path('users/change_password',access_managing.Change_Password.as_view()),
     path('users/get_user',access_managing.GetUser.as_view()),
     path('users/deposition/',access_managing.Deposition.as_view()),
-    path('users/compliancy/',EmployeeCompliancyView.as_view()),# типо как на github
-    path('users/delete/<id>',labor_fill.delete_user),
+   # path('users/delete/<id>',labor_fill.delete_user),
 
-    path('users/',access_managing.UserList),
+    path('users/',access_managing.user_list),
 
     path('users/<pk>',access_managing.UserDetail),
     
@@ -38,7 +37,7 @@ urlpatterns = [
     path('reset/password',access_managing.Reset_Password),
 
 
-    # ! это рабочее
+    # ! это рабочее точно
         
 
 
@@ -101,7 +100,6 @@ urlpatterns = [
 
 
 
-    # path('analytics/employee/compliancy/',)
 
     path('history/user/',EmployeePerformanceView.as_view()) , # чекаем все таски сотрудника  за промежуток времен
     
@@ -114,15 +112,6 @@ urlpatterns = [
     path('app/statistics',get_app_status_data),
     
     path('app/logs',get_logs),
-
-    # urls.py
-
-   
-# & сделать создание функциональных обязаностей и должностей
-
-# ! оформить логику заполнения отчета
-
-# ? убрать не нужные эндпоинты
 
 
 

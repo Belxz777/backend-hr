@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from urllib.parse import urlparse
 import dj_database_url
 from dotenv import load_dotenv
 load_dotenv()
@@ -23,16 +22,14 @@ LOGGING = {
     'handlers': {
         'file': {
             'level': 'INFO',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.TimedRotatingFileHandler',  # Используем только один класс
             'filename': 'django.log',
-            'formatter': 'verbose',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
             'when': 'midnight',  # ротация каждый день
             'backupCount': 7,    # хранить 7 дней логов
             'formatter': 'verbose',
         },
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',  # Уровень DEBUG для консоли
             'class': 'logging.StreamHandler',
             'formatter': 'verbose',
         },
@@ -40,10 +37,10 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file', 'console'],
-            'level': 'INFO',
+            'level': 'DEBUG',  # Понижаем уровень до DEBUG, чтобы видеть больше сообщений
             'propagate': True,
         },
-        'myapp': {
+        'main': {
             'handlers': ['file', 'console'],
             'level': 'DEBUG',
             'propagate': True,
@@ -163,34 +160,10 @@ USE_TZ = True
 STATIC_URL = '/static/'  # Обязательная настройка
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Куда собирать статику
 
-# Настройки WhiteNoise
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": os.getenv("REDIS_URL", "redis://:belx001%2322@hr_redis:6379/0"),
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#             "SOCKET_CONNECT_TIMEOUT": 5,
-#             "SOCKET_TIMEOUT": 5,
-#         },
-#         "KEY_PREFIX": "django_"
-#     }
-# }
-# CACHES = { кеширование на основе файлов , медленее но без отдельных сервисов
-#     # we use "default" as the alias.
-#     "default": {
-#         # Here, we're using the file-based cache backend.
-#         "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
-
-#         # LOCATION parameter to specify the file system path where cached data will be stored.
-#         "LOCATION": "/var/tmp/django_cache",
-#     }
-# }
 
