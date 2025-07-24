@@ -1,56 +1,45 @@
-
-
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: hr_eff
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mL1oGD~CQOs@BHA
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   web:
     build: .
-    container_name: django_app  
+    container_name: django_app
     volumes:
       - static:/app/staticfiles
-      - ./:/app  
+      - ./:/app
     environment:
-      SECRET_KEY: "super_secret"
+      SECRET_KEY: "Cp4ADYDUB5G5vDtfuMhp2RtTCmtExwaP"
       DEBUG: "False"
-      DATABASE_URL: "postgresql://postgres:shit@5.129.207.182:5432/hr_eff"
-      REDIS_URL: "redis://:belx001%22@hr_redis:6399/0"  # Добавлено подключение к Redis
+      DATABASE_URL: "postgresql://postgres:mL1oGD~CQOs@BHA@db:5432/hr_eff"
       IS_URL: "True"
-      RESET_PASSWORD_COMMAND: "hello"
-      PYTHONUNBUFFERED: "1"
-      PYTHONDONTWRITEBYTECODE: "1"
+      RESET_PASSWORD_COMMAND: "use_admin_rooles_delete_this"
     ports:
       - "8000:8000"
     depends_on:
-      redis:
+      db:
         condition: service_healthy
-    networks:
-      - backend_network  # Исправлена опечатка (было bacckend_network)
     restart: always
     command: >
       sh -c "python manage.py makemigrations &&
-              python manage.py migrate &&
+             python manage.py migrate &&
              python manage.py collectstatic --noinput &&
-             python manage.py createcachetable &&
-            gunicorn --bind 0.0.0.0:8000 laborcount.wsgi:application"
-
-  redis:
-    image: redis:7.2-alpine
-    container_name: hr_redis
-    ports:
-      - "6399:6399"
-    volumes:
-      - redis_data:/data
-    command: redis-server --requirepass belx001%22
-    healthcheck:
-      test: ["CMD", "redis-cli", "-a", "belx001%22", "ping"]  # Добавлен пароль
-      interval: 5s
-      timeout: 3s
-      retries: 3
-    networks:
-      - backend_network
+             gunicorn --bind 0.0.0.0:8000 laborcount.wsgi:application"
 
 volumes:
-  redis_data:
+  postgres_data:
   static:
-
-networks:
-  backend_network:  # Единая сеть для всех сервисов
-    driver: bridge

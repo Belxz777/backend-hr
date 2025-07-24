@@ -9,7 +9,8 @@ read -p "Выберите (1 или 2): " choice
 case $choice in
   1)
     echo "Запуск через Docker Compose..."
-    docker compose up -d --build
+    sudo docker compose down -v  # если были предыдущие контейнеры
+    sudo docker compose up --build
     ;;
   2)
     echo "Сборка и запуск через Dockerfile..."

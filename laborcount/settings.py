@@ -91,7 +91,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'drf_yasg',
-    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [
@@ -159,9 +158,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
 
 
 STATIC_URL = '/static/'  # Обязательная настройка
@@ -198,13 +194,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #     }
 # }
 
-CACHES = { # кеширование на основе базы данных всегда работает
-    # we use "default" as the alias.
-    "default": {
-        # Here, we're using the database-backed cache backend.
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-
-        # Provide a LOCATION parameter to specify the database table name where cached data will be stored.
-        "LOCATION": "cache_table",
-    }
-}
