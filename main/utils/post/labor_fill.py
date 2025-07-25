@@ -87,7 +87,7 @@ def labor_fill(request):
                     comment=data.get('comment', '')
                 )
                 
-            logger.info(f"Successfully created labor cost record (ID: {labor_cost.id})")
+            logger.info(f"Successfully created labor cost record (ID: {labor_cost.laborCostId})")
             return Response(
                 {'message': 'Запись о проделанной работе создана. Хорошего вам дня!'}, 
                 status=status.HTTP_201_CREATED

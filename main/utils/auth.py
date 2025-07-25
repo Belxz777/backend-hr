@@ -18,7 +18,7 @@ if not coding_token:
 def get_user(request):
     token = request.COOKIES.get('jwt')
     if token is None:
-        raise AuthenticationFailed('Ты не аутетифицирован')
+        raise AuthenticationFailed('Не аутетифицирован')
     try:
         payload = jwt.decode(token, coding_token, algorithms=['HS256'])
     except jwt.ExpiredSignatureError:

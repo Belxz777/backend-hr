@@ -107,12 +107,7 @@ class DepartmentManaging(APIView):
         logger.info(f"PATCH request for DepartmentManaging from {request.META.get('REMOTE_ADDR')}")
         try:
             department_id = request.query_params.get('id')
-            user = get_user(request)
-            
-            if not user or user.position != 5:
-                logger.warning(f"Unauthorized PATCH attempt by user {user.employeeId if user else 'anonymous'}")
-                return Response({'error': 'У вас нет прав на это действие'}, status=403)
-            
+
             if not department_id:
                 logger.warning("Missing department ID in PATCH request")
                 return Response({"error": "ID обязателен"}, status=400)
