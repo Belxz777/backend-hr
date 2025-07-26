@@ -10,9 +10,16 @@ services:
     environment:
       SECRET_KEY: "Cp4ADYDUB5G5vDtfuMhp2RtTCmtExwaP"
       DEBUG: "False"
-      DATABASE_URL: "postgresql://postgres:test@5.129.207.182:5432/it"
-      IS_URL: "True"
+      DATABASE_URL: "postgresql://postgres:easy@5.129.207.182:5432/it"
+      DATABASE_NAME: "it"
+      DATABASE_HOST: "5.129.207.182"
+      DATABASE_PASSWORD: "easy"
+      DJANGO_SETTINGS_MODULE: laborcount.settings.experimental
+      # IS_URL: "True"
       RESET_PASSWORD_COMMAND: "use_admin_rooles_delete_this"
+      REDIS_URL: "redis://:Bm84qq}9E8G@hr_redis:6399/0"
+    depends_on:
+      - hr_redis
     ports:
       - "8000:8000"
     restart: unless-stopped
@@ -21,6 +28,26 @@ services:
              python manage.py migrate &&
              python manage.py collectstatic --noinput &&
              gunicorn --bind 0.0.0.0:8000 laborcount.wsgi:application"
+  hr_redis:
+    image: redis:7.2-alpine
+    container_name: hr_redis
+    ports:
+      - "6399:6399"
+    volumes:
+      - redis_data:/data
+    command: redis-server --requirepass Bm84qq}9E8G
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "Bm84qq}9E8G", "ping"]  
+      interval: 5s
+      timeout: 3s
+      retries: 3
+    networks:
+      - backend_network
 
 volumes:
+  redis_data:
   static:
+
+networks:
+  backend_network:  # Единая сеть для всех сервисов
+    driver: bridge

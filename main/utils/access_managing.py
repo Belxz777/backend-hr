@@ -306,23 +306,16 @@ class Change_Password(APIView):
 class GetUser(APIView):
     def get(self, request):
         # Логирование попытки подключения к Redis
-        try:
-            cache.get('test_connection', 'test') 
-        except Exception as e:
-            logger.error(f"Ошибка подключения к кеш-системе: {str(e)}")
+        # try:
+        #     cache.get('test_connection', 'test') 
+        # except Exception as e:
+        #     logger.error(f"Ошибка подключения к кеш-системе: {str(e)}")
 
         token = request.COOKIES.get('jwt')
         if not token:
             logger.warning('Пользователь не аутентифицирован')
             raise AuthenticationFailed({'message': 'Ты не аутентифицирован'})
         
-        # Ключ кэша = user_{payload['user']}_v2
-        cache_key = f"user_{token}_data"
-        
-        cached_data = cache.get(cache_key)
-        if cached_data:
-            return Response(cached_data)
-            
         try:
             payload = jwt.decode(token, coding_token, algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
@@ -368,7 +361,6 @@ class GetUser(APIView):
             response_data['deputy'] = list(deputies)
         
         # Кэшируем на 1 час (3600 секунд)
-        cache.set(cache_key, response_data, timeout=3600)
                 
         return Response(response_data, status=200)
 class Deposition(APIView):

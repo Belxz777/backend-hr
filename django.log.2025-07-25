@@ -1,0 +1,169 @@
+INFO 2025-07-25 10:40:27,953 autoreload Watching for file changes with StatReloader
+INFO 2025-07-25 10:40:49,938 autoreload Watching for file changes with StatReloader
+ERROR 2025-07-25 10:41:04,933 log Internal Server Error: /api/v1/report/functions/
+ERROR 2025-07-25 10:41:04,933 basehttp "GET /api/v1/report/functions/ HTTP/1.1" 500 79
+ERROR 2025-07-25 10:41:06,903 log Internal Server Error: /api/v1/users/get_user
+Traceback (most recent call last):
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/rest_framework/views.py", line 506, in dispatch
+    response = handler(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roman/projects/backend-pulse/main/utils/access_managing.py", line 327, in get
+    payload = jwt.decode(token, coding_token, algorithms=['HS256'])
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/jwt/api_jwt.py", line 222, in decode
+    decoded = self.decode_complete(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/jwt/api_jwt.py", line 156, in decode_complete
+    decoded = api_jws.decode_complete(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/jwt/api_jws.py", line 220, in decode_complete
+    self._verify_signature(signing_input, header, signature, key, algorithms)
+  File "/home/roman/projects/backend-pulse/.venv/lib/python3.12/site-packages/jwt/api_jws.py", line 328, in _verify_signature
+    raise InvalidSignatureError("Signature verification failed")
+jwt.exceptions.InvalidSignatureError: Signature verification failed
+ERROR 2025-07-25 10:41:06,904 basehttp "GET /api/v1/users/get_user HTTP/1.1" 500 120806
+INFO 2025-07-25 10:41:27,417 views GET request for JobList from 127.0.0.1
+INFO 2025-07-25 10:41:27,906 basehttp "GET /api/v1/entities/jobs/ HTTP/1.1" 200 41
+INFO 2025-07-25 10:41:27,991 basehttp "GET /api/v1/entities/departments/overall/ HTTP/1.1" 200 43
+ERROR 2025-07-25 10:41:38,140 signals Cache invalidation error: 'LocMemCache' object has no attribute 'delete_pattern'
+INFO 2025-07-25 10:41:38,142 basehttp "POST /api/v1/users/create HTTP/1.1" 201 116
+WARNING 2025-07-25 10:41:42,436 log Unauthorized: /api/v1/users/login
+WARNING 2025-07-25 10:41:42,437 basehttp "POST /api/v1/users/login HTTP/1.1" 401 56
+WARNING 2025-07-25 10:41:48,630 log Unauthorized: /api/v1/users/login
+WARNING 2025-07-25 10:41:48,631 basehttp "POST /api/v1/users/login HTTP/1.1" 401 56
+INFO 2025-07-25 10:41:50,342 views GET request for JobList from 127.0.0.1
+INFO 2025-07-25 10:41:50,395 basehttp "GET /api/v1/entities/jobs/ HTTP/1.1" 200 41
+INFO 2025-07-25 10:41:50,469 basehttp "GET /api/v1/entities/departments/overall/ HTTP/1.1" 200 43
+ERROR 2025-07-25 10:42:01,309 signals Cache invalidation error: 'LocMemCache' object has no attribute 'delete_pattern'
+INFO 2025-07-25 10:42:01,310 basehttp "POST /api/v1/users/create HTTP/1.1" 201 112
+INFO 2025-07-25 10:42:08,634 basehttp "POST /api/v1/users/login HTTP/1.1" 200 248
+INFO 2025-07-25 10:42:08,848 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:42:12,629 basehttp "GET /api/v1/report/functions/ HTTP/1.1" 200 207
+INFO 2025-07-25 10:42:16,501 labor_fill Starting labor_fill request from 127.0.0.1
+ERROR 2025-07-25 10:42:16,716 labor_fill Error creating labor cost record: 'LaborCosts' object has no attribute 'id'
+Traceback (most recent call last):
+  File "/home/roman/projects/backend-pulse/main/utils/post/labor_fill.py", line 90, in labor_fill
+    logger.info(f"Successfully created labor cost record (ID: {labor_cost.id})")
+                                                               ^^^^^^^^^^^^^
+AttributeError: 'LaborCosts' object has no attribute 'id'
+ERROR 2025-07-25 10:42:16,719 log Internal Server Error: /api/v1/fill/progress/
+ERROR 2025-07-25 10:42:16,720 basehttp "POST /api/v1/fill/progress/ HTTP/1.1" 500 61
+INFO 2025-07-25 10:42:28,747 autoreload /home/roman/projects/backend-pulse/main/utils/post/labor_fill.py changed, reloading.
+INFO 2025-07-25 10:42:29,029 autoreload Watching for file changes with StatReloader
+INFO 2025-07-25 10:42:35,285 basehttp "GET /api/v1/report/functions/ HTTP/1.1" 200 207
+INFO 2025-07-25 10:42:37,175 labor_fill Starting labor_fill request from 127.0.0.1
+INFO 2025-07-25 10:42:37,391 labor_fill Successfully created labor cost record (ID: 4)
+INFO 2025-07-25 10:42:37,393 basehttp "POST /api/v1/fill/progress/ HTTP/1.1" 201 113
+INFO 2025-07-25 10:42:38,649 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:42:41,933 basehttp "GET /api/v1/report/functions/ HTTP/1.1" 200 207
+INFO 2025-07-25 10:42:46,352 labor_fill Starting labor_fill request from 127.0.0.1
+INFO 2025-07-25 10:42:46,992 labor_fill Successfully created labor cost record (ID: 5)
+INFO 2025-07-25 10:42:46,993 basehttp "POST /api/v1/fill/progress/ HTTP/1.1" 201 113
+INFO 2025-07-25 10:42:48,047 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:42:50,088 basehttp "GET /api/v1/report/functions/ HTTP/1.1" 200 207
+INFO 2025-07-25 10:42:53,882 labor_fill Starting labor_fill request from 127.0.0.1
+INFO 2025-07-25 10:42:54,100 labor_fill Successfully created labor cost record (ID: 6)
+INFO 2025-07-25 10:42:54,101 basehttp "POST /api/v1/fill/progress/ HTTP/1.1" 201 113
+INFO 2025-07-25 10:42:55,156 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:42:57,600 basehttp "GET /api/v1/report/functions/ HTTP/1.1" 200 207
+INFO 2025-07-25 10:43:05,040 labor_fill Starting labor_fill request from 127.0.0.1
+INFO 2025-07-25 10:43:05,715 labor_fill Successfully created labor cost record (ID: 7)
+INFO 2025-07-25 10:43:05,716 basehttp "POST /api/v1/fill/progress/ HTTP/1.1" 201 113
+INFO 2025-07-25 10:43:06,772 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:43:09,311 basehttp "GET /api/v1/report/functions/ HTTP/1.1" 200 207
+INFO 2025-07-25 10:43:10,882 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:44:06,828 autoreload /home/roman/projects/backend-pulse/main/signals.py changed, reloading.
+INFO 2025-07-25 10:44:07,123 autoreload Watching for file changes with StatReloader
+INFO 2025-07-25 10:44:12,842 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:46:15,719 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:46:47,833 basehttp "POST /api/v1/users/login HTTP/1.1" 200 248
+INFO 2025-07-25 10:46:48,036 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:46:54,058 basehttp "GET /api/v1/analytics/department/?is_auto=true&date=2025-07-25 HTTP/1.1" 200 530
+INFO 2025-07-25 10:46:54,498 basehttp "GET /api/v1/analytics/department/percentage/?is_auto=true&date=2025-07-25 HTTP/1.1" 200 700
+INFO 2025-07-25 10:46:56,177 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:46:59,113 basehttp "GET /api/v1/entities/departments/overall/ HTTP/1.1" 200 43
+INFO 2025-07-25 10:47:00,162 crud DeputyView GET request from 127.0.0.1
+INFO 2025-07-25 10:47:00,328 crud Returning 2 deputies
+INFO 2025-07-25 10:47:00,329 basehttp "GET /api/v1/entities/deputy/?only_compulsory=false HTTP/1.1" 200 244
+INFO 2025-07-25 10:47:00,356 views GET request for JobList from 127.0.0.1
+INFO 2025-07-25 10:47:00,407 basehttp "GET /api/v1/entities/jobs/ HTTP/1.1" 200 41
+INFO 2025-07-25 10:47:04,750 views POST request for JobList from 127.0.0.1
+INFO 2025-07-25 10:47:04,869 views New job created with ID: 2
+INFO 2025-07-25 10:47:04,872 basehttp "POST /api/v1/entities/jobs/ HTTP/1.1" 201 41
+INFO 2025-07-25 10:47:15,305 basehttp "GET /api/v1/users/quicksearch/?search=da&only_mydepartment=false HTTP/1.1" 200 243
+INFO 2025-07-25 10:47:26,384 basehttp "GET /api/v1/users/quicksearch/?search=das&only_mydepartment=false HTTP/1.1" 200 243
+INFO 2025-07-25 10:47:29,786 basehttp "PATCH /api/v1/users/deposition/ HTTP/1.1" 200 64
+INFO 2025-07-25 10:47:30,816 basehttp "GET /api/v1/users/quicksearch/?search=das&only_mydepartment=false HTTP/1.1" 200 243
+INFO 2025-07-25 10:47:35,640 basehttp "GET /api/v1/entities/departments/overall/ HTTP/1.1" 200 43
+INFO 2025-07-25 10:47:36,716 crud DeputyView GET request from 127.0.0.1
+INFO 2025-07-25 10:47:36,877 crud Returning 2 deputies
+INFO 2025-07-25 10:47:36,878 basehttp "GET /api/v1/entities/deputy/?only_compulsory=false HTTP/1.1" 200 244
+INFO 2025-07-25 10:47:39,479 crud FunctionsView POST request from 127.0.0.1
+INFO 2025-07-25 10:47:39,583 crud Created function with ID: 2
+INFO 2025-07-25 10:47:39,852 crud Added function 2 to deputy 1
+INFO 2025-07-25 10:47:39,853 basehttp "POST /api/v1/entities/functions/ HTTP/1.1" 201 44
+INFO 2025-07-25 10:47:40,444 basehttp "GET /api/v1/report/functions/ HTTP/1.1" 200 267
+INFO 2025-07-25 10:47:43,041 views GET request for JobList from 127.0.0.1
+INFO 2025-07-25 10:47:43,093 basehttp "GET /api/v1/entities/jobs/ HTTP/1.1" 200 83
+INFO 2025-07-25 10:47:58,378 views PATCH request for JobManaging from 127.0.0.1
+WARNING 2025-07-25 10:47:58,914 views Validation errors in PATCH request: {'deputy': [ErrorDetail(string='Недопустимый первичный ключ "0" - объект не существует.', code='does_not_exist')]}
+WARNING 2025-07-25 10:47:58,915 log Bad Request: /api/v1/entities/job/
+WARNING 2025-07-25 10:47:58,916 basehttp "PATCH /api/v1/entities/job/?id=2 HTTP/1.1" 400 115
+INFO 2025-07-25 10:48:01,820 views PATCH request for JobManaging from 127.0.0.1
+INFO 2025-07-25 10:48:01,977 views Job 2 updated successfully
+INFO 2025-07-25 10:48:01,980 basehttp "PATCH /api/v1/entities/job/?id=2 HTTP/1.1" 200 49
+INFO 2025-07-25 10:48:03,039 views GET request for JobList from 127.0.0.1
+INFO 2025-07-25 10:48:03,092 basehttp "GET /api/v1/entities/jobs/ HTTP/1.1" 200 83
+INFO 2025-07-25 10:48:07,469 views PATCH request for DepartmentManaging from 127.0.0.1
+ERROR 2025-07-25 10:48:07,469 views Error in DepartmentManaging PATCH: Ты не аутетифицирован
+Traceback (most recent call last):
+  File "/home/roman/projects/backend-pulse/main/views.py", line 110, in patch
+    user = get_user(request)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/roman/projects/backend-pulse/main/utils/auth.py", line 21, in get_user
+    raise AuthenticationFailed('Ты не аутетифицирован')
+rest_framework.exceptions.AuthenticationFailed: Ты не аутетифицирован
+ERROR 2025-07-25 10:48:07,470 log Internal Server Error: /api/v1/entities/department/
+ERROR 2025-07-25 10:48:07,470 basehttp "PATCH /api/v1/entities/department/?id=1 HTTP/1.1" 500 60
+INFO 2025-07-25 10:48:26,762 views PATCH request for DepartmentManaging from 127.0.0.1
+ERROR 2025-07-25 10:48:26,762 views Error in DepartmentManaging PATCH: Ты не аутетифицирован
+Traceback (most recent call last):
+  File "/home/roman/projects/backend-pulse/main/views.py", line 110, in patch
+    user = get_user(request)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/roman/projects/backend-pulse/main/utils/auth.py", line 21, in get_user
+    raise AuthenticationFailed('Ты не аутетифицирован')
+rest_framework.exceptions.AuthenticationFailed: Ты не аутетифицирован
+ERROR 2025-07-25 10:48:26,763 log Internal Server Error: /api/v1/entities/department/
+ERROR 2025-07-25 10:48:26,763 basehttp "PATCH /api/v1/entities/department/?id=1 HTTP/1.1" 500 60
+INFO 2025-07-25 10:49:00,872 autoreload /home/roman/projects/backend-pulse/main/utils/auth.py changed, reloading.
+INFO 2025-07-25 10:49:01,209 autoreload Watching for file changes with StatReloader
+INFO 2025-07-25 10:49:16,743 autoreload /home/roman/projects/backend-pulse/main/views.py changed, reloading.
+INFO 2025-07-25 10:49:17,035 autoreload Watching for file changes with StatReloader
+INFO 2025-07-25 10:49:19,025 views PATCH request for DepartmentManaging from 127.0.0.1
+INFO 2025-07-25 10:49:19,865 views Department 1 updated successfully
+INFO 2025-07-25 10:49:19,922 basehttp "PATCH /api/v1/entities/department/?id=1 HTTP/1.1" 200 72
+INFO 2025-07-25 10:49:20,000 basehttp "GET /api/v1/entities/departments/overall/ HTTP/1.1" 200 43
+INFO 2025-07-25 10:49:24,738 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:49:27,870 basehttp "GET /api/v1/common/departments/?date=2025-07-25 HTTP/1.1" 200 570
+INFO 2025-07-25 10:49:33,480 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
+INFO 2025-07-25 10:49:39,052 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 246
