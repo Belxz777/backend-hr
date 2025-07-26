@@ -14,10 +14,10 @@ services:
       DATABASE_NAME: "it"
       DATABASE_HOST: "5.129.207.182"
       DATABASE_PASSWORD: "easy"
-      DJANGO_SETTINGS_MODULE: laborcount.settings.experimental
+      DJANGO_SETTINGS_MODULE: laborcount.settings.exp
       # IS_URL: "True"
       RESET_PASSWORD_COMMAND: "use_admin_rooles_delete_this"
-      REDIS_URL: "redis://:Bm84qq}9E8G@hr_redis:6399/0"
+      REDIS_URL: "redis://:Bm84qq9E8G@hr_redis:6399/0"
     depends_on:
       - hr_redis
     ports:
@@ -35,9 +35,9 @@ services:
       - "6399:6399"
     volumes:
       - redis_data:/data
-    command: redis-server --requirepass Bm84qq}9E8G
+    command: redis-server --requirepass Bm84qq9E8G
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "Bm84qq}9E8G", "ping"]  
+      test: ["CMD", "redis-cli", "-a", "Bm84qq9E8G", "ping"]  
       interval: 5s
       timeout: 3s
       retries: 3

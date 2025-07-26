@@ -303,14 +303,17 @@ class Change_Password(APIView):
             user.password = make_password(new_password)
             user.save()
             return Response({'message': 'Пароль успешно изменен'})
+
+
 class GetUser(APIView):
     def get(self, request):
-        # Логирование попытки подключения к Redis
-        # try:
-        #     cache.get('test_connection', 'test') 
-        # except Exception as e:
-        #     logger.error(f"Ошибка подключения к кеш-системе: {str(e)}")
-
+        # Проверка подключения к Redis
+        try:
+            cache.get('test_connection', 'test') 
+        except Exception as e:
+            logger.error(f"Ошибка подключения к кеш-системе: {str(e)}")
+            # Не прерываем выполнение, продолжаем без кэша
+        
         token = request.COOKIES.get('jwt')
         if not token:
             logger.warning('Пользователь не аутентифицирован')
@@ -321,6 +324,16 @@ class GetUser(APIView):
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed('Токен истек')
         
+        # Формируем уникальный ключ кэша на основе user_id
+        cache_key = f"user_data_{payload['user']}"
+        
+        # Пытаемся получить данные из кэша
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            logger.info(f"Данные пользователя {payload['user']} получены из кэша")
+            return Response(cached_data, status=200)
+        
+        # Если данных нет в кэше, получаем их из БД
         user = Employee.objects.select_related('jobid', 'departmentid').filter(
             employeeId=payload['user']
         ).values(
@@ -360,8 +373,13 @@ class GetUser(APIView):
             ).values('deputyId', 'deputyName', 'compulsory')
             response_data['deputy'] = list(deputies)
         
-        # Кэшируем на 1 час (3600 секунд)
-                
+        # Кэшируем данные на 1 час (3600 секунд)
+        try:
+            cache.set(cache_key, response_data, timeout=3600)
+            logger.info(f"Данные пользователя {payload['user']} сохранены в кэш")
+        except Exception as e:
+            logger.error(f"Ошибка при сохранении в кэш: {str(e)}")
+        
         return Response(response_data, status=200)
 class Deposition(APIView):
     def patch(self,request):
