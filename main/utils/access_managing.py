@@ -373,9 +373,8 @@ class GetUser(APIView):
             ).values('deputyId', 'deputyName', 'compulsory')
             response_data['deputy'] = list(deputies)
         
-        # Кэшируем данные на 1 час (3600 секунд)
         try:
-            cache.set(cache_key, response_data, timeout=3600)
+            cache.set(cache_key, response_data, timeout=500)
             logger.info(f"Данные пользователя {payload['user']} сохранены в кэш")
         except Exception as e:
             logger.error(f"Ошибка при сохранении в кэш: {str(e)}")

@@ -10,7 +10,9 @@ from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from django.shortcuts import get_object_or_404
 from .models import Job, Department, Employee
-
+from django.core.cache import cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 logger = logging.getLogger(__name__)
 
@@ -90,17 +92,30 @@ class JobList(APIView):
             logger.exception(f"Error in JobList POST: {str(e)}")
             return Response({'error': 'Внутренняя ошибка сервера'}, status=500)
 
+    @method_decorator(cache_page(60 * 15))  # Кешируем на 15 минут
     def get(self, request):
+        cache_key = 'job_list_all'  # Уникальный ключ для кеша
         logger.info(f"GET request for JobList from {request.META.get('REMOTE_ADDR')}")
+        
         try:
+            # Проверяем кеш перед запросом к БД
+            cached_data = cache.get(cache_key)
+            if cached_data:
+                logger.info("Returning cached job list")
+                return Response(cached_data)
+            
             check_token(request)
             jobs = Job.objects.all()
             serializer = JobSerializer(jobs, many=True)
+            
+            # Сохраняем в кеш на 15 минут
+            cache.set(cache_key, serializer.data, timeout=60 * 15)
+            
             return Response(serializer.data)
+            
         except Exception as e:
             logger.exception(f"Error in JobList GET: {str(e)}")
             return Response({'error': 'Внутренняя ошибка сервера'}, status=500)
-
 
 class DepartmentManaging(APIView):
     def patch(self, request):

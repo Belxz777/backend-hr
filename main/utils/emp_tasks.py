@@ -50,13 +50,6 @@ def getDepEmp(request):
     return Response(employees.values('employeeId', 'firstName', 'lastName','position'))    
 
  
-@api_view(['GET'])
-def departmentTf(request):
-    if request.method == 'GET':
-        id = request.query_params.get('id')
-        tfs = Department.objects.filter(departmentId=id).values('tfs')
-        type = TypicalFunction.objects.filter(tfId__in=tfs).values('tfId', 'tfName','isMain','time')
-        return Response(type)
 
 @api_view(['GET'])
 def employeeFuncs(request):

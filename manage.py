@@ -2,6 +2,8 @@
 import os
 import sys
 
+import delete_cache
+
 
 
 def main():
