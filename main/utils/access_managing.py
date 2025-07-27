@@ -98,7 +98,7 @@ class LoginView(APIView):
 
             payload = {
                 'user': user.employeeId,
-                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),  # Срок жизни 1 день
+                'exp': datetime.datetime.utcnow() + datetime.timedelta(days=14),  # Срок жизни 1 день
                 'iat': datetime.datetime.utcnow(),
                 'position': user.position,
             }
@@ -271,7 +271,7 @@ class refresh_token(APIView):
           if now < exp_time:
             return Response({'message': 'Токен еще не истек'}, status=200)
           else:
-            new_payload = {'exp': datetime.datetime.now() + datetime.timedelta(days=10)}
+            new_payload = {'exp': datetime.datetime.now() + datetime.timedelta(days=14)}
             new_token = jwt.encode(new_payload, coding_token, algorithm='HS256')
             return Response({'message': 'Токен истек, но был обновлен', 'token': new_token.decode('utf-8')}, status=200)
 
