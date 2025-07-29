@@ -261,21 +261,22 @@ def Reset_Password(request):
         except Exception as e:
             return Response({'message': 'Произошла ошибка при сбросе пароля', 'error': str(e)})
 
-def refresh_token(token):
+class refresh_token(APIView):
+    def get(self, request):
+        token = request.COOKIES.get('jwt')
         try:     
           payload = jwt.decode(token, coding_token, algorithms=['HS256'])
           exp_time = datetime.datetime.fromtimestamp(payload['exp'])
           now = datetime.datetime.now()
           if now < exp_time:
-            return {'message': 'Токен еще не истек'}
+            return Response({'message': 'Токен еще не истек'}, status=200)
           else:
             new_payload = {'exp': datetime.datetime.now() + datetime.timedelta(days=14)}
             new_token = jwt.encode(new_payload, coding_token, algorithm='HS256')
-            return {'message': 'Токен истек, но был обновлен', 'token': new_token.decode('utf-8')}
+            return Response({'message': 'Токен истек, но был обновлен', 'token': new_token.decode('utf-8')}, status=200)
 
         except jwt.exceptions.DecodeError:
-            return {'message': 'Неверный токен ошибка декодировки.'}
-        
+            return Response({'message': 'Неверный токен ошибка декодировки.'}, status=400)
 class Change_Password(APIView):
         def post(self, request):
             token = request.COOKIES.get('jwt')
@@ -321,8 +322,7 @@ class GetUser(APIView):
         try:
             payload = jwt.decode(token, coding_token, algorithms=['HS256'])
         except jwt.ExpiredSignatureError:
-            is_updated = refresh_token(token)
-            raise Response(is_updated)
+            raise AuthenticationFailed('Токен истек')
         
         # Формируем уникальный ключ кэша на основе user_id
         cache_key = f"user_data_{payload['user']}"
