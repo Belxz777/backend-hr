@@ -2,10 +2,6 @@
 import os
 import sys
 
-import delete_cache
-
-
-
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'laborcount.settings')
     try:    
