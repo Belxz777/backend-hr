@@ -23,7 +23,7 @@ def get_user(request):
         payload = jwt.decode(token, coding_token, algorithms=['HS256'])
     except jwt.ExpiredSignatureError:
         raise AuthenticationFailed('Токен истек')
-    user = Employee.objects.filter(employeeId=payload['user']).first()
+    user = Employee.objects.filter(id=payload['user']).first()
     if not user:
         raise AuthenticationFailed('Пользователь не найден')
     return user

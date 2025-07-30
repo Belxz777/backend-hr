@@ -1,58 +1,81 @@
 from rest_framework import serializers
-from .models import Employee, Job, Department, LaborCosts, Deputy, Functions
+from .models import Job, Department, Employee, Reports, Functions
 
-class EmployeeSerializer(serializers.ModelSerializer):
-    class Meta:
-          model = Employee
-          fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid', 'position']
-          extra_kwargs = {'password': {'write_only': True},
-                          'login': {'write_only': True}}   
-
-class AdminEmployeeSerializer(serializers.ModelSerializer):
-    class Meta:
-          model = Employee
-          fields = ['employeeId', 'firstName', 'lastName', 'patronymic', 'login', 'password', 'jobid', 'departmentid', 'position']
-        
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
-        fields = ['jobId', 'jobName', 'deputy']
+        fields = ['id', 'name', 'pre_positioned']
+        extra_kwargs = {
+            'pre_positioned': {'min_value': 1, 'max_value': 5}
+        }
 
 class DepartmentSerializer(serializers.ModelSerializer):
-      class Meta:
-          model = Department  
-          fields = ['departmentId', 'departmentName', 'headId', 'jobsList']
+    jobs_list = JobSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Department
+        fields = ['id', 'name',  'jobs_list']
+        
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     if instance.leader:
+    #         representation['leader'] = EmployeeSerializer(instance.leader).data
+    #     return representation
 
-class PerformanceSerializer(serializers.Serializer):
-    date = serializers.DateField()
-    report_count = serializers.IntegerField()
-    total_hours = serializers.DecimalField(max_digits=5, decimal_places=2)
+class EmployeeSerializer(serializers.ModelSerializer):
+    job_id = serializers.PrimaryKeyRelatedField(
+        queryset=Job.objects.all(), 
+        source='job',
+        write_only=True
+    )
+    department_id = serializers.PrimaryKeyRelatedField(
+        queryset=Department.objects.all(),
+        source='department',
+        write_only=True
+    )
+    
+    # Для чтения используем вложенные сериализаторы
+    job = JobSerializer(read_only=True)
+    department = DepartmentSerializer(read_only=True)
+    
+    class Meta:
+        model = Employee
+        fields = [
+            'id', 'name', 'surname', 'patronymic', 
+            'login', 'password', 'job', 'department',
+            'job_id', 'department_id', 'position'
+        ]
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'position': {'min_value': 1, 'max_value': 5}
+        }
 
-class LaborCostsSerializer(serializers.ModelSerializer):
-      class Meta:
-          model = LaborCosts
-          fields = ['laborCostId', 'employeeId', 'departmentId', 'function', 'deputy', 'compulsory', 'worked_hours', 'comment', 'date']
+class AdminEmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = '__all__'
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'position': {'min_value': 1, 'max_value': 5}
+        }
 
-
+class ReportsSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Reports
+        fields = [
+            'id', 'by_employee', 'function', 
+            'hours_worked', 'comment', 'date'
+        ]
+        extra_kwargs = {
+            'hours_worked': {
+                'min_value': 0.5,
+                'max_value': 10
+            },
+            'comment': {'required': False, 'allow_blank': True}
+        }
 
 class FunctionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Functions
-        fields = [
-            'funcId',
-            'funcName',
-            'consistent',
-        ]
-        
-class DeputySerializer(serializers.ModelSerializer):
-    deputy_functions = deputy_functions = FunctionsSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Deputy
-        fields = [
-            'deputyId', 
-            'deputyName', 
-            'deputyDescription',
-            'compulsory',
-            'deputy_functions'  
-        ]
+        fields = ['id', 'name', 'description', 'is_main']
