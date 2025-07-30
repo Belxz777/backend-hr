@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 
-DEBUG = False
+DEBUG = True
 
 LOGGING = {
     'version': 1,
@@ -51,14 +51,12 @@ LOGGING = {
 }
 
 
-
+ALLOWED_HOSTS = ["*"]
 if DEBUG:
-    ALLOWED_HOSTS = ["*"]
     print("Приложение запущено в режиме разработки 🚀")
     
     
 else:
-    ALLOWED_HOSTS = ["*"]
     print("Приложение запущено в рабочей версии 🤖")
        
 

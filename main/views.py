@@ -92,7 +92,7 @@ class JobList(APIView):
             logger.exception(f"Error in JobList POST: {str(e)}")
             return Response({'error': 'Внутренняя ошибка сервера'}, status=500)
 
-    @method_decorator(cache_page(60 * 15))  # Кешируем на 15 минут
+    @method_decorator(cache_page(60 * 2))  # Кешируем на 15 минут
     def get(self, request):
         cache_key = 'job_list_all'  # Уникальный ключ для кеша
         logger.info(f"GET request for JobList from {request.META.get('REMOTE_ADDR')}")

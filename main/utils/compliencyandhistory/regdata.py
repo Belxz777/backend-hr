@@ -2,7 +2,7 @@ from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
+from ..cache_utils import invalidate_model_cache,cache_model
 import logging
 
 from main.models import Department
@@ -10,7 +10,7 @@ from main.models import Department
 logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
-@cache_page(60 * 10)  # Кешируем весь ответ на 15 минут
+@cache_page(60 * 2)  # Кешируем весь ответ на 15 минут
 def departsdata(request):
     # Anti-DDoS protection
     request_ip = request.META.get('REMOTE_ADDR')

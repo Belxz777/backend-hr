@@ -304,7 +304,6 @@ class Change_Password(APIView):
             user.save()
             return Response({'message': 'Пароль успешно изменен'})
 
-
 class GetUser(APIView):
     def get(self, request):
         # Проверка подключения к Redis
@@ -328,10 +327,13 @@ class GetUser(APIView):
         cache_key = f"user_data_{payload['user']}"
         
         # Пытаемся получить данные из кэша
-        cached_data = cache.get(cache_key)
-        if cached_data:
-            logger.info(f"Данные пользователя {payload['user']} получены из кэша")
-            return Response(cached_data, status=200)
+        try:
+            cached_data = cache.get(cache_key)
+            if cached_data:
+                logger.info(f"Данные пользователя {payload['user']} получены из кэша")
+                return Response(cached_data, status=200)
+        except Exception as e:
+            logger.error(f"Ошибка при чтении из кэша: {str(e)}")
         
         # Если данных нет в кэше, получаем их из БД
         user = Employee.objects.select_related('jobid', 'departmentid').filter(
@@ -374,12 +376,14 @@ class GetUser(APIView):
             response_data['deputy'] = list(deputies)
         
         try:
-            cache.set(cache_key, response_data, timeout=500)
+            cache.set(cache_key, response_data, timeout=60*10)  # 1 час
             logger.info(f"Данные пользователя {payload['user']} сохранены в кэш")
         except Exception as e:
             logger.error(f"Ошибка при сохранении в кэш: {str(e)}")
         
         return Response(response_data, status=200)
+
+
 class Deposition(APIView):
     def patch(self,request):
             is_admin = get_user(request)
