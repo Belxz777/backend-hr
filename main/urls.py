@@ -146,7 +146,7 @@ urlpatterns = [
     
     path('entities/department/',DepartmentManaging.as_view()),
     
-    path('entities/department/create/',DepartmentCreate.as_view()),
+    path('entities/department/create',DepartmentCreate.as_view()),
     
     # протестированно
     

@@ -250,7 +250,7 @@ def reset_password(request):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        if len(request.data['new_password']) < 12:
+        if len(request.data['new_password']) < 12 and user.position<4:
             return Response(
                 {'message': 'Пароль должен содержать минимум 12 символов'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -479,14 +479,14 @@ class Deposition(APIView):
                     status=status.HTTP_403_FORBIDDEN
                 )
             
-            if 'empid' not in request.data or 'position' not in request.data:
+            if 'id' not in request.data or 'position' not in request.data:
                 return Response(
                     {'message': 'Необходимо указать ID пользователя и новую должность'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
             updated = Employee.objects.filter(
-                id=request.data['empid']
+                id=request.data['id']
             ).update(
                 position=request.data['position']
             )
@@ -498,7 +498,7 @@ class Deposition(APIView):
                     status=status.HTTP_200_OK
                 )
             else:
-                logger.warning(f'Должность не изменена: {request.data["empid"]}')
+                logger.warning(f'Должность не изменена: {request.data["id"]}')
                 return Response(
                     {'message': 'Пользователь не найден или данные не изменились'},
                     status=status.HTTP_404_NOT_FOUND
@@ -514,20 +514,18 @@ class Deposition(APIView):
 @api_view(['GET'])
 def user_quick_view(request):
     try:
-        current_user = get_user(request)
-        if not current_user:
-            return Response(
-                {'message': 'Требуется аутентификация'},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        # current_user = get_user(request)
+        # if not current_user:
+        #     return Response(
+        #         {'message': 'Требуется аутентификация'},
+        #         status=status.HTTP_401_UNAUTHORIZED
+        #     )
         
         search_query = request.GET.get('search', '').strip()
         only_mydepartment = request.GET.get('only_mydepartment', 'false').lower() == 'true'
+
         
-        if only_mydepartment and current_user.position < 4:
-            queryset = Employee.objects.filter(department=current_user.department)
-        else:
-            queryset = Employee.objects.all()
+        queryset = Employee.objects.all()
         
         if search_query:
             queryset = queryset.filter(

@@ -106,9 +106,9 @@ class DepartmentManaging(APIView):
                 departments = Department.objects.all()
             
             # Опциональная фильтрация по правам пользователя
-                user = get_user(request)
-                if not isinstance(user, Response) and user.position < 4:
-                    departments = departments.filter(id=user.departmentid.id)
+                # user = get_user(request)
+                # if not isinstance(user, Response) and user.position < 4:
+                #     departments = departments.filter(id=user.departmentid.id)
             
                 serializer = DepartmentSerializer(departments, many=True)
                 return Response(

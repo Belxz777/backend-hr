@@ -37,9 +37,9 @@ class FunctionsManage(APIView):
         """Получение списка функций или конкретной функции"""
         try:
             # Проверка прав
-            permission_check = self.check_permissions(request)
-            if permission_check:
-                return permission_check
+            # permission_check = self.check_permissions(request)
+            # if permission_check:
+            #     return permission_check
 
             function_id = self.get_id_from_request(request)
             if function_id:
