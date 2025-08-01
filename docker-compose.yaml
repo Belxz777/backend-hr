@@ -1,18 +1,17 @@
 services:
   web:
     build: .  # Используем Dockerfile вместо прямого образа
-    container_name: django_app
+    container_name: backend_hr
     volumes:
       - static:/usr/src/app/staticfiles  # Должно соответствовать WORKDIR в Dockerfile
       - ./:/usr/src/app
     environment:
       SECRET_KEY: "Cp4ADYDUB5G5vDtfuMhp2RtTCmtExwaP"
       DEBUG: "False"
-      DATABASE_URL: "postgresql://postgres:easy@5.129.207.182:5432/it"
-      DATABASE_NAME: "it"
+      DATABASE_URL: "postgresql://postgres:easy@5.129.207.182:5432/tst"
+      DATABASE_NAME: "tst"
       DATABASE_HOST: "5.129.207.182"
       DATABASE_PASSWORD: "easy"
-      DJANGO_SETTINGS_MODULE: laborcount.settings.exp
       # IS_URL: "True"
       RESET_PASSWORD_COMMAND: "use_admin_rooles_delete_this"
       REDIS_URL: "redis://:Bm84qq9E8G@hr_redis:6379/0"
