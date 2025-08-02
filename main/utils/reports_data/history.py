@@ -1,3 +1,4 @@
+from collections import defaultdict
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,11 +10,12 @@ import logging
 
 from main.models import Department, Reports
 
-logger = logging.getLogger('performance')
+
+logger = logging.getLogger(__name__)
 
 class DepartmentPerformanceView(APIView):
     def get(self, request):
-        """Получение статистики производительности отдела за указанный период или последние 30 дней по умолчанию"""
+        """Получение статистики производительности отдела с полными датами"""
         try:
             # 1. Получаем и валидируем параметры
             department_id = request.query_params.get("department_id")
@@ -35,7 +37,7 @@ class DepartmentPerformanceView(APIView):
                     status=status.HTTP_404_NOT_FOUND
                 )
 
-            # 3. Получаем параметры дат или устанавливаем по умолчанию (последние 30 дней)
+            # 3. Обработка дат
             today = timezone.now().date()
             start_date_str = request.query_params.get("start_date")
             end_date_str = request.query_params.get("end_date")
@@ -44,84 +46,70 @@ class DepartmentPerformanceView(APIView):
                 try:
                     start_date = timezone.datetime.strptime(start_date_str, '%Y-%m-%d').date()
                     end_date = timezone.datetime.strptime(end_date_str, '%Y-%m-%d').date()
+                    end_date_plus_1 = end_date + timedelta(days=1)
                     
                     if start_date > end_date:
                         raise ValidationError("Дата начала периода не может быть позже даты окончания")
-                    
                     if start_date > today:
                         raise ValidationError("Дата начала периода не может быть в будущем")
-                        
                 except ValueError as e:
                     logger.warning(f"Invalid date format: {str(e)}")
                     return Response(
                         {"message": "Неверный формат даты. Используйте YYYY-MM-DD"},
                         status=status.HTTP_400_BAD_REQUEST
                     )
-                except ValidationError as e:
-                    logger.warning(f"Invalid date range: {str(e)}")
-                    return Response(
-                        {"message": str(e)},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
             else:
-                # По умолчанию - последние 30 дней
                 end_date = today
-                start_date = end_date - timedelta(days=30)
+                start_date = end_date - timedelta(days=29)
+                end_date_plus_1 = end_date + timedelta(days=1)
 
-            logger.debug(f"Date range: {start_date} to {end_date}")
-
+            # 4. Получаем отчеты с полной датой и временем
             reports = Reports.objects.filter(
                 by_employee__department=department_id,
                 date__gte=start_date,
-                date__lte=end_date
+                date__lt=end_date_plus_1
             ).select_related('by_employee', 'function').order_by('date')
 
-            if not reports.exists():
-                logger.info(f"No reports found for department {department_id}")
-                return Response(
-                    {
-                        "message": "Нет данных за указанный период",
-                        "data": {
-                            "department_id": department_id,
-                            "department_name": department.name,
-                            "start_date": start_date,
-                            "end_date": end_date,
-                            "reports": []
-                        }
-                    },
-                    status=status.HTTP_200_OK
-                )
-
             # 5. Формируем структуру ответа
-            performance_data = {
+            response_data = {
                 "department_id": department.id,
                 "department_name": department.name,
-                "start_date": start_date,
-                "end_date": end_date,
-                "total_hours": sum(float(r.hours_worked) for r in reports),
-                "reports_by_date": {}
+                "start_date": start_date.isoformat(),
+                "end_date": end_date.isoformat(),
+                "total_hours": 0.0,
+                "reports_by_date": {}  # Используем обычный dict вместо defaultdict
             }
 
+            total_hours = 0.0
             for report in reports:
-                date_str = report.date.strftime('%Y-%m-%d')
-                if date_str not in performance_data["reports_by_date"]:
-                    performance_data["reports_by_date"][date_str] = []
+                date_key = report.date.strftime('%Y-%m-%d')
+                full_datetime = report.date.isoformat()  # Полная дата и время
+                hours = float(report.hours_worked)
+                total_hours += hours
+
+                if date_key not in response_data["reports_by_date"]:
+                    response_data["reports_by_date"][date_key] = []
                 
-                performance_data["reports_by_date"][date_str].append({
+                response_data["reports_by_date"][date_key].append({
                     "report_id": report.id,
                     "employee_id": report.by_employee.id,
                     "employee_name": f"{report.by_employee.surname} {report.by_employee.name}",
                     "function_id": report.function.id,
                     "function_name": report.function.name,
-                    "hours_worked": float(report.hours_worked),
-                    "comment": report.comment
+                    "hours_worked": hours,
+                    "comment": report.comment,
+                    "date": full_datetime,  # Полная дата и время создания
                 })
 
-            logger.info(f"Returning performance data for department {department_id}")
+            response_data["total_hours"] = round(total_hours, 2)
+
+            # Преобразуем в обычный dict перед возвратом
+            response_data["reports_by_date"] = dict(response_data["reports_by_date"])
+
             return Response(
                 {
                     "message": "Данные о производительности отдела",
-                    "data": performance_data
+                    "data": response_data
                 },
                 status=status.HTTP_200_OK
             )

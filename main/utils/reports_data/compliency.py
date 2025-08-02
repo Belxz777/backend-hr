@@ -10,14 +10,13 @@ logger = logging.getLogger(__name__)
 
 class EmployeePerformanceView(APIView):
     def get(self, request):
-        """Get employee performance data for a specified period or last 30 days by default"""
+        """Получение данных о производительности сотрудника с полной информацией о времени"""
         try:
-            # Get parameters
+            # 1. Получение и валидация параметров
             employee_id = request.query_params.get("emp_id")
             start_date_str = request.query_params.get("start_date")
             end_date_str = request.query_params.get("end_date")
 
-            # Validate employee_id
             if not employee_id:
                 logger.warning("Missing employee_id parameter")
                 return Response(
@@ -25,10 +24,10 @@ class EmployeePerformanceView(APIView):
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
-            # Check employee exists
+            # 2. Проверка существования сотрудника
             try:
                 employee = Employee.objects.get(id=employee_id)
-                logger.debug(f"Found employee: {employee.surname} {employee.name}")
+                logger.debug(f"Employee found: {employee.surname} {employee.name}")
             except Employee.DoesNotExist:
                 logger.error(f"Employee not found: {employee_id}")
                 return Response(
@@ -36,20 +35,20 @@ class EmployeePerformanceView(APIView):
                     status=status.HTTP_404_NOT_FOUND
                 )
 
-            # Handle date range
+            # 3. Обработка диапазона дат (включая end_date)
             today = timezone.now().date()
             
             if start_date_str and end_date_str:
                 try:
                     start_date = timezone.datetime.strptime(start_date_str, '%Y-%m-%d').date()
                     end_date = timezone.datetime.strptime(end_date_str, '%Y-%m-%d').date()
+                    end_date_plus_1 = end_date + timedelta(days=1)
                     
                     if start_date > end_date:
                         return Response(
                             {"message": "Дата начала не может быть позже даты окончания"},
                             status=status.HTTP_400_BAD_REQUEST
                         )
-                    
                         
                 except ValueError:
                     logger.warning("Invalid date format")
@@ -58,76 +57,69 @@ class EmployeePerformanceView(APIView):
                         status=status.HTTP_400_BAD_REQUEST
                     )
             else:
-                # Default to last 30 days
+                # По умолчанию - последние 30 дней (включая сегодня)
                 end_date = today
-                start_date = end_date - timedelta(days=30)
+                start_date = end_date - timedelta(days=29)
+                end_date_plus_1 = end_date + timedelta(days=1)
 
-            logger.debug(f"Date range for employee {employee_id}: {start_date} to {end_date}")
+            logger.debug(f"Date range for employee {employee_id}: {start_date} to {end_date} (inclusive)")
 
-            # Get reports for employee in date range
+            # 4. Получение отчетов с учетом часового пояса
             reports = Reports.objects.filter(
                 by_employee=employee,
-                date__date__gte=start_date,
-                date__date__lte=end_date
-            ).select_related('function').order_by('date')
+                date__gte=start_date,
+                date__lt=end_date_plus_1  # Используем строго меньше следующего дня
+            ).select_related('function', 'by_employee__department').order_by('date')
 
-            if not reports.exists():
-                logger.info(f"No reports found for employee {employee_id}")
-                return Response(
-                    {
-                        "message": "Нет данных за указанный период",
-                        "data": {
-                            "employee_id": employee.id,
-                            "employee_name": f"{employee.surname} {employee.name}",
-                            "department_id": employee.department.id,
-                            "department_name": employee.department.name,
-                            "start_date": start_date,
-                            "end_date": end_date,
-                            "reports": []
-                        }
-                    },
-                    status=status.HTTP_200_OK
-                )
-
-            # Prepare response data
-            performance_data = {
+            # 5. Формирование структуры ответа
+            response_data = {
                 "employee_id": employee.id,
                 "employee_name": f"{employee.surname} {employee.name}",
-                "department_id": employee.department.id,
                 "department_name": employee.department.name,
-                "start_date": start_date,
-                "end_date": end_date,
-                "total_hours": sum(float(r.hours_worked) for r in reports),
-                "reports_by_date": {}
+                "start_date": start_date.isoformat(),
+                "end_date": end_date.isoformat(),
+                "total_hours": 0.0,
+                "reports_by_date": {},
             }
 
+            total_hours = 0.0
             for report in reports:
-                date_str = report.date.strftime('%Y-%m-%d')
-                if date_str not in performance_data["reports_by_date"]:
-                    performance_data["reports_by_date"][date_str] = []
+                date_key = report.date.strftime('%Y-%m-%d')
+                full_datetime = report.date.isoformat()
+                hours = float(report.hours_worked)
+                total_hours += hours
+
+                # Группировка по датам
+                if date_key not in response_data["reports_by_date"]:
+                    response_data["reports_by_date"][date_key] = []
                 
-                performance_data["reports_by_date"][date_str].append({
+                response_data["reports_by_date"][date_key].append({
                     "report_id": report.id,
                     "function_id": report.function.id,
                     "function_name": report.function.name,
-                    "hours_worked": float(report.hours_worked),
+                    "hours_worked": hours,
                     "comment": report.comment,
-                    "date": date_str
+                    "date": full_datetime
                 })
 
-            logger.info(f"Returning performance data for employee {employee_id}")
+                # Подробные отчеты с полной датой
+               
+
+            response_data["total_hours"] = round(total_hours, 2)
+
+            # 6. Формирование ответа
+     
             return Response(
-                {
-                    "message": "Данные о производительности сотрудника",
-                    "data": performance_data
-                },
+                {"data": response_data},
                 status=status.HTTP_200_OK
             )
 
         except Exception as e:
             logger.exception(f"Error in EmployeePerformanceView: {str(e)}")
             return Response(
-                {"message": "Ошибка при получении данных о производительности"},
+                {
+                    "message": "Ошибка при получении данных о производительности",
+                    "error": str(e)
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
