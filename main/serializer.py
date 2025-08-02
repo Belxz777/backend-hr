@@ -72,7 +72,6 @@ class ReportsSerializer(serializers.ModelSerializer):
                 'min_value': 0.5,
                 'max_value': 10
             },
-            'comment': {'required': False, 'allow_blank': True}
         }
 
 class FunctionsSerializer(serializers.ModelSerializer):
