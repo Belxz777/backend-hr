@@ -445,7 +445,7 @@ class GetUser(APIView):
             }
             
             try:
-                cache.set(cache_key, response_data, timeout=60*60)
+                cache.set(cache_key, response_data, timeout=60*15)
                 logger.info(f"Данные пользователя {payload['user']} сохранены в кэш")
             except Exception as e:
                 logger.error(f"Ошибка сохранения в кэш: {str(e)}")
