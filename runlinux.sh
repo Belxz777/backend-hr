@@ -10,7 +10,7 @@ case $choice in
   1)
     echo "Запуск через Docker Compose..."
     sudo docker compose down -v  # если были предыдущие контейнеры
-    sudo docker compose up --build
+    sudo docker compose up --build -d
     ;;
   2)
     echo "Сборка и запуск через Dockerfile..."

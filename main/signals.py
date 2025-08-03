@@ -1,4 +1,4 @@
-# signals.py
+# signals.py сигналы используются для инвалидации кеша после изменения моделей
 from django.db.models.signals import pre_save, post_save, pre_delete, post_delete
 from django.dispatch import receiver
 from django.core.cache import cache

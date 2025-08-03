@@ -1,3 +1,5 @@
+# models.py все модели приложения сердце логики  
+ 
 from datetime import timezone
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -49,25 +51,25 @@ class Employee(models.Model):
     password = models.CharField(max_length=128, null=False)  # Пароль сотрудника
     job = models.ForeignKey(Job, on_delete=models.CASCADE,help_text="Отдел в котором состоит") 
     department = models.ForeignKey(Department, on_delete=models.CASCADE,help_text="Отдел сотрдуника в котором он состоит") 
-    position = models.IntegerField(default=1,help_text="Уровень доступа(позиция ) сотрудника 1-5")
+    position = models.IntegerField(default=1,help_text="Уровень доступа(позиция ) сотрудника 1-5") ;
 
 
 class Reports(models.Model):
     id = models.AutoField(primary_key=True)  
-    by_employee = models.ForeignKey('Employee', on_delete=models.CASCADE) 
-    function = models.ForeignKey('Functions', on_delete=models.CASCADE)
+    by_employee = models.ForeignKey('Employee', on_delete=models.CASCADE) # сотрудник заполняющий
+    function = models.ForeignKey('Functions', on_delete=models.CASCADE)#функция по которой заполняется
     hours_worked = models.DecimalField(max_digits=5, decimal_places=2, validators=[
             MaxValueValidator(10),
             MinValueValidator(0.5)
-        ], null=False)
+        ], null=False)# отработанное время
     comment = models.CharField(max_length=300, null=True)  
-    date = models.DateTimeField(default=timezone.now) 
+    date = models.DateTimeField(default=timezone.now) # дата отчета
     
 class Functions(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200,null=False)
     description = models.TextField(max_length=300)
-    is_main = models.BooleanField(default=True)
+    is_main = models.BooleanField(default=True) # осноная или дополнительная если true то основная если false то дополнительная
     
     
     

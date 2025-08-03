@@ -122,49 +122,50 @@ from main.utils.report.send import create_report
 from main.utils.statistics import get_app_status_data
 
 urlpatterns = [
-    path('users/create',access_managing.RegisterView.as_view()),
+    path('users/create',access_managing.RegisterView.as_view()),# создание сотрудника
     
-    path("users/login",access_managing.LoginView.as_view()),
+    path("users/login",access_managing.LoginView.as_view()), # вход
     
-    path("users/auth",access_managing.UserAuth.as_view()),
-    # path('refresh',access_managing.refresh_token.as_view()),
-    path('users/change_password',access_managing.ChangePassword.as_view()),
+    path("users/auth",access_managing.UserAuth.as_view()), # получение payload у токена
+    # path('refresh',access_managing.refresh_token.as_view()), этот эндпоинт удален так как нет смысла потому что токен на фронтенде если
+    # истекает то просто middleware выкидывает пользователя из профиля при next входе
+    path('users/change_password',access_managing.ChangePassword.as_view()), # смена пароля с предоставлением старого
     
-    path('users/get_user',access_managing.GetUser.as_view()),
+    path('users/get_user',access_managing.GetUser.as_view()), # получение данных о пользователе необходимо представить cookie токен 
     
-    path('users/deposition',access_managing.Deposition.as_view()),
+    path('users/deposition',access_managing.Deposition.as_view()), # изменение позиции пользователя для выставления прав 
 
-    path('users/detail/<pk>',access_managing.user_detail),
+    path('users/detail/<pk>',access_managing.user_detail),# получение детальной информации о пользователе (не используется , не протестированно)
     
-    path('users/quicksearch',access_managing.user_quick_view),
+    path('users/quicksearch',access_managing.user_quick_view),# поиск по пользователям используется во всем компонентах с поиском 
 
-    path('users/reset_password',access_managing.reset_password),
+    path('users/reset_password',access_managing.reset_password),# сброс пароля с использование подтверждения в виде пароля админа указывается в .env
     
-    path('entities/job/',JobManaging.as_view()),
+    path('entities/job/',JobManaging.as_view()), # манипуляции с должностями (get,patch,delete) по id и также получение листа
 
-    path('entities/job/create',JobCreate.as_view()),
+    path('entities/job/create',JobCreate.as_view()), # создание должности 
     
-    path('entities/department/',DepartmentManaging.as_view()),
+    path('entities/department/',DepartmentManaging.as_view()), # также манипуляции с отделами (get,patch,delete ) по id и получение списка всех при регистарации
     
-    path('entities/department/create',DepartmentCreate.as_view()),
+    path('entities/department/create',DepartmentCreate.as_view()),#  создание отдела
     
     # протестированно
     
     
-    path('entities/functions/',FunctionsManage.as_view()),
+    path('entities/functions/',FunctionsManage.as_view()),# манипуляции с функциями (crud)
     
     
-    # path('report/functions/',get_user_functions),
+    # path('report/functions/',get_user_functions), устарело
 
-    path('fill/progress/', create_report),
+    path('fill/progress/', create_report), # отправка отчета по выполненной работе
     
     
-    path('app/statistics',get_app_status_data),
+    path('app/statistics',get_app_status_data),# получение статистики (cpu,ram,uptime)
     
-    path('history/employee/',EmployeePerformanceView.as_view()) , 
+    path('history/employee/',EmployeePerformanceView.as_view()) ,# получение статистки по сотруднику (отчеты)
     
-    path('history/department/',DepartmentPerformanceView.as_view())
+    path('history/department/',DepartmentPerformanceView.as_view())# получение статистики по отделу (тоже отчеты по периоду )
     
     
-    
+    # подробно о функции вы можете узнать в комментариях внутри нее
 ]

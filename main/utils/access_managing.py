@@ -1,20 +1,19 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
 from rest_framework.views import APIView
 from dotenv import load_dotenv
 import os
 from django.contrib.auth.hashers import make_password, check_password
-from django.db.models import Q, F
+from django.db.models import Q
 import jwt
 import datetime
 from django.core.cache import cache
 from rest_framework import status
 from main.utils.auth import get_user
-from ..models import Department, Employee, Functions, Job
+from ..models import Employee
 from ..serializer import AdminEmployeeSerializer, EmployeeSerializer
 import logging
-from django.core.exceptions import ObjectDoesNotExist
+
 
 logger = logging.getLogger(__name__)
 load_dotenv()

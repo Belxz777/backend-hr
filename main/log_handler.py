@@ -1,4 +1,4 @@
-# logging_handler.py
+# log_handler.py  обработчик логов приложения 
 import logging
 from collections import deque
 

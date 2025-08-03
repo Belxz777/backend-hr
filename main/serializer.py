@@ -1,3 +1,5 @@
+# serializer.py общие правила по созданию получению валидации данных
+
 from rest_framework import serializers
 from .models import Job, Department, Employee, Reports, Functions
 

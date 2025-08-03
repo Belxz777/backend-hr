@@ -8,7 +8,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from main.models import Employee
 
 
-logger = logging.getLogger('users')
+logger = logging.getLogger(__name__)
 load_dotenv()
 
 coding_token = os.getenv('SECRET_KEY')

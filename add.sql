@@ -1,5 +1,5 @@
 -- Вставка департаментов (используем точное имя столбца)
-INSERT INTO main_department ("departmentName") VALUES
+INSERT INTO main_department ("name") VALUES
 ('Отдел внутренних коммуникаций и корпоративной культуры № 220'),
 ('Отдел кадров № 10'),
 ('Отдел по подбору и адаптации персонала № 219'),
@@ -8,7 +8,7 @@ INSERT INTO main_department ("departmentName") VALUES
 ('Управление организации труда и заработной платы № 5');
 
 -- Вставка должностей (используем точное имя столбца)
-INSERT INTO main_job ("jobName") VALUES
+INSERT INTO main_job ("name") VALUES
 ('Начальник отдела'),
 ('Руководитель проекта'),
 ('Ведущий специалист'),
@@ -45,7 +45,7 @@ INSERT INTO main_job ("jobName") VALUES
 ('Экономист по труду 2-й категории');
 
 -- Связывание должностей с отделами (используем точное имя таблицы)
-INSERT INTO "main_department_jobsList" ("department_id", "job_id") VALUES
+INSERT INTO "main_department_jobs_list" ("id", "job_id") VALUES
 -- Отдел внутренних коммуникаций и корпоративной культуры № 220 (departmentId = 1)
 (1, 1), (1, 2), (1, 3), (1, 4), (1, 5),
 -- Отдел кадров № 10 (departmentId = 2)

@@ -1,3 +1,3 @@
 from django.test import TestCase
 
-# Create your tests here.
+# тесты были удалены после большого обновления моделей
