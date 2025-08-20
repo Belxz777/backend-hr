@@ -54,7 +54,7 @@ class RegisterView(APIView):
     def post(self, request):
         try:
             # Валидация обязательных полей
-            required_fields = ['name', 'surname', 'login', 'password', 'job_id', 'department_id']
+            required_fields = [ 'surname', 'login', 'password', 'job_id', 'department_id']
             if not all(field in request.data for field in required_fields):
                 return Response(
                     {'message': 'Необходимо указать все обязательные поля'},

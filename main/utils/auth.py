@@ -14,7 +14,7 @@ load_dotenv()
 coding_token = os.getenv('SECRET_KEY')
 if not coding_token:
     raise RuntimeError("SECRET_KEY not configured in environment variables")
-
+# функция для проверки токена пользователя
 def get_user(request):
     token = request.COOKIES.get('jwt')
     if token is None:

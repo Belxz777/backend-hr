@@ -44,9 +44,9 @@ class Department(models.Model):
 class Employee(models.Model):
     # Модель для сотрудников, содержит информацию о работниках
     id = models.AutoField(primary_key=True,help_text="Уникальный инкрементируемый айди сотрудника")   
-    name = models.CharField(max_length=30, null=False,help_text="Имя сотрудника")  
-    surname = models.CharField(max_length=30, null=False,help_text="Фамилия")  # Фамилия сотрудника
-    patronymic = models.CharField(max_length=30, null=False)  # Отчество сотрудника
+    name = models.CharField(max_length=30, null=False,help_text="Имя сотрудника",default=" ")  
+    surname = models.CharField(max_length=30, null=False,help_text="Фамилия")  
+    patronymic = models.CharField(max_length=30, null=False,default=" ")  
     login = models.CharField(max_length=30, null=False)  # Логин сотрудника
     password = models.CharField(max_length=128, null=False)  # Пароль сотрудника
     job = models.ForeignKey(Job, on_delete=models.CASCADE,help_text="Отдел в котором состоит") 

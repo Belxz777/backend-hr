@@ -10,7 +10,7 @@ from django.conf import settings
 # комментарии на английском ai generated
 @api_view(['GET'])
 def get_app_status_data(request):
- 
+    
     status_data = {
         'is_running': True,
         'uptime': get_system_uptime(),
