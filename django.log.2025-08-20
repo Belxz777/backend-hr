@@ -1,0 +1,89 @@
+INFO 2025-08-20 20:11:31,178 autoreload Watching for file changes with StatReloader
+INFO 2025-08-20 20:11:55,364 signals Cache invalidated after save for migration:23
+INFO 2025-08-20 20:12:00,895 autoreload Watching for file changes with StatReloader
+INFO 2025-08-20 20:14:20,463 jobs Job retrieval request from 127.0.0.1
+INFO 2025-08-20 20:14:20,942 basehttp "GET /api/v1/entities/job/ HTTP/1.1" 200 2081
+INFO 2025-08-20 20:14:21,751 basehttp "GET /api/v1/entities/department/ HTTP/1.1" 200 721
+INFO 2025-08-20 20:15:19,176 jobs Job retrieval request from 127.0.0.1
+INFO 2025-08-20 20:15:19,654 basehttp "GET /api/v1/entities/job/ HTTP/1.1" 200 2081
+INFO 2025-08-20 20:15:20,446 basehttp "GET /api/v1/entities/department/ HTTP/1.1" 200 721
+INFO 2025-08-20 20:15:25,423 jobs Job retrieval request from 127.0.0.1
+INFO 2025-08-20 20:15:25,892 basehttp "GET /api/v1/entities/job/ HTTP/1.1" 200 2081
+INFO 2025-08-20 20:15:26,684 basehttp "GET /api/v1/entities/department/ HTTP/1.1" 200 721
+INFO 2025-08-20 20:40:26,405 autoreload /home/roman/projects/backend-hr/main/utils/statistics.py changed, reloading.
+INFO 2025-08-20 20:40:26,808 autoreload Watching for file changes with StatReloader
+INFO 2025-08-20 20:59:22,602 basehttp "GET / HTTP/1.1" 200 31
+WARNING 2025-08-20 20:59:22,643 log Not Found: /favicon.ico
+WARNING 2025-08-20 20:59:22,643 basehttp "GET /favicon.ico HTTP/1.1" 404 2215
+INFO 2025-08-20 20:59:39,958 jobs Job retrieval request from 127.0.0.1
+INFO 2025-08-20 20:59:40,430 basehttp "GET /api/v1/entities/job/ HTTP/1.1" 200 2081
+INFO 2025-08-20 20:59:41,235 basehttp "GET /api/v1/entities/department/ HTTP/1.1" 200 721
+WARNING 2025-08-20 20:59:55,684 log Bad Request: /api/v1/users/create
+WARNING 2025-08-20 20:59:55,684 basehttp "POST /api/v1/users/create HTTP/1.1" 400 207
+INFO 2025-08-20 21:15:14,726 autoreload /home/roman/projects/backend-hr/main/serializer.py changed, reloading.
+INFO 2025-08-20 21:15:15,013 autoreload Watching for file changes with StatReloader
+INFO 2025-08-20 21:15:19,470 signals Cache invalidated after save for employee:27
+INFO 2025-08-20 21:15:19,523 basehttp "POST /api/v1/users/create HTTP/1.1" 201 357
+INFO 2025-08-20 21:15:31,492 access_managing Auth attempt - UserID: 27, Success: True, IP: 127.0.0.1
+INFO 2025-08-20 21:15:31,492 basehttp "POST /api/v1/users/login HTTP/1.1" 200 250
+INFO 2025-08-20 21:15:32,740 access_managing Данные пользователя 27 сохранены в кэш
+INFO 2025-08-20 21:15:32,741 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 288
+INFO 2025-08-20 21:15:54,704 access_managing Данные пользователя 27 получены из кэша
+INFO 2025-08-20 21:15:54,704 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 288
+INFO 2025-08-20 21:16:15,802 access_managing Данные пользователя 27 получены из кэша
+INFO 2025-08-20 21:16:15,803 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 288
+INFO 2025-08-20 21:16:56,244 access_managing Данные пользователя 27 получены из кэша
+INFO 2025-08-20 21:16:56,245 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 288
+INFO 2025-08-20 21:17:02,956 access_managing Данные пользователя 27 получены из кэша
+INFO 2025-08-20 21:17:02,957 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 288
+INFO 2025-08-20 21:17:20,775 access_managing Данные пользователя 27 получены из кэша
+INFO 2025-08-20 21:17:20,776 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 288
+INFO 2025-08-20 21:20:17,733 access_managing Данные пользователя 27 получены из кэша
+INFO 2025-08-20 21:20:17,734 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 288
+INFO 2025-08-20 21:20:30,871 access_managing Auth attempt - UserID: 27, Success: True, IP: 127.0.0.1
+INFO 2025-08-20 21:20:30,871 basehttp "POST /api/v1/users/login HTTP/1.1" 200 250
+INFO 2025-08-20 21:20:30,991 access_managing Данные пользователя 27 получены из кэша
+INFO 2025-08-20 21:20:30,992 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 288
+INFO 2025-08-20 21:20:36,335 jobs Job retrieval request from 127.0.0.1
+INFO 2025-08-20 21:20:36,799 basehttp "GET /api/v1/entities/job/ HTTP/1.1" 200 2081
+INFO 2025-08-20 21:20:37,621 basehttp "GET /api/v1/entities/department/ HTTP/1.1" 200 687
+INFO 2025-08-20 21:20:57,230 signals Cache invalidated after save for employee:28
+INFO 2025-08-20 21:20:57,283 basehttp "POST /api/v1/users/create HTTP/1.1" 201 395
+INFO 2025-08-20 21:21:05,446 access_managing Auth attempt - UserID: 28, Success: True, IP: 127.0.0.1
+INFO 2025-08-20 21:21:05,447 basehttp "POST /api/v1/users/login HTTP/1.1" 200 250
+INFO 2025-08-20 21:21:06,070 access_managing Данные пользователя 28 сохранены в кэш
+INFO 2025-08-20 21:21:06,070 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 324
+INFO 2025-08-20 21:21:14,194 basehttp "GET /api/v1/entities/functions/ HTTP/1.1" 200 9434
+INFO 2025-08-20 21:21:25,140 signals Cache invalidated after save for reports:32
+INFO 2025-08-20 21:21:25,194 basehttp "POST /api/v1/fill/progress/ HTTP/1.1" 201 246
+INFO 2025-08-20 21:21:27,355 access_managing Данные пользователя 28 получены из кэша
+INFO 2025-08-20 21:21:27,356 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 324
+INFO 2025-08-20 21:21:47,267 access_managing Данные пользователя 28 получены из кэша
+INFO 2025-08-20 21:21:47,267 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 324
+INFO 2025-08-20 21:21:56,245 access_managing Данные пользователя 28 получены из кэша
+INFO 2025-08-20 21:21:56,246 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 324
+WARNING 2025-08-20 21:22:34,330 access_managing Login attempt for non-existent user: administrator
+WARNING 2025-08-20 21:22:34,331 log Unauthorized: /api/v1/users/login
+WARNING 2025-08-20 21:22:34,332 basehttp "POST /api/v1/users/login HTTP/1.1" 401 86
+WARNING 2025-08-20 21:23:00,735 access_managing Login attempt for non-existent user: administrator
+WARNING 2025-08-20 21:23:00,735 log Unauthorized: /api/v1/users/login
+WARNING 2025-08-20 21:23:00,736 basehttp "POST /api/v1/users/login HTTP/1.1" 401 86
+WARNING 2025-08-20 21:23:09,326 access_managing Login attempt for non-existent user: admin
+WARNING 2025-08-20 21:23:09,327 log Unauthorized: /api/v1/users/login
+WARNING 2025-08-20 21:23:09,328 basehttp "POST /api/v1/users/login HTTP/1.1" 401 86
+INFO 2025-08-20 21:23:20,836 basehttp "GET /api/v1/users/quicksearch?search=%D0%91%D0%B5%D0%BB%D1%8B&only_mydepartment=false HTTP/1.1" 200 63
+INFO 2025-08-20 21:23:22,810 basehttp "GET /api/v1/users/quicksearch?search=%D0%91%D0%B5%D0%BB%D1%8B&only_mydepartment=false HTTP/1.1" 200 63
+INFO 2025-08-20 21:24:13,778 access_managing Auth attempt - UserID: 8, Success: True, IP: 127.0.0.1
+INFO 2025-08-20 21:24:13,778 basehttp "POST /api/v1/users/login HTTP/1.1" 200 248
+INFO 2025-08-20 21:24:14,427 access_managing Данные пользователя 8 сохранены в кэш
+INFO 2025-08-20 21:24:14,428 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 325
+INFO 2025-08-20 21:24:22,447 basehttp "GET /api/v1/users/quicksearch?search=32&only_mydepartment=true HTTP/1.1" 200 124
+INFO 2025-08-20 21:24:28,133 basehttp "GET /api/v1/users/quicksearch?search=32%D0%AB&only_mydepartment=true HTTP/1.1" 200 63
+INFO 2025-08-20 21:24:29,185 basehttp "GET /api/v1/users/quicksearch?search=32&only_mydepartment=true HTTP/1.1" 200 124
+INFO 2025-08-20 21:24:32,202 basehttp "GET /api/v1/history/employee/?emp_id=28&start_date=2025-08-13&end_date=2025-08-20 HTTP/1.1" 200 470
+INFO 2025-08-20 21:24:37,461 access_managing Данные пользователя 8 получены из кэша
+INFO 2025-08-20 21:24:37,462 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 325
+INFO 2025-08-20 21:24:47,891 access_managing Auth attempt - UserID: 28, Success: True, IP: 127.0.0.1
+INFO 2025-08-20 21:24:47,891 basehttp "POST /api/v1/users/login HTTP/1.1" 200 250
+INFO 2025-08-20 21:24:48,026 access_managing Данные пользователя 28 получены из кэша
+INFO 2025-08-20 21:24:48,026 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 324
