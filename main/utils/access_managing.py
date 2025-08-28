@@ -54,7 +54,7 @@ class RegisterView(APIView):
     def post(self, request):
         try:
             # Валидация обязательных полей
-            required_fields = [ 'surname', 'login', 'password', 'job_id', 'department_id']
+            required_fields = [ 'surname','code', 'login', 'password', 'job_id', 'department_id']
             if not all(field in request.data for field in required_fields):
                 return Response(
                     {'message': 'Необходимо указать все обязательные поля'},
@@ -62,9 +62,9 @@ class RegisterView(APIView):
                 )
 
             # Проверка уникальности логина
-            if Employee.objects.filter(login=request.data['login']).exists():
+            if Employee.objects.filter(code=request.data['code']).exists():
                 return Response(
-                    {'message': 'Этот логин уже занят'},
+                    {'message': 'Этот код уже занят'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
@@ -104,22 +104,76 @@ class RegisterView(APIView):
                 {'message': 'Произошла ошибка при регистрации'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+# class LoginView(APIView):
+#     authentication_classes = []
+#     permission_classes = []
+    
+#     def post(self, request):
+#         try:
+#             login = request.data.get('login')
+#             password = request.data.get('password')
+#             if not login or not password:
+#                 return Response(
+#                     {'message': 'Требуется логин и пароль '}, 
+#                     status=status.HTTP_400_BAD_REQUEST
+#                 )
+#             user = Employee.objects.filter(login=login).first()
+#             if not user:
+#                 logger.warning(f"Login attempt for non-existent user: {login}")
+#                 return Response(
+#                     {'message': 'Указаны неверные данные учётной записи'}, 
+#                     status=status.HTTP_401_UNAUTHORIZED
+#                 )
+#             if not check_password(password, user.password):
+#                 log_auth_attempt(user.id, False, get_client_ip(request))
+#                 return Response(
+#                     {'message': 'Указан неверный пароль'}, 
+#                     status=status.HTTP_401_UNAUTHORIZED
+#                 )
+#             payload = {
+#                 'user': user.id,
+#                 'exp': datetime.datetime.utcnow() + datetime.timedelta(days=14),  # Срок жизни 14 дней
+#                 'iat': datetime.datetime.utcnow(),
+#                 'position': user.position,
+#             }
+#             token = jwt.encode(payload, coding_token, algorithm='HS256')
+            
+#             response = Response({
+#                 'message': 'Вы успешно вошли в систему',
+#                 'token': token,
+#                 'time': datetime.datetime.now().strftime("%H:%M:%S")
+#             },status=status.HTTP_200_OK)
+#             response.set_cookie(
+#                 key='jwt', 
+#                 value=token, 
+#                 httponly=True, 
+#                 samesite='Lax'
+#             ) 
+#             log_auth_attempt(user.id, True, get_client_ip(request))
+#             return response
+
+#         except Exception as e:
+#             logger.exception("Login error")
+#             return Response(
+#                 {'error': 'Внутренняя ошибка сервера, обратитесь в тех. поддержку '}, 
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+#             )
 class LoginView(APIView):
     authentication_classes = []
     permission_classes = []
     
     def post(self, request):
         try:
-            login = request.data.get('login')
+            code = request.data.get('code')
             password = request.data.get('password')
-            if not login or not password:
+            if not code or not password:
                 return Response(
                     {'message': 'Требуется логин и пароль '}, 
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            user = Employee.objects.filter(login=login).first()
+            user = Employee.objects.filter(code=code).first()
             if not user:
-                logger.warning(f"Login attempt for non-existent user: {login}")
+                logger.warning(f"Login attempt for non-existent user with code: {code}")
                 return Response(
                     {'message': 'Указаны неверные данные учётной записи'}, 
                     status=status.HTTP_401_UNAUTHORIZED

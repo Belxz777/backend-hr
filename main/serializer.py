@@ -44,7 +44,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = Employee
         fields = [
             'id',  'surname',  
-            'login', 'password', 'job', 'department',
+            'login', 'password','code', 'job', 'department',
             'job_id', 'department_id', 'position'
         ]
         extra_kwargs = {

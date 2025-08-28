@@ -1,0 +1,12 @@
+INFO 2025-08-22 10:10:30,547 autoreload Watching for file changes with StatReloader
+WARNING 2025-08-22 10:10:44,907 log Not Found: /api/v1/users/get_user
+WARNING 2025-08-22 10:10:44,907 basehttp "GET /api/v1/users/get_user HTTP/1.1" 404 56
+INFO 2025-08-22 10:11:10,100 jobs Job retrieval request from 127.0.0.1
+INFO 2025-08-22 10:11:10,577 basehttp "GET /api/v1/entities/job/ HTTP/1.1" 200 2081
+INFO 2025-08-22 10:11:11,382 basehttp "GET /api/v1/entities/department/ HTTP/1.1" 200 687
+INFO 2025-08-22 10:11:31,695 signals Cache invalidated after save for employee:29
+INFO 2025-08-22 10:11:31,748 basehttp "POST /api/v1/users/create HTTP/1.1" 201 378
+INFO 2025-08-22 10:11:58,942 access_managing Auth attempt - UserID: 29, Success: True, IP: 127.0.0.1
+INFO 2025-08-22 10:11:58,942 basehttp "POST /api/v1/users/login HTTP/1.1" 200 250
+INFO 2025-08-22 10:11:59,614 access_managing Данные пользователя 29 сохранены в кэш
+INFO 2025-08-22 10:11:59,614 basehttp "GET /api/v1/users/get_user HTTP/1.1" 200 306

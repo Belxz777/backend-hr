@@ -45,7 +45,8 @@ class Employee(models.Model):
     # Модель для сотрудников, содержит информацию о работниках
     id = models.AutoField(primary_key=True,help_text="Уникальный инкрементируемый айди сотрудника")   
     name = models.CharField(max_length=30, null=False,help_text="Имя сотрудника",default=" ")  
-    surname = models.CharField(max_length=30, null=False,help_text="Фамилия")  
+    code = models.IntegerField(max_length=35,null=False,default=0,help_text="code")
+    surname = models.CharField(max_length=30, null=True,help_text="Фамилия")  
     patronymic = models.CharField(max_length=30, null=False,default=" ")  
     login = models.CharField(max_length=30, null=False)  # Логин сотрудника
     password = models.CharField(max_length=128, null=False)  # Пароль сотрудника
