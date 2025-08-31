@@ -37,13 +37,6 @@ jobs:
           REDIS_URL=redis://redis:6379/0
           EOF
 
-      - name: Copy additional config files if needed
-        run: |
-          # Копирование nginx конфигов, если есть
-          if [ -f "nginx.conf" ]; then
-            sudo cp nginx.conf /etc/nginx/sites-available/ || true
-          fi
-
       - name: Stop and remove existing containers
         run: docker compose down -v --remove-orphans || true
 
