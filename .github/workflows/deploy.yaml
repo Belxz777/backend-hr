@@ -11,49 +11,40 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      # - name: Setup Docker permissions properly
-      #   run: |
-      #     # Безопасная настройка прав вместо chmod 666
-      #     sudo groupadd docker || true
-      #     sudo usermod -aG docker $USER || true
-      #     sudo chown root:docker /var/run/docker.sock
-      #     sudo chmod 660 /var/run/docker.sock
-      #     newgrp docker || true
-
       - name: Pull latest changes
-        run: git pull origin master
+        run: sudo -u runner git pull origin master
 
       - name: Create environment file
         run: |
-          cat > .env << EOF
+          sudo -u runner bash -c 'cat > .env << EOF
           SECRET_KEY=${{ secrets.SECRET_KEY }}
           DEBUG=False
-          ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS || 'localhost,127.0.0.1,.example.com' }}
+          ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS || 'localhost,127.0.0.1' }}
           DATABASE_NAME=${{ secrets.DATABASE_NAME }}
           DATABASE_HOST=${{ secrets.DATABASE_HOST }}
           DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
           DATABASE_USER=${{ secrets.DATABASE_USER }}
           DATABASE_PORT=${{ secrets.DATABASE_PORT || '5432' }}
           REDIS_URL=redis://redis:6379/0
-          EOF
+          EOF'
 
       - name: Stop and remove existing containers
-        run: docker compose down -v --remove-orphans || true
+        run: sudo -u runner docker compose down -v --remove-orphans || true
 
       - name: Build and start containers
-        run: docker compose up --build -d
+        run: sudo -u runner docker compose up --build -d
 
       - name: Run database migrations
-        run: docker compose exec web python manage.py migrate --noinput || true
+        run: sudo -u runner docker compose exec web python manage.py migrate --noinput || true
 
       - name: Collect static files
-        run: docker compose exec web python manage.py collectstatic --noinput --clear || true
+        run: sudo -u runner docker compose exec web python manage.py collectstatic --noinput --clear || true
 
       - name: Verify deployment
         run: |
           sleep 15
-          docker ps -a
-          docker compose logs --tail=50 web
+          sudo -u runner docker ps -a
+          sudo -u runner docker compose logs --tail=50 web
           
       - name: Health check
         run: |
