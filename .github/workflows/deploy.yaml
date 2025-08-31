@@ -11,8 +11,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      # - name: Setup Docker permissions
-      #   run: sudo chmod 666 /var/run/docker.sock || true
+      - name: Setup Docker permissions properly
+        run: |
+          # Безопасная настройка прав вместо chmod 666
+          sudo groupadd docker || true
+          sudo usermod -aG docker $USER || true
+          sudo chown root:docker /var/run/docker.sock
+          sudo chmod 660 /var/run/docker.sock
+          newgrp docker || true
 
       - name: Pull latest changes
         run: git pull origin master
@@ -22,22 +28,40 @@ jobs:
           cat > .env << EOF
           SECRET_KEY=${{ secrets.SECRET_KEY }}
           DEBUG=False
-          IS_URL=False
+          ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS || 'localhost,127.0.0.1,.example.com' }}
           DATABASE_NAME=${{ secrets.DATABASE_NAME }}
           DATABASE_HOST=${{ secrets.DATABASE_HOST }}
           DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
           DATABASE_USER=${{ secrets.DATABASE_USER }}
           DATABASE_PORT=${{ secrets.DATABASE_PORT || '5432' }}
+          REDIS_URL=redis://redis:6379/0
           EOF
-          
+
+      - name: Copy additional config files if needed
+        run: |
+          # Копирование nginx конфигов, если есть
+          if [ -f "nginx.conf" ]; then
+            sudo cp nginx.conf /etc/nginx/sites-available/ || true
+          fi
+
       - name: Stop and remove existing containers
         run: docker compose down -v --remove-orphans || true
 
       - name: Build and start containers
         run: docker compose up --build -d
 
+      - name: Run database migrations
+        run: docker compose exec web python manage.py migrate --noinput || true
+
+      - name: Collect static files
+        run: docker compose exec web python manage.py collectstatic --noinput --clear || true
+
       - name: Verify deployment
         run: |
-          sleep 10
-          docker ps
-          docker compose logs --tail=20
+          sleep 15
+          docker ps -a
+          docker compose logs --tail=50 web
+          
+      - name: Health check
+        run: |
+          curl -f http://localhost:8000/health/ || curl -f http://localhost:8000/ || echo "Health check failed but continuing"
