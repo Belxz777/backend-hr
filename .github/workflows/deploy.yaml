@@ -11,8 +11,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      - name: Setup Docker permissions
-        run: sudo chmod 666 /var/run/docker.sock || true
+      # - name: Setup Docker permissions
+      #   run: sudo chmod 666 /var/run/docker.sock || true
 
       - name: Pull latest changes
         run: git pull origin master
