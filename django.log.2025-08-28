@@ -1,0 +1,17 @@
+INFO 2025-08-28 20:23:38,438 autoreload Watching for file changes with StatReloader
+INFO 2025-08-28 20:26:17,221 autoreload /home/roman/projects/backend-hr/main/models.py changed, reloading.
+INFO 2025-08-28 20:26:17,525 autoreload Watching for file changes with StatReloader
+INFO 2025-08-28 20:26:29,989 autoreload /home/roman/projects/backend-hr/main/serializer.py changed, reloading.
+INFO 2025-08-28 20:26:30,267 autoreload Watching for file changes with StatReloader
+INFO 2025-08-28 20:26:39,596 autoreload /home/roman/projects/backend-hr/main/models.py changed, reloading.
+INFO 2025-08-28 20:26:39,860 autoreload Watching for file changes with StatReloader
+INFO 2025-08-28 20:27:37,879 autoreload /home/roman/projects/backend-hr/main/utils/access_managing.py changed, reloading.
+INFO 2025-08-28 20:27:38,258 autoreload Watching for file changes with StatReloader
+INFO 2025-08-28 20:27:52,707 autoreload /home/roman/projects/backend-hr/main/models.py changed, reloading.
+INFO 2025-08-28 20:27:52,986 autoreload Watching for file changes with StatReloader
+INFO 2025-08-28 20:28:03,350 autoreload /home/roman/projects/backend-hr/main/utils/access_managing.py changed, reloading.
+INFO 2025-08-28 20:28:03,703 autoreload Watching for file changes with StatReloader
+INFO 2025-08-28 20:28:21,132 autoreload /home/roman/projects/backend-hr/main/utils/access_managing.py changed, reloading.
+INFO 2025-08-28 20:28:21,465 autoreload Watching for file changes with StatReloader
+INFO 2025-08-28 20:48:29,258 autoreload Watching for file changes with StatReloader
+INFO 2025-08-28 20:54:16,349 signals Cache invalidated after save for migration:26

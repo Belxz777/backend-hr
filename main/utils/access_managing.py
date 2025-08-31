@@ -437,7 +437,7 @@ class GetUser(APIView):
             if not token:
                 logger.warning('Попытка доступа без аутентификации')
                 return Response(
-                    {'message': 'Требуется аутентификация'},
+                    {'message': 'Требуется аутентификация','status':401},
                     status=status.HTTP_401_UNAUTHORIZED
                 )
             
@@ -445,12 +445,12 @@ class GetUser(APIView):
                 payload = jwt.decode(token, coding_token, algorithms=['HS256'])
             except jwt.ExpiredSignatureError:
                 return Response(
-                    {'message': 'Токен истек'},
+                    {'message': 'Токен истек','status':401},
                     status=status.HTTP_401_UNAUTHORIZED
                 )
             except jwt.InvalidTokenError:
                 return Response(
-                    {'message': 'Неверный токен'},
+                    {'message': 'Неверный токен','status':400},
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
@@ -460,7 +460,7 @@ class GetUser(APIView):
                 if cached_data:
                     logger.info(f"Данные пользователя {payload['user']} получены из кэша")
                     return Response(
-                        {'message': 'Данные пользователя', 'data': cached_data},
+                        {'message': 'Данные пользователя', 'data': cached_data,'status':200},
                         status=status.HTTP_200_OK
                     )
             except Exception as e:
@@ -471,6 +471,7 @@ class GetUser(APIView):
             ).values(
                 'id',
                 'name',
+                'code',
                 'surname',
                 'job',
                 'department__name',
@@ -480,7 +481,7 @@ class GetUser(APIView):
             
             if not user:
                 return Response(
-                    {'message': 'Пользователь не найден'},
+                    {'message': 'Пользователь не найден','status':404},
                     status=status.HTTP_404_NOT_FOUND
                 )
             
@@ -488,6 +489,7 @@ class GetUser(APIView):
                 'user': {
                     'employeeId': user['id'],
                     'firstName': user['name'],
+                    'code':user['code'],
                     'lastName': user['surname'],
                     'position': user['position']
                 },
@@ -504,14 +506,14 @@ class GetUser(APIView):
                 logger.error(f"Ошибка сохранения в кэш: {str(e)}")
             
             return Response(
-                {'message': 'Данные пользователя', 'data': response_data},
+                {'message': 'Данные пользователя', 'data': response_data,'status':200},
                 status=status.HTTP_200_OK
             )
             
         except Exception as e:
             logger.exception("Get user error")
             return Response(
-                {'message': 'Ошибка получения данных пользователя'},
+                {'message': 'Ошибка получения данных пользователя','status':500},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
@@ -583,12 +585,14 @@ def user_quick_view(request):
         if search_query:
             queryset = queryset.filter(
                 Q(surname__icontains=search_query) | 
-                Q(name__icontains=search_query)
+                Q(name__icontains=search_query) |
+                Q(code__icontains=search_query)  
             )
         
         users = queryset.order_by('-position')[:15].values(
             'id', 
             'name', 
+            'code',
             'surname',
             'position',
             'job'

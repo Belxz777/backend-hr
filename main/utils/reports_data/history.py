@@ -9,8 +9,9 @@ from django.core.paginator import Paginator,EmptyPage
 import logging
 
 from main.models import Department, Employee, Reports
+from main.serializer import ReportsSerializer
 
-
+# отрефакторить
 logger = logging.getLogger(__name__)
 from datetime import timedelta
 from django.core.paginator import Paginator, EmptyPage
@@ -122,6 +123,7 @@ class DepartmentPerformanceView(APIView):
             # 5. Пагинация отчетов
             paginator = Paginator(reports, page_size)
             
+            
             try:
                 reports_page = paginator.page(page)
             except EmptyPage:
@@ -158,6 +160,7 @@ class DepartmentPerformanceView(APIView):
                 response_data["reports_by_date"][date_key].append({
                     "report_id": report.id,
                     "employee_id": report.by_employee.id,
+                    "code":report.by_employee.code,
                     "employee_name": f"{report.by_employee.surname} {report.by_employee.name}",
                     "function": {
                         "id": report.function.id if report.function else None,
