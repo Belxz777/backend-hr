@@ -11,14 +11,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
-      - name: Setup Docker permissions properly
-        run: |
-          # Безопасная настройка прав вместо chmod 666
-          sudo groupadd docker || true
-          sudo usermod -aG docker $USER || true
-          sudo chown root:docker /var/run/docker.sock
-          sudo chmod 660 /var/run/docker.sock
-          newgrp docker || true
+      # - name: Setup Docker permissions properly
+      #   run: |
+      #     # Безопасная настройка прав вместо chmod 666
+      #     sudo groupadd docker || true
+      #     sudo usermod -aG docker $USER || true
+      #     sudo chown root:docker /var/run/docker.sock
+      #     sudo chmod 660 /var/run/docker.sock
+      #     newgrp docker || true
 
       - name: Pull latest changes
         run: git pull origin master
