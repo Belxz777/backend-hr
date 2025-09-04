@@ -113,6 +113,7 @@
 from django.urls import path
 
 from main.utils import access_managing
+from main.utils.download.workdata import ReportsExcelExportView
 from main.utils.reports_data.compliency import EmployeePerformanceView
 from main.utils.reports_data.history import DepartmentPerformanceView
 from main.utils.departments import DepartmentCreate, DepartmentManaging
@@ -164,8 +165,8 @@ urlpatterns = [
     
     path('history/employee/',EmployeePerformanceView.as_view()) ,# получение статистки по сотруднику (отчеты)
     
-    path('history/department/',DepartmentPerformanceView.as_view())# получение статистики по отделу (тоже отчеты по периоду )
+    path('history/department/',DepartmentPerformanceView.as_view()),# получение статистики по отделу (тоже отчеты по периоду )
     
-    
+    path('download/workdata',ReportsExcelExportView.as_view())
     # подробно о функции вы можете узнать в комментариях внутри нее
 ]
