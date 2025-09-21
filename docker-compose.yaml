@@ -1,26 +1,24 @@
-
-
 services:
   web:
-    build: .
+    build: . 
     container_name: backend_hr
     volumes:
-      - static:/usr/src/app/staticfiles
+      - static:/usr/src/app/staticfiles  
       - ./:/usr/src/app
+    env_file:
+      - data.env
     environment:
       SECRET_KEY: ${SECRET_KEY}
       DEBUG: ${DEBUG}
       DATABASE_URL: ${DATABASE_URL}
       DATABASE_NAME: ${DATABASE_NAME}
-      DATABASE_HOST: postgres  # Изменено на имя сервиса
-      DATABASE_PORT: 5432
+      DATABASE_HOST: ${DATABASE_HOST}
       IS_URL: ${IS_URL}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       RESET_PASSWORD_COMMAND: ${RESET_PASSWORD_COMMAND}
       REDIS_URL: ${REDIS_URL}
     depends_on:
       - hr_redis
-      - postgres  # Добавлена зависимость от PostgreSQL
     ports:
       - "8000:8000"
     restart: unless-stopped
@@ -30,8 +28,7 @@ services:
              python manage.py collectstatic --noinput &&
              gunicorn --bind 0.0.0.0:8000 laborcount.wsgi:application"
     networks:
-      - backend_network
-
+      - backend_network # была проблема дж не подключался к редису из за того что  они были в разных сетях имеется в виду что не в backend_network
   hr_redis:
     image: redis:7.2-alpine
     container_name: hr_redis
@@ -41,40 +38,17 @@ services:
       - redis_data:/data
     command: redis-server --requirepass Bm84qq9E8G
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "Bm84qq9E8G", "ping"]
+      test: ["CMD", "redis-cli", "-a", "Bm84qq9E8G", "ping"]  
       interval: 5s
       timeout: 3s
       retries: 3
     networks:
       - backend_network
-
-  postgres:
-    image: postgres:15-alpine
-    container_name: hr_postgres
-    environment:
-      POSTGRES_DB: ${DATABASE_NAME}
-      POSTGRES_USER: ${DATABASE_USER:-postgres}  # Можно задать через переменные окружения
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_HOST_AUTH_METHOD: trust
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./postgres-init.sql:/docker-entrypoint-initdb.d/init.sql  # Опционально: скрипт инициализации
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    networks:
-      - backend_network
-
+    
 volumes:
   redis_data:
   static:
-  postgres_data:
 
 networks:
-  backend_network:
+  backend_network:  # Единая сеть для всех сервисов
     driver: bridge
