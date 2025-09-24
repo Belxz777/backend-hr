@@ -6,13 +6,13 @@ services:
       - static:/usr/src/app/staticfiles  
       - ./:/usr/src/app
     env_file:
-      - data.env
+      - .env
     environment:
       SECRET_KEY: ${SECRET_KEY}
       DEBUG: ${DEBUG}
       DATABASE_URL: ${DATABASE_URL}
       DATABASE_NAME: ${DATABASE_NAME}
-      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_HOST: ${DATABASE_HOST} 
       IS_URL: ${IS_URL}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
       RESET_PASSWORD_COMMAND: ${RESET_PASSWORD_COMMAND}

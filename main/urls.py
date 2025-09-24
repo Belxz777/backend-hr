@@ -121,7 +121,7 @@ from main.utils.functions import FunctionsManage
 from main.utils.jobs import JobCreate, JobManaging
 from main.utils.report.send import create_report
 from main.utils.statistics import get_app_status_data
-
+from main.utils.healthcheck.func import  health_check
 urlpatterns = [
     path('users/create',access_managing.RegisterView.as_view()),# создание сотрудника
     
@@ -167,6 +167,9 @@ urlpatterns = [
     
     path('history/department/',DepartmentPerformanceView.as_view()),# получение статистики по отделу (тоже отчеты по периоду )
     
-    path('download/workdata',ReportsExcelExportView.as_view())
+    path('download/workdata',ReportsExcelExportView.as_view()),
+    
+    path('monitoring/healthcheck',health_check)
+    
     # подробно о функции вы можете узнать в комментариях внутри нее
 ]

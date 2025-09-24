@@ -19,14 +19,14 @@ LOGGING = {
         },
     },
     'handlers': {
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.TimedRotatingFileHandler',  # Используем только один класс
-            'filename': 'django.log',
-            'when': 'midnight',  # ротация каждый день
-            'backupCount': 7,    # хранить 7 дней логов
-            'formatter': 'verbose',
-        },
+        # 'file': {
+        #     'level': 'INFO',
+        #     'class': 'logging.handlers.TimedRotatingFileHandler',  # Используем только один класс
+        #     'filename': 'django.log',
+        #     'when': 'midnight',  # ротация каждый день
+        #     'backupCount': 7,    # хранить 7 дней логов
+        #     'formatter': 'verbose',
+        # },
         'console': {
             'level': 'DEBUG',  # Уровень DEBUG для консоли
             'class': 'logging.StreamHandler',
@@ -39,22 +39,21 @@ LOGGING = {
             'handlers': ['console'],
         },
         'django': {
-            'handlers': ['file', 'console'],
+            'handlers': [ 'console'],
             'level': 'INFO',  # Понижаем уровень до DEBUG, чтобы видеть больше сообщений
             'propagate': True,
         },
         'main': {
-            'handlers': ['file', 'console'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
         },
     },
 }
+ 
 ALLOWED_HOSTS = ["*"]
 if DEBUG:
-    print("Приложение запущено в режиме разработки 🚀")
-    
-    
+    print("Приложение запущено в режиме разработки 🚀")  
 else:
     print("Приложение запущено в рабочей версии 🤖")
        
@@ -170,40 +169,38 @@ else:
         }
     }
 
-REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+REDIS_URL = os.getenv('REDIS_URL', 'redis://:Bm84qq9E8G@5.129.207.182:6379/0')
 
+# Проверяем доступность Redis
+def is_redis_available():
+    try:
+        import redis
+        r = redis.from_url(REDIS_URL, socket_connect_timeout=5, socket_timeout=5)
+        r.ping()
+        return True
+    except Exception:
+        return False
 
-CACHES = {
-
-
-    "default": {
-
-
-        "BACKEND": "django_redis.cache.RedisCache",
-
-
-        "LOCATION": REDIS_URL,
-
-
-        "OPTIONS": {
-
-
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-
-
-            "SOCKET_CONNECT_TIMEOUT": 5,
-
-
-            "SOCKET_TIMEOUT": 5,
-
-
-        },
-
-
-        "KEY_PREFIX": "django_"
-
-
+# Выбираем бэкенд в зависимости от доступности Redis
+if is_redis_available():
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "SOCKET_CONNECT_TIMEOUT": 5,
+                "SOCKET_TIMEOUT": 5,
+                "IGNORE_EXCEPTIONS": True,  # Игнорировать ошибки Redis
+            },
+            "KEY_PREFIX": "django_"
+        }
     }
-
-
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+            "KEY_PREFIX": "django_fallback_"
+        }
+    }
