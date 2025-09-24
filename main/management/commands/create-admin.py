@@ -2,7 +2,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.hashers import make_password
 from main.models import Job, Department, Employee  
-
+import os
 class Command(BaseCommand):
     help = 'Создает администратора с отделом "Управление организации труда и заработной платы № 5"'
 
@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 'surname': 'Главный',
                 'patronymic': 'Системы',
                 'code': 1,
-                'password': make_password('admin123'),  # Пароль по умолчанию
+                'password': make_password(os.getenv('RESET_PASSWORD_COMMAND','kwbyYRrCBvmc')),  # Пароль по умолчанию
                 'job': job,
                 'department': department,
                 'position': 5  # Максимальный уровень доступа
